@@ -5,6 +5,7 @@ import Register from './pages/Register';
 import MyOrders from './pages/MyOrders';
 import Wishlist from './pages/Wishlist';
 import ProductDetails from './pages/ProductDetails';
+import Checkout from './pages/Checkout';
 import AdminLayout from './pages/admin/AdminLayout';
 import Dashboard from './pages/admin/Dashboard';
 import Products from './pages/admin/Products';
@@ -32,6 +33,14 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/wishlist" element={<UserLayout><Wishlist /></UserLayout>} />
         <Route path="/product/:id" element={<UserLayout><ProductDetails /></UserLayout>} />
+        <Route
+          path="/checkout"
+          element={
+            <ProtectedRoute>
+              <UserLayout><Checkout /></UserLayout>
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/my-orders"
           element={

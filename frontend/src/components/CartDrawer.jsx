@@ -2,16 +2,15 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
-import API from '../api/axios';
 import toast from 'react-hot-toast';
 import { formatPrice } from '../utils/formatPrice';
 
 const CartDrawer = ({ open, onClose }) => {
-  const { cartItems, removeFromCart, updateQuantity, clearCart, totalPrice } = useCart();
+  const { cartItems, removeFromCart, updateQuantity, totalPrice } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const handleCheckout = async () => {
+  const handleCheckout = () => {
     if (!user) {
       toast.error('Please login to checkout');
       return;
@@ -20,31 +19,8 @@ const CartDrawer = ({ open, onClose }) => {
       toast.error('Your cart is empty');
       return;
     }
-    try {
-      const orderItems = cartItems.map(({ _id, name, image, price, quantity }) => ({
-        product: _id,
-        name,
-        image,
-        price,
-        quantity,
-      }));
-      await API.post('/orders', {
-        items: orderItems,
-        totalAmount: totalPrice,
-        shippingAddress: {
-          address: '123 Main St',
-          city: 'Anytown',
-          postalCode: '12345',
-          country: 'US',
-        },
-      });
-      clearCart();
-      onClose();
-      toast.success('Order placed successfully!');
-      navigate('/my-orders');
-    } catch (error) {
-      toast.error(error.response?.data?.message || 'Checkout failed');
-    }
+    onClose();
+    navigate('/checkout');
   };
 
   const handleOpenWishlist = () => {
