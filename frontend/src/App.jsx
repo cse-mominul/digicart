@@ -15,11 +15,13 @@ import CategoryManager from './pages/admin/CategoryManager';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 
 const UserLayout = ({ children }) => (
   <div className="flex flex-col gap-0">
     <Navbar />
     {children}
+    <Footer />
   </div>
 );
 
