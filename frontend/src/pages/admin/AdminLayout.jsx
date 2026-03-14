@@ -1,0 +1,139 @@
+import { useState } from 'react';
+import { Outlet, NavLink, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+
+const navItems = [
+  { to: '/admin', label: 'Dashboard', end: true, icon: (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+    </svg>
+  )},
+  { to: '/admin/products', label: 'Products', end: false, icon: (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10" />
+    </svg>
+  )},
+  { to: '/admin/orders', label: 'Orders', end: false, icon: (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+    </svg>
+  )},
+  { to: '/admin/users', label: 'Users', end: false, icon: (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+    </svg>
+  )},
+];
+
+const AdminLayout = () => {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const [dark, setDark] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
+  return (
+    <div className={dark ? 'dark' : ''}>
+      <div className="flex h-screen bg-gray-100 dark:bg-gray-900 transition-colors overflow-hidden">
+        {/* Sidebar */}
+        <aside
+          className={`${
+            sidebarOpen ? 'w-64' : 'w-16'
+          } bg-gray-900 dark:bg-black text-white flex flex-col transition-all duration-300 flex-shrink-0`}
+        >
+          {/* Sidebar Header */}
+          <div className="flex items-center justify-between p-4 border-b border-gray-700 min-h-[64px]">
+            {sidebarOpen && (
+              <span className="text-lg font-bold text-indigo-400 truncate">DigiCart Admin</span>
+            )}
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="text-gray-400 hover:text-white transition-colors ml-auto flex-shrink-0"
+              aria-label="Toggle sidebar"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={sidebarOpen ? 'M15 19l-7-7 7-7' : 'M9 5l7 7-7 7'} />
+              </svg>
+            </button>
+          </div>
+
+          {/* Navigation */}
+          <nav className="flex-1 py-4">
+            {navItems.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end={item.end}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-4 py-3 text-sm transition-colors ${
+                    sidebarOpen ? '' : 'justify-center'
+                  } ${
+                    isActive
+                      ? 'bg-indigo-600 text-white'
+                      : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                  }`
+                }
+              >
+                <span className="flex-shrink-0">{item.icon}</span>
+                {sidebarOpen && <span>{item.label}</span>}
+              </NavLink>
+            ))}
+          </nav>
+
+          {/* User Info */}
+          {sidebarOpen && (
+            <div className="p-4 border-t border-gray-700">
+              <p className="text-xs text-gray-500 uppercase tracking-wide">Logged in as</p>
+              <p className="text-sm font-semibold text-white mt-1 truncate">{user?.name}</p>
+              <p className="text-xs text-indigo-400">{user?.email}</p>
+            </div>
+          )}
+        </aside>
+
+        {/* Main Panel */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {/* Top Header */}
+          <header className="bg-white dark:bg-gray-800 shadow-sm px-6 flex justify-between items-center flex-shrink-0 h-16">
+            <h1 className="text-lg font-semibold text-gray-800 dark:text-white">Admin Panel</h1>
+            <div className="flex items-center gap-3">
+              {/* Dark Mode Toggle */}
+              <button
+                onClick={() => setDark(!dark)}
+                className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                aria-label="Toggle dark mode"
+              >
+                {dark ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                  </svg>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                  </svg>
+                )}
+              </button>
+
+              <button
+                onClick={handleLogout}
+                className="text-sm text-red-500 hover:text-red-700 font-medium transition-colors"
+              >
+                Logout
+              </button>
+            </div>
+          </header>
+
+          {/* Page Content */}
+          <main className="flex-1 overflow-y-auto p-6 dark:bg-gray-900">
+            <Outlet />
+          </main>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default AdminLayout;
