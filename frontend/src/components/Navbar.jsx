@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -12,6 +12,10 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [cartOpen, setCartOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem('theme') === 'dark');
+  const [accountOpen, setAccountOpen] = useState(false);
+  const accountRef = useRef(null);
+
+  const firstName = user?.name?.trim()?.split(' ')[0] || 'My Account';
 
   useEffect(() => {
     if (darkMode) {
@@ -22,6 +26,17 @@ const Navbar = () => {
       localStorage.setItem('theme', 'light');
     }
   }, [darkMode]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (accountRef.current && !accountRef.current.contains(event.target)) {
+        setAccountOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -86,9 +101,45 @@ const Navbar = () => {
               </Link>
 
               {user ? (
-                <button onClick={handleLogout} className="hidden sm:block text-gray-800 dark:text-gray-100 hover:text-[#ff3366] transition-colors">
-                  Logout
-                </button>
+                <div ref={accountRef} className="relative">
+                  <button
+                    onClick={() => setAccountOpen((prev) => !prev)}
+                    className="flex items-center gap-2 text-gray-800 dark:text-gray-100 hover:text-[#ff3366] transition-colors"
+                    aria-label="My account menu"
+                    aria-expanded={accountOpen}
+                  >
+                    <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.121 17.804A9 9 0 1118.88 17.8M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                    </span>
+                    <span className="hidden sm:inline font-medium">{firstName}</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="hidden sm:block h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+
+                  {accountOpen && (
+                    <div className="absolute right-0 mt-2 w-52 bg-white rounded-xl border border-gray-200 shadow-sm py-2 z-50">
+                      <Link
+                        to="/account/profile"
+                        onClick={() => setAccountOpen(false)}
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                      >
+                        My Profile
+                      </Link>
+                      <button
+                        onClick={() => {
+                          setAccountOpen(false);
+                          handleLogout();
+                        }}
+                        className="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-gray-50"
+                      >
+                        Logout
+                      </button>
+                    </div>
+                  )}
+                </div>
               ) : (
                 <Link to="/login" className="text-gray-800 dark:text-gray-100 hover:text-[#ff3366] transition-colors">
                   Login

@@ -6,6 +6,10 @@ import MyOrders from './pages/MyOrders';
 import Wishlist from './pages/Wishlist';
 import ProductDetails from './pages/ProductDetails';
 import Checkout from './pages/Checkout';
+import MyProfile from './pages/MyProfile';
+import ShippingAddress from './pages/ShippingAddress';
+import AccountDashboard from './pages/AccountDashboard';
+import UserAccount from './pages/UserAccount';
 import AdminLayout from './pages/admin/AdminLayout';
 import Dashboard from './pages/admin/Dashboard';
 import Products from './pages/admin/Products';
@@ -35,6 +39,54 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/wishlist" element={<UserLayout><Wishlist /></UserLayout>} />
         <Route path="/product/:id" element={<UserLayout><ProductDetails /></UserLayout>} />
+        <Route
+          path="/my-account"
+          element={
+            <ProtectedRoute>
+              <UserLayout><AccountDashboard /></UserLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/my-profile"
+          element={
+            <ProtectedRoute>
+              <UserLayout><MyProfile /></UserLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/account/profile"
+          element={
+            <ProtectedRoute>
+              <UserLayout><UserAccount /></UserLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/account/orders"
+          element={
+            <ProtectedRoute>
+              <UserLayout><UserAccount /></UserLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/account/addresses"
+          element={
+            <ProtectedRoute>
+              <UserLayout><UserAccount /></UserLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/shipping-address"
+          element={
+            <ProtectedRoute>
+              <UserLayout><ShippingAddress /></UserLayout>
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/checkout"
           element={
