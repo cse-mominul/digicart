@@ -7,6 +7,7 @@ import CategoryChips from '../components/CategoryChips';
 const Home = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [categories, setCategories] = useState([]);
   const [category, setCategory] = useState('All');
 
   useEffect(() => {
@@ -23,7 +24,18 @@ const Home = () => {
     fetchProducts();
   }, []);
 
-  const categories = ['All', ...new Set(products.map((p) => p.category))];
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const { data } = await API.get('/categories');
+        setCategories(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error('Failed to fetch categories:', error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   const filtered = products.filter((p) => category === 'All' || p.category === category);
 
