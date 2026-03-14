@@ -30,19 +30,19 @@ const Navbar = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-50 pb-0 mb-0 bg-white dark:bg-gray-900 transition-colors">
-        <div className="max-w-7xl mx-auto px-4 pt-3 pb-0">
+      <header className="sticky top-0 z-50 bg-white dark:bg-gray-950 border-b border-gray-100 dark:border-gray-800">
+        <div className="max-w-7xl mx-auto px-4 py-3">
           <div className="flex items-center gap-3 md:gap-6">
-            <Link to="/" className="text-xl sm:text-2xl font-extrabold text-pink-500 tracking-tight">
+            <Link to="/" className="text-xl sm:text-2xl font-extrabold text-[#ff3366] tracking-tight">
               DigiCart
             </Link>
 
-            <div className="hidden md:block flex-1">
+            <div className="flex-1 max-w-3xl mx-auto">
               <div className="relative">
                 <input
                   type="text"
                   placeholder="Search for products, brands and more"
-                  className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full py-2.5 pl-11 pr-4 text-sm text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-400"
+                  className="w-full bg-white dark:bg-gray-900 border border-[#ff3366] rounded-full py-2.5 pl-11 pr-4 text-sm text-gray-800 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:outline-none focus:ring-0"
                 />
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -56,10 +56,10 @@ const Navbar = () => {
               </div>
             </div>
 
-            <div className="ml-auto flex items-center gap-3 sm:gap-4 text-xs sm:text-sm">
+            <div className="ml-auto flex items-center gap-3 sm:gap-5 text-xs sm:text-sm">
               <button
                 onClick={() => setDarkMode((prev) => !prev)}
-                className="hidden sm:inline-flex p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200"
+                className="inline-flex p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200"
                 aria-label="Toggle dark mode"
               >
                 {darkMode ? (
@@ -73,7 +73,7 @@ const Navbar = () => {
                 )}
               </button>
 
-              <Link to="/wishlist" className="hidden sm:flex items-center gap-1 text-gray-700 dark:text-gray-200 hover:text-pink-500 transition-colors relative">
+              <Link to="/wishlist" className="hidden sm:flex items-center gap-1 text-gray-800 dark:text-gray-100 hover:text-[#ff3366] transition-colors relative">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                 </svg>
@@ -86,28 +86,18 @@ const Navbar = () => {
               </Link>
 
               {user ? (
-                <>
-                  <Link to="/my-orders" className="hidden sm:block text-gray-700 dark:text-gray-200 hover:text-pink-500 transition-colors">
-                    My Orders
-                  </Link>
-                  {user.role === 'admin' && (
-                    <Link to="/admin" className="hidden sm:block text-gray-700 dark:text-gray-200 hover:text-pink-500 transition-colors">
-                      Admin
-                    </Link>
-                  )}
-                  <button onClick={handleLogout} className="hidden sm:block text-gray-700 dark:text-gray-200 hover:text-pink-500 transition-colors">
-                    Logout
-                  </button>
-                </>
+                <button onClick={handleLogout} className="hidden sm:block text-gray-800 dark:text-gray-100 hover:text-[#ff3366] transition-colors">
+                  Logout
+                </button>
               ) : (
-                <Link to="/login" className="text-gray-700 dark:text-gray-200 hover:text-pink-500 transition-colors">
+                <Link to="/login" className="text-gray-800 dark:text-gray-100 hover:text-[#ff3366] transition-colors">
                   Login
                 </Link>
               )}
 
               <button
                 onClick={() => setCartOpen(true)}
-                className="relative flex items-center gap-1 text-gray-700 dark:text-gray-200 hover:text-pink-500 transition-colors"
+                className="relative flex items-center gap-1 text-gray-800 dark:text-gray-100 hover:text-[#ff3366] transition-colors"
                 aria-label="Open cart"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -120,25 +110,6 @@ const Navbar = () => {
                   </span>
                 )}
               </button>
-            </div>
-          </div>
-
-          <div className="md:hidden mt-3">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search products"
-                className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full py-2.5 pl-10 pr-4 text-sm text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-400"
-              />
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-5.2-5.2m0 0A7.5 7.5 0 105.2 5.2a7.5 7.5 0 0010.6 10.6z" />
-              </svg>
             </div>
           </div>
         </div>

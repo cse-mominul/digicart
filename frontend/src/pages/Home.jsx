@@ -29,7 +29,7 @@ const Home = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 pb-6 sm:pb-8">
-      <section className="sticky top-[104px] md:top-[76px] z-40 pt-0 mt-0 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 mb-6">
+      <section className="sticky top-[60px] md:top-[60px] z-40 pt-0 mt-0 bg-white dark:bg-gray-950 border-b border-gray-100 dark:border-gray-800 mb-4">
         <CategoryChips categories={categories} activeCategory={category} onChange={setCategory} />
       </section>
 

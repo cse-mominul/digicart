@@ -23,7 +23,7 @@ const UserLayout = ({ children }) => (
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors">
+    <div className="min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors">
       <Routes>
         {/* Public / User Routes */}
         <Route path="/" element={<UserLayout><Home /></UserLayout>} />
