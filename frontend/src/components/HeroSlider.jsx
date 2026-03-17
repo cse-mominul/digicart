@@ -1,45 +1,46 @@
 import { useEffect, useState } from 'react';
-
-const slides = [
-  {
-    id: 1,
-    title: 'Win a Dyson Airwrap',
-    subtitle: 'Shop selected beauty-tech products and get a chance to win big.',
-    cta: 'Shop Campaign',
-    image:
-      'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=1400',
-    bg: 'from-pink-500 via-fuchsia-500 to-purple-600',
-  },
-  {
-    id: 2,
-    title: 'Eid Sale Up To 50% OFF',
-    subtitle: 'Limited-time offers on best-selling electronics and daily essentials.',
-    cta: 'Explore Deals',
-    image:
-      'https://images.unsplash.com/photo-1607083206968-13611e3d76db?w=1400',
-    bg: 'from-emerald-500 via-teal-500 to-cyan-600',
-  },
-  {
-    id: 3,
-    title: 'Weekend Gadget Drop',
-    subtitle: 'Fresh arrivals in accessories, audio, and smart device bundles.',
-    cta: 'See New Arrivals',
-    image:
-      'https://images.unsplash.com/photo-1518770660439-4636190af475?w=1400',
-    bg: 'from-indigo-600 via-violet-600 to-purple-700',
-  },
-];
+import API from '../api/axios';
 
 const HeroSlider = () => {
+  const [slides, setSlides] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const fetchCampaigns = async () => {
+      try {
+        const { data } = await API.get('/campaigns/active');
+        setSlides(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error('Failed to fetch campaigns:', error);
+        setSlides([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCampaigns();
+  }, []);
+
+  useEffect(() => {
+    if (slides.length === 0) return;
+
     const timer = setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % slides.length);
     }, 5000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [slides.length]);
+
+  if (loading) {
+    return (
+      <section className="rounded-2xl overflow-hidden shadow-lg mb-8 bg-white dark:bg-gray-900 h-80 animate-pulse" />
+    );
+  }
+
+  if (slides.length === 0) {
+    return null;
+  }
 
   const activeSlide = slides[activeIndex];
 
@@ -70,7 +71,7 @@ const HeroSlider = () => {
       <div className="flex items-center justify-center gap-2 py-3 bg-white dark:bg-gray-900">
         {slides.map((slide, idx) => (
           <button
-            key={slide.id}
+            key={slide._id || idx}
             onClick={() => setActiveIndex(idx)}
             className={`h-2.5 rounded-full transition-all ${
               idx === activeIndex
