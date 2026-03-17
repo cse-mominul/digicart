@@ -246,8 +246,8 @@ const CategoryProducts = () => {
                   ))}
                 </div>
 
-                {totalPages > 1 && (
-                  <div className="mt-8 flex items-center justify-center gap-2">
+                <div className="mt-8 flex flex-col items-center gap-3">
+                  <div className="flex items-center justify-center gap-2">
                     <button
                       type="button"
                       onClick={() => handlePageChange(currentPage - 1)}
@@ -287,7 +287,10 @@ const CategoryProducts = () => {
                       </svg>
                     </button>
                   </div>
-                )}
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    Page {currentPage} of {totalPages}
+                  </p>
+                </div>
               </>
             ) : (
               <div className="h-full min-h-[680px] rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 flex items-center justify-center p-10 text-center">
