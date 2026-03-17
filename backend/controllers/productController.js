@@ -6,12 +6,20 @@ const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 // @route GET /api/products
 const getProducts = async (req, res) => {
   try {
-    const { category } = req.query;
+    const { category, search } = req.query;
     const query = {};
 
     if (typeof category === 'string' && category.trim()) {
       const normalizedCategory = decodeURIComponent(category.trim()).replace(/-/g, ' ');
       query.category = { $regex: `^${escapeRegex(normalizedCategory)}$`, $options: 'i' };
+    }
+
+    if (typeof search === 'string' && search.trim()) {
+      const searchTerm = escapeRegex(search.trim());
+      query.$or = [
+        { name: { $regex: searchTerm, $options: 'i' } },
+        { brand: { $regex: searchTerm, $options: 'i' } },
+      ];
     }
 
     const hasPaginationQuery = req.query.page != null || req.query.limit != null;

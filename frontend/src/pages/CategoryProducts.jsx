@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import API from '../api/axios';
 import ProductCard from '../components/ProductCard';
 import { formatPrice } from '../utils/formatPrice';
@@ -22,6 +22,7 @@ const inferBrand = (product) => {
 
 const CategoryProducts = () => {
   const { categorySlug } = useParams();
+  const [searchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [isFallbackActive, setIsFallbackActive] = useState(false);
@@ -36,11 +37,13 @@ const CategoryProducts = () => {
 
   const normalizedSlug = (categorySlug || 'all').toLowerCase();
   const showAllCategories = normalizedSlug === 'all';
+  const searchTerm = searchParams.get('search') || '';
 
   const categoryTitle = useMemo(() => {
+    if (searchTerm) return `Search Results for "${searchTerm}"`;
     if (showAllCategories) return 'All Products';
     return toTitleFromSlug(categorySlug || '');
-  }, [categorySlug, showAllCategories]);
+  }, [categorySlug, showAllCategories, searchTerm]);
 
   const maxPrice = useMemo(() => {
     if (products.length === 0) return 0;
@@ -71,6 +74,10 @@ const CategoryProducts = () => {
           queryParams.append('category', categorySlug || '');
         }
 
+        if (searchTerm) {
+          queryParams.append('search', searchTerm);
+        }
+
         const { data } = await API.get(`/products?${queryParams.toString()}`);
 
         const list = Array.isArray(data) ? data : Array.isArray(data?.products) ? data.products : [];
@@ -99,14 +106,14 @@ const CategoryProducts = () => {
     };
 
     fetchProductsByCategory();
-  }, [categorySlug, showAllCategories, currentPage]);
+  }, [categorySlug, showAllCategories, currentPage, searchTerm]);
 
   useEffect(() => {
     setCurrentPage(1);
     setOnlyInStock(false);
     setSelectedBrands([]);
     setPriceLimit(0);
-  }, [categorySlug]);
+  }, [categorySlug, searchTerm]);
 
   useEffect(() => {
     const getPrice = (item) => Number(item.price) || 0;
@@ -222,7 +229,7 @@ const CategoryProducts = () => {
         </aside>
 
         <section className="flex-1 min-w-0">
-          <div className="min-h-[680px]">
+          <div>
             <div className="h-5 mb-3">
               {isFallbackActive && !loading && products.length > 0 && (
                 <p className="text-xs text-gray-500 dark:text-gray-400">Showing our best value items</p>
@@ -293,23 +300,21 @@ const CategoryProducts = () => {
                 </div>
               </>
             ) : (
-              <div className="h-full min-h-[680px] rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 flex items-center justify-center p-10 text-center">
-                <div className="flex flex-col items-center">
-                  <div className="mb-4 h-14 w-14 rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex items-center justify-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      className="h-7 w-7 text-gray-400 dark:text-gray-500"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.6" d="M3 7.5l9-4 9 4m-18 0l9 4m-9-4V17l9 4m0-9.5l9-4V17l-9 4" />
-                    </svg>
-                  </div>
-                  <p className="text-gray-500 dark:text-gray-400 font-medium">
-                    No products found in this category
-                  </p>
+              <div className="py-12 flex flex-col items-center justify-center text-center">
+                <div className="mb-4 h-14 w-14 rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex items-center justify-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    className="h-7 w-7 text-gray-400 dark:text-gray-500"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.6" d="M3 7.5l9-4 9 4m-18 0l9 4m-9-4V17l9 4m0-9.5l9-4V17l-9 4" />
+                  </svg>
                 </div>
+                <p className="text-gray-500 dark:text-gray-400 font-medium">
+                  No products found in this category
+                </p>
               </div>
             )}
           </div>

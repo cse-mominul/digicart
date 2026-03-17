@@ -24,9 +24,21 @@ const Navbar = () => {
   const [cartOpen, setCartOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem('theme') === 'dark');
   const [accountOpen, setAccountOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const accountRef = useRef(null);
 
   const firstName = user?.name?.trim()?.split(' ')[0] || 'My Account';
+
+  const handleSearch = (e) => {
+    if (e.key === 'Enter' && searchQuery.trim()) {
+      navigate(`/products/all?search=${encodeURIComponent(searchQuery)}`);
+      setSearchQuery('');
+    }
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
 
   useEffect(() => {
     if (darkMode) {
@@ -72,6 +84,9 @@ const Navbar = () => {
                 <input
                   type="text"
                   placeholder="Search for products, brands and more"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  onKeyPress={handleSearch}
                   className="w-full bg-white dark:bg-gray-900 border border-[#ff3366] rounded-full py-2.5 pl-11 pr-4 text-sm text-gray-800 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:outline-none focus:ring-0"
                 />
                 <svg
