@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import API from '../api/axios';
+import { formatPrice } from '../utils/formatPrice';
 
 const statusColors = {
   Pending: 'bg-yellow-100 text-yellow-800',
@@ -71,7 +72,7 @@ const MyOrders = () => {
                     <div>
                       <p className="text-sm font-medium text-gray-800">{item.name}</p>
                       <p className="text-xs text-gray-500">
-                        Qty: {item.quantity} &times; ${item.price?.toFixed(2)}
+                        Qty: {item.quantity} &times; {formatPrice(item.price)}
                       </p>
                     </div>
                   </div>
@@ -83,7 +84,7 @@ const MyOrders = () => {
                   Ordered on {new Date(order.createdAt).toLocaleDateString()}
                 </p>
                 <p className="font-bold text-indigo-600 text-lg">
-                  Total: ${order.totalAmount.toFixed(2)}
+                  Total: {formatPrice(order.totalAmount)}
                 </p>
               </div>
             </div>

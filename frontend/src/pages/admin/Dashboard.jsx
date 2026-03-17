@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import API from '../../api/axios';
+import { formatPrice } from '../../utils/formatPrice';
 
 const statusColors = {
   Pending: 'bg-yellow-100 text-yellow-800',
@@ -34,6 +35,7 @@ const Dashboard = () => {
           API.get('/orders'),
           API.get('/admin/users'),
         ]);
+
         const revenue = ordersRes.data.reduce((sum, o) => sum + o.totalAmount, 0);
         setStats({
           products: productsRes.data.length,
@@ -67,7 +69,7 @@ const Dashboard = () => {
             <StatCard title="Total Products" value={stats.products} icon="📦" borderColor="border-indigo-500" />
             <StatCard title="Total Orders" value={stats.orders} icon="🛒" borderColor="border-green-500" />
             <StatCard title="Total Users" value={stats.users} icon="👥" borderColor="border-purple-500" />
-            <StatCard title="Revenue" value={`$${stats.revenue.toFixed(2)}`} icon="💰" borderColor="border-yellow-500" />
+            <StatCard title="Revenue" value={formatPrice(stats.revenue)} icon="💰" borderColor="border-yellow-500" />
           </div>
 
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
@@ -92,7 +94,7 @@ const Dashboard = () => {
                         {order.user?.name || 'N/A'}
                       </td>
                       <td className="py-3 pr-4 font-semibold text-indigo-600">
-                        ${order.totalAmount.toFixed(2)}
+                        {formatPrice(order.totalAmount)}
                       </td>
                       <td className="py-3">
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[order.status]}`}>

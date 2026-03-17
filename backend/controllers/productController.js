@@ -14,8 +14,30 @@ const getProducts = async (req, res) => {
       query.category = { $regex: `^${escapeRegex(normalizedCategory)}$`, $options: 'i' };
     }
 
-    const products = await Product.find(query);
-    res.json(products);
+    const hasPaginationQuery = req.query.page != null || req.query.limit != null;
+    const page = Math.max(1, Number.parseInt(req.query.page, 10) || 1);
+    const limit = Math.min(50, Math.max(1, Number.parseInt(req.query.limit, 10) || 12));
+
+    if (!hasPaginationQuery) {
+      const products = await Product.find(query).sort({ createdAt: -1 });
+      return res.json(products);
+    }
+
+    const skip = (page - 1) * limit;
+    const total = await Product.countDocuments(query);
+    const products = await Product.find(query)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    return res.json({
+      products,
+      total,
+      page,
+      limit,
+      pages: Math.max(1, Math.ceil(total / limit)),
+    });
+
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

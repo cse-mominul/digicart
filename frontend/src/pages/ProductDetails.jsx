@@ -1,16 +1,28 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import API from '../api/axios';
-import { useCart } from '../context/CartContext';
-import { useWishlist } from '../context/WishlistContext';
 import toast from 'react-hot-toast';
+import { formatPrice } from '../utils/formatPrice';
 
 const ProductDetails = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
-  const { addToCart } = useCart();
-  const { toggleWishlist, isInWishlist } = useWishlist();
+  const [placingOrder, setPlacingOrder] = useState(false);
+  const [orderSuccess, setOrderSuccess] = useState(false);
+  const [deliveryCharge, setDeliveryCharge] = useState(80);
+  const [deliveryArea, setDeliveryArea] = useState('inside');
+  const [deliverySettings, setDeliverySettings] = useState({
+    insideDhakaCharge: 80,
+    outsideDhakaCharge: 120,
+  });
+  const [form, setForm] = useState({
+    fullName: '',
+    phone: '',
+    fullAddress: '',
+  });
+  const orderFormRef = useRef(null);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -33,30 +45,118 @@ const ProductDetails = () => {
     fetchProduct();
   }, [id]);
 
-  const discountPercent = useMemo(() => {
-    if (!product) return 0;
-    const discountOptions = [15, 25, 30, 40];
-    return discountOptions[product.name.length % discountOptions.length];
+  useEffect(() => {
+    const fetchDeliverySettings = async () => {
+      try {
+        const { data } = await API.get('/settings');
+        setDeliverySettings({
+          insideDhakaCharge: Number(data?.insideDhakaCharge) || 80,
+          outsideDhakaCharge: Number(data?.outsideDhakaCharge) || 120,
+        });
+      } catch (error) {
+        console.error('Failed to fetch delivery settings:', error);
+      }
+    };
+
+    fetchDeliverySettings();
+  }, []);
+
+  useEffect(() => {
+    setDeliveryCharge(
+      deliveryArea === 'inside'
+        ? Number(deliverySettings.insideDhakaCharge) || 0
+        : Number(deliverySettings.outsideDhakaCharge) || 0
+    );
+  }, [deliveryArea, deliverySettings]);
+
+  const shortFeatures = useMemo(() => {
+    if (!product) return [];
+
+    const stockCount = product.countInStock ?? product.stock ?? 0;
+
+    return [
+      'Premium quality build with minimalist design',
+      'Fast delivery and secure packaging',
+      stockCount > 0 ? `${stockCount} units currently in stock` : 'Currently out of stock',
+    ];
   }, [product]);
 
-  const oldPrice = useMemo(() => {
-    if (!product) return 0;
-    return product.price / (1 - discountPercent / 100);
-  }, [product, discountPercent]);
+  const galleryImages = useMemo(() => {
+    if (!product) return [];
 
-  const stockCount = product?.countInStock ?? product?.stock ?? 0;
-  const inWishlist = product ? isInWishlist(product._id) : false;
+    return [
+      product.image,
+      product.image,
+      product.image,
+    ];
+  }, [product]);
 
-  const handleAddToCart = () => {
-    if (!product) return;
-    addToCart(product);
-    toast.success(`${product.name} added to cart!`);
+  const productPrice = Number(product?.price) || 0;
+  const grandTotal = productPrice + deliveryCharge;
+
+  const scrollToOrderForm = () => {
+    orderFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
-  const handleWishlist = () => {
+  const handleConfirmOrder = async (event) => {
+    event.preventDefault();
+
     if (!product) return;
-    toggleWishlist(product);
-    toast.success(inWishlist ? 'Removed from wishlist' : 'Added to wishlist');
+
+    const payload = {
+      fullName: form.fullName.trim(),
+      phone: form.phone.trim(),
+      fullAddress: form.fullAddress.trim(),
+    };
+
+    if (!payload.fullName || !payload.phone || !payload.fullAddress) {
+      toast.error('Please fill in Full Name, Phone Number, and Full Address');
+      return;
+    }
+
+    setPlacingOrder(true);
+    try {
+      await API.post('/orders', {
+        items: [
+          {
+            product: product._id,
+            name: product.name,
+            image: product.image,
+            price: product.price,
+            quantity: 1,
+          },
+        ],
+        totalAmount: grandTotal,
+        deliveryCharge,
+        deliveryArea: deliveryArea === 'inside' ? 'Inside Dhaka' : 'Outside Dhaka',
+        shippingAddress: {
+          address: payload.fullAddress,
+          city: deliveryArea === 'inside' ? 'Dhaka' : 'Outside Dhaka',
+          postalCode: '',
+          country: 'Bangladesh',
+        },
+        customer: {
+          name: payload.fullName,
+          phone: payload.phone,
+          address: payload.fullAddress,
+        },
+      });
+
+      setOrderSuccess(true);
+      toast.success('Order confirmed successfully');
+      setForm({ fullName: '', phone: '', fullAddress: '' });
+      orderFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } catch (error) {
+      if (error.response?.status === 401) {
+        toast.error('Please login first to place an order');
+        navigate('/login');
+        return;
+      }
+
+      toast.error(error.response?.data?.message || 'Failed to place order');
+    } finally {
+      setPlacingOrder(false);
+    }
   };
 
   if (loading) {
@@ -92,7 +192,8 @@ const ProductDetails = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="bg-[#0f172a] min-h-screen pb-24 md:pb-8">
+      <div className="max-w-7xl mx-auto px-4 py-8">
       <Link
         to="/"
         className="inline-flex items-center gap-2 mb-6 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-pink-500"
@@ -100,12 +201,9 @@ const ProductDetails = () => {
         ← Back to Home
       </Link>
 
-      <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
-        <div className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-2xl p-4 sm:p-6">
-          <div className="relative rounded-xl overflow-hidden bg-gray-50 dark:bg-gray-950">
-            <span className="absolute top-3 left-3 z-10 bg-pink-500 text-white text-xs font-semibold px-2.5 py-1 rounded-full">
-              {discountPercent}% OFF
-            </span>
+      <section className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start mb-10">
+        <div className="bg-[#111827] border border-white/10 rounded-2xl p-4 sm:p-6 shadow-lg">
+          <div className="rounded-xl overflow-hidden bg-[#020617]">
             <img
               src={product.image}
               alt={product.name}
@@ -117,54 +215,177 @@ const ProductDetails = () => {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-2xl p-5 sm:p-7">
-          <span className="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 mb-3">
+        <div className="bg-[#111827] border border-white/10 rounded-2xl p-5 sm:p-7 shadow-lg">
+          <span className="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-[#1f2937] text-gray-200 mb-3">
             {product.category}
           </span>
 
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white leading-tight">
+          <h1 className="text-2xl sm:text-3xl font-bold text-white leading-tight">
             {product.name}
           </h1>
 
-          <div className="mt-4 flex items-center gap-3 flex-wrap">
-            <span className="text-3xl font-bold text-pink-600 dark:text-pink-400">
-              ${product.price.toFixed(2)}
-            </span>
-            <span className="text-lg text-gray-400 line-through">${oldPrice.toFixed(2)}</span>
-            <span className="text-sm font-semibold text-emerald-600 dark:text-emerald-400">
-              Save {discountPercent}%
-            </span>
+          <div className="mt-4">
+            <span className="text-3xl font-bold text-pink-400">{formatPrice(product.price)}</span>
           </div>
 
-          <p className="mt-5 text-gray-600 dark:text-gray-300 leading-relaxed">
-            {product.description}
-          </p>
+          <ul className="mt-6 space-y-3">
+            {shortFeatures.map((feature) => (
+              <li key={feature} className="flex items-start gap-2 text-gray-200 text-sm">
+                <span className="mt-1 h-2 w-2 rounded-full bg-pink-500" />
+                <span>{feature}</span>
+              </li>
+            ))}
+          </ul>
 
-          <div className="mt-6 mb-2 text-sm text-gray-500 dark:text-gray-400">
-            {stockCount > 0 ? `${stockCount} in stock` : 'Out of stock'}
-          </div>
-
-          <div className="mt-4 grid sm:grid-cols-2 gap-3">
+          <div className="mt-7 grid sm:grid-cols-2 gap-3">
             <button
-              onClick={handleAddToCart}
-              disabled={stockCount === 0}
-              className="w-full rounded-xl bg-gray-900 dark:bg-pink-500 text-white py-3 font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+              onClick={scrollToOrderForm}
+              className="w-full rounded-xl bg-pink-500 text-white py-3 font-semibold hover:bg-pink-600 transition-colors"
             >
-              Add to Cart
+              Order Now
             </button>
-
             <button
-              onClick={handleWishlist}
-              className={`w-full rounded-xl py-3 font-semibold border transition-colors ${
-                inWishlist
-                  ? 'bg-pink-500 text-white border-pink-500'
-                  : 'bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-700 hover:border-pink-400'
-              }`}
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              className="w-full rounded-xl py-3 font-semibold border border-white/20 text-gray-200 hover:border-pink-400 transition-colors"
             >
-              {inWishlist ? '♥ Added to Wishlist' : '♡ Add to Wishlist'}
+              Learn More
             </button>
           </div>
         </div>
+      </section>
+
+      <section className="grid lg:grid-cols-5 gap-6 mb-10">
+        <div className="lg:col-span-3 bg-[#111827] border border-white/10 rounded-2xl p-6 shadow-lg">
+          <h2 className="text-xl font-semibold text-white mb-3">Product Details</h2>
+          <p className="text-gray-300 leading-relaxed mb-6">{product.description}</p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {galleryImages.map((image, index) => (
+              <div key={`${image}-${index}`} className="rounded-xl overflow-hidden border border-white/10 bg-[#0b1220]">
+                <img
+                  src={image}
+                  alt={`${product.name} preview ${index + 1}`}
+                  className="h-52 w-full object-cover"
+                  onError={(event) => {
+                    event.currentTarget.src = 'https://placehold.co/600x400?text=Preview';
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <aside ref={orderFormRef} className="lg:col-span-2 bg-[#111827] border border-white/10 rounded-2xl p-6 shadow-lg h-fit lg:sticky lg:top-24">
+          <h2 className="text-xl font-semibold text-white mb-1">Order Now</h2>
+          <p className="text-sm text-gray-400 mb-5">Fill out the form and confirm your order instantly.</p>
+
+          {orderSuccess && (
+            <div className="mb-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-300">
+              Success! Your order has been placed.
+            </div>
+          )}
+
+          <form onSubmit={handleConfirmOrder} className="space-y-4">
+            <div>
+              <label className="block text-sm text-gray-300 mb-1">Full Name</label>
+              <input
+                type="text"
+                value={form.fullName}
+                onChange={(event) => setForm((prev) => ({ ...prev, fullName: event.target.value }))}
+                className="w-full rounded-xl border border-white/15 bg-[#0b1220] text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                placeholder="Enter your full name"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm text-gray-300 mb-1">Phone Number</label>
+              <input
+                type="text"
+                value={form.phone}
+                onChange={(event) => setForm((prev) => ({ ...prev, phone: event.target.value }))}
+                className="w-full rounded-xl border border-white/15 bg-[#0b1220] text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                placeholder="Enter your phone number"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm text-gray-300 mb-1">Full Address</label>
+              <textarea
+                rows={4}
+                value={form.fullAddress}
+                onChange={(event) => setForm((prev) => ({ ...prev, fullAddress: event.target.value }))}
+                className="w-full rounded-xl border border-white/15 bg-[#0b1220] text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                placeholder="House, road, area, city"
+              />
+            </div>
+
+            <div className="bg-[#1e293b] rounded-lg border border-white/10 p-4 space-y-3">
+              <p className="text-sm font-medium text-gray-200">Delivery Area</p>
+
+              <label className="flex items-center justify-between rounded-lg border border-white/10 px-3 py-2 cursor-pointer hover:border-pink-400/40 transition-colors">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    name="deliveryArea"
+                    checked={deliveryArea === 'inside'}
+                    onChange={() => setDeliveryArea('inside')}
+                    className="accent-pink-500"
+                  />
+                  <span className="text-sm text-gray-200">Inside Dhaka</span>
+                </div>
+                <span className="text-sm text-gray-300">{deliverySettings.insideDhakaCharge} BDT</span>
+              </label>
+
+              <label className="flex items-center justify-between rounded-lg border border-white/10 px-3 py-2 cursor-pointer hover:border-pink-400/40 transition-colors">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    name="deliveryArea"
+                    checked={deliveryArea === 'outside'}
+                    onChange={() => setDeliveryArea('outside')}
+                    className="accent-pink-500"
+                  />
+                  <span className="text-sm text-gray-200">Outside Dhaka</span>
+                </div>
+                <span className="text-sm text-gray-300">{deliverySettings.outsideDhakaCharge} BDT</span>
+              </label>
+            </div>
+
+            <div className="rounded-lg border border-white/10 bg-[#1e293b] p-4 space-y-2">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-gray-300">Product Price</span>
+                <span className="text-gray-200">{productPrice} BDT</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-gray-300">Delivery Charge</span>
+                <span className="text-gray-200">{deliveryCharge} BDT</span>
+              </div>
+              <div className="flex items-center justify-between pt-2 border-t border-white/10">
+                <span className="font-semibold text-gray-100">Grand Total</span>
+                <span className="font-bold text-pink-400">{grandTotal} BDT</span>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={placingOrder}
+              className="w-full rounded-xl bg-pink-500 text-white py-3 font-semibold hover:bg-pink-600 transition-colors disabled:opacity-60"
+            >
+              {placingOrder ? 'Confirming...' : 'Confirm Order'}
+            </button>
+          </form>
+        </aside>
+      </section>
+
+      <div className="md:hidden fixed bottom-4 left-4 right-4 z-40">
+        <button
+          type="button"
+          onClick={scrollToOrderForm}
+          className="w-full rounded-xl bg-pink-500 text-white py-3.5 font-semibold shadow-lg shadow-pink-500/30"
+        >
+          Order Now
+        </button>
+      </div>
       </div>
     </div>
   );

@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useWishlist } from '../context/WishlistContext';
 import { useCart } from '../context/CartContext';
 import toast from 'react-hot-toast';
+import { formatPrice } from '../utils/formatPrice';
 
 const Wishlist = () => {
   const { wishlistItems, removeFromWishlist } = useWishlist();
@@ -44,7 +45,7 @@ const Wishlist = () => {
                 />
                 <div className="flex-1 min-w-0">
                   <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-100 line-clamp-2">{item.name}</h3>
-                  <p className="text-pink-600 dark:text-pink-400 font-bold mt-1">${item.price.toFixed(2)}</p>
+                  <p className="text-pink-600 dark:text-pink-400 font-bold mt-1">{formatPrice(item.price)}</p>
                 </div>
               </div>
 

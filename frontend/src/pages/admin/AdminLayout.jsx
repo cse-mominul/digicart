@@ -28,6 +28,12 @@ const navItems = [
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h10v10H7V7zm-3 0h1m14 0h1M4 12h1m14 0h1M4 17h1m14 0h1M12 4v1m0 14v1" />
     </svg>
   )},
+  { to: '/admin/settings', label: 'Settings', end: false, icon: (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317a1 1 0 011.35-.936l.41.163a1 1 0 00.73 0l.41-.163a1 1 0 011.35.936l.05.443a1 1 0 00.575.785l.39.195a1 1 0 01.453 1.33l-.2.397a1 1 0 000 .894l.2.397a1 1 0 01-.453 1.33l-.39.195a1 1 0 00-.575.785l-.05.443a1 1 0 01-1.35.936l-.41-.163a1 1 0 00-.73 0l-.41.163a1 1 0 01-1.35-.936l-.05-.443a1 1 0 00-.575-.785l-.39-.195a1 1 0 01-.453-1.33l.2-.397a1 1 0 000-.894l-.2-.397a1 1 0 01.453-1.33l.39-.195a1 1 0 00.575-.785l.05-.443z" />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
+    </svg>
+  )},
 ];
 
 const AdminLayout = () => {

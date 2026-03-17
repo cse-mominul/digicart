@@ -17,6 +17,7 @@ import Products from './pages/admin/Products';
 import Orders from './pages/admin/Orders';
 import Users from './pages/admin/Users';
 import CategoryManager from './pages/admin/CategoryManager';
+import Settings from './pages/admin/Settings';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
 import Navbar from './components/Navbar';
@@ -120,6 +121,7 @@ function App() {
           <Route index element={<Dashboard />} />
           <Route path="products" element={<Products />} />
           <Route path="categories" element={<CategoryManager />} />
+          <Route path="settings" element={<Settings />} />
           <Route path="orders" element={<Orders />} />
           <Route path="users" element={<Users />} />
         </Route>

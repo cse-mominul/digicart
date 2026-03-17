@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import API from '../../api/axios';
 import toast from 'react-hot-toast';
+import { formatPrice } from '../../utils/formatPrice';
 
 const emptyForm = {
   name: '',
@@ -15,15 +16,25 @@ const Products = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalProducts, setTotalProducts] = useState(0);
+  const itemsPerPage = 8;
   const [form, setForm] = useState(emptyForm);
   const [editId, setEditId] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  const fetchProducts = async () => {
+  const fetchProducts = async (page = currentPage) => {
     try {
-      const { data } = await API.get('/products');
-      setProducts(data);
+      const { data } = await API.get(`/products?page=${page}&limit=${itemsPerPage}`);
+      const list = Array.isArray(data) ? data : Array.isArray(data?.products) ? data.products : [];
+      const pages = Number(data?.pages) || 1;
+      const total = Number(data?.total) || list.length;
+
+      setProducts(list);
+      setTotalPages(Math.max(1, pages));
+      setTotalProducts(total);
     } catch {
       toast.error('Failed to load products');
     } finally {
@@ -41,9 +52,12 @@ const Products = () => {
   };
 
   useEffect(() => {
-    fetchProducts();
     fetchCategories();
   }, []);
+
+  useEffect(() => {
+    fetchProducts(currentPage);
+  }, [currentPage]);
 
   const openCreate = () => {
     setForm(emptyForm);
@@ -71,12 +85,13 @@ const Products = () => {
       if (editId) {
         await API.put(`/products/${editId}`, form);
         toast.success('Product updated!');
+        fetchProducts(currentPage);
       } else {
         await API.post('/products', form);
         toast.success('Product created!');
+        setCurrentPage(1);
       }
       setShowModal(false);
-      fetchProducts();
     } catch (error) {
       toast.error(error.response?.data?.message || 'Operation failed');
     } finally {
@@ -89,16 +104,28 @@ const Products = () => {
     try {
       await API.delete(`/products/${id}`);
       toast.success('Product deleted!');
-      setProducts((prev) => prev.filter((p) => p._id !== id));
+
+      if (products.length === 1 && currentPage > 1) {
+        setCurrentPage((prev) => prev - 1);
+      } else {
+        fetchProducts(currentPage);
+      }
     } catch {
       toast.error('Delete failed');
     }
+  };
+
+  const handlePageChange = (page) => {
+    if (page < 1 || page > totalPages || page === currentPage) return;
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Product Management</h2>
+        <p className="text-sm text-gray-500 dark:text-gray-400">{totalProducts} items</p>
         <button
           onClick={openCreate}
           className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium"
@@ -139,7 +166,7 @@ const Products = () => {
                     </td>
                     <td className="px-6 py-4 text-gray-500 dark:text-gray-400">{product.category}</td>
                     <td className="px-6 py-4 font-semibold text-indigo-600">
-                      ${parseFloat(product.price).toFixed(2)}
+                      {formatPrice(product.price)}
                     </td>
                     <td className="px-6 py-4">
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${product.stock > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
@@ -174,6 +201,43 @@ const Products = () => {
               </tbody>
             </table>
           </div>
+
+          {totalPages > 1 && (
+            <div className="px-4 py-4 border-t border-gray-100 dark:border-gray-700 flex items-center justify-center gap-2">
+              <button
+                type="button"
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="inline-flex items-center gap-1 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-700 dark:text-gray-200 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Previous
+              </button>
+
+              {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
+                <button
+                  key={page}
+                  type="button"
+                  onClick={() => handlePageChange(page)}
+                  className={`h-10 min-w-10 rounded-xl border px-3 text-sm font-medium transition-colors ${
+                    currentPage === page
+                      ? 'bg-pink-500 text-white border-pink-500'
+                      : 'bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800'
+                  }`}
+                >
+                  {page}
+                </button>
+              ))}
+
+              <button
+                type="button"
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="inline-flex items-center gap-1 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-700 dark:text-gray-200 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
       )}
 
@@ -247,7 +311,7 @@ const Products = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Price ($)
+                    Price (BDT)
                   </label>
                   <input
                     type="number"

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import API from '../../api/axios';
 import toast from 'react-hot-toast';
+import { formatPrice } from '../../utils/formatPrice';
 
 const STATUS_OPTIONS = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
 
@@ -78,7 +79,7 @@ const Orders = () => {
                       {order.items.length} item(s)
                     </td>
                     <td className="px-6 py-4 font-semibold text-indigo-600">
-                      ${order.totalAmount.toFixed(2)}
+                      {formatPrice(order.totalAmount)}
                     </td>
                     <td className="px-6 py-4 text-gray-500 dark:text-gray-400 text-xs">
                       {new Date(order.createdAt).toLocaleDateString()}
