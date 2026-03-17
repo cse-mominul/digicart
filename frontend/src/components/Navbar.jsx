@@ -1,15 +1,26 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import CartDrawer from './CartDrawer';
+
+const categoryLinks = ['All', 'Laptop', 'Phone', 'Smart Phone'];
+
+const toSlug = (value = '') =>
+  value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-');
 
 const Navbar = () => {
   const { user, logout } = useAuth();
   const { totalItems } = useCart();
   const { wishlistCount } = useWishlist();
   const navigate = useNavigate();
+  const location = useLocation();
   const [cartOpen, setCartOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem('theme') === 'dark');
   const [accountOpen, setAccountOpen] = useState(false);
@@ -42,6 +53,10 @@ const Navbar = () => {
     logout();
     navigate('/login');
   };
+
+  const currentSlug = location.pathname.startsWith('/products/')
+    ? decodeURIComponent(location.pathname.split('/products/')[1] || '')
+    : '';
 
   return (
     <>
@@ -162,6 +177,33 @@ const Navbar = () => {
                 )}
               </button>
             </div>
+          </div>
+
+          <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-800 flex items-center gap-5 overflow-x-auto whitespace-nowrap">
+            {categoryLinks.map((category) => {
+              const slug = toSlug(category);
+              const isActive = slug === 'all'
+                ? currentSlug === '' || currentSlug === 'all'
+                : currentSlug === slug;
+
+              return (
+                <button
+                  key={category}
+                  type="button"
+                  onClick={() => navigate(`/products/${slug}`)}
+                  className={`group relative cursor-pointer text-sm font-medium transition-all duration-200 hover:text-pink-500 ${
+                    isActive ? 'text-pink-500' : 'text-gray-700 dark:text-gray-200'
+                  }`}
+                >
+                  {category}
+                  <span
+                    className={`absolute left-0 -bottom-1 h-0.5 bg-pink-500 transition-all duration-200 ${
+                      isActive ? 'w-full' : 'w-0 group-hover:w-full'
+                    }`}
+                  />
+                </button>
+              );
+            })}
           </div>
         </div>
       </header>

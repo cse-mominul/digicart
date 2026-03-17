@@ -15,7 +15,7 @@ const getCategories = async (req, res) => {
 // @desc  Create a category (admin only)
 // @route POST /api/categories
 const createCategory = async (req, res) => {
-  const { name, isActive } = req.body;
+  const { name, iconUrl, isActive } = req.body;
 
   if (!name || !name.trim()) {
     return res.status(400).json({ message: 'Category name is required' });
@@ -32,6 +32,7 @@ const createCategory = async (req, res) => {
 
     const category = await Category.create({
       name: name.trim(),
+      iconUrl: typeof iconUrl === 'string' ? iconUrl.trim() : '',
       isActive: typeof isActive === 'boolean' ? isActive : true,
     });
 
@@ -45,7 +46,7 @@ const createCategory = async (req, res) => {
 // @route PUT /api/categories/:id
 const updateCategory = async (req, res) => {
   const { id } = req.params;
-  const { name, isActive } = req.body;
+  const { name, iconUrl, isActive } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).json({ message: 'Invalid category id' });
@@ -72,6 +73,10 @@ const updateCategory = async (req, res) => {
 
     if (typeof isActive === 'boolean') {
       category.isActive = isActive;
+    }
+
+    if (typeof iconUrl === 'string') {
+      category.iconUrl = iconUrl.trim();
     }
 
     const updatedCategory = await category.save();

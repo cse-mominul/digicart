@@ -1,10 +1,20 @@
 const Product = require('../models/Product');
 
+const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 // @desc  Get all products
 // @route GET /api/products
 const getProducts = async (req, res) => {
   try {
-    const products = await Product.find({});
+    const { category } = req.query;
+    const query = {};
+
+    if (typeof category === 'string' && category.trim()) {
+      const normalizedCategory = decodeURIComponent(category.trim()).replace(/-/g, ' ');
+      query.category = { $regex: `^${escapeRegex(normalizedCategory)}$`, $options: 'i' };
+    }
+
+    const products = await Product.find(query);
     res.json(products);
   } catch (error) {
     res.status(500).json({ message: error.message });

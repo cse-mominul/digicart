@@ -5,6 +5,7 @@ import Register from './pages/Register';
 import MyOrders from './pages/MyOrders';
 import Wishlist from './pages/Wishlist';
 import ProductDetails from './pages/ProductDetails';
+import CategoryProducts from './pages/CategoryProducts';
 import Checkout from './pages/Checkout';
 import MyProfile from './pages/MyProfile';
 import ShippingAddress from './pages/ShippingAddress';
@@ -35,6 +36,9 @@ function App() {
       <Routes>
         {/* Public / User Routes */}
         <Route path="/" element={<UserLayout><Home /></UserLayout>} />
+        <Route path="/products" element={<UserLayout><CategoryProducts /></UserLayout>} />
+        <Route path="/products/:categorySlug" element={<UserLayout><CategoryProducts /></UserLayout>} />
+        <Route path="/category/:categoryName" element={<UserLayout><Home /></UserLayout>} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/wishlist" element={<UserLayout><Wishlist /></UserLayout>} />
