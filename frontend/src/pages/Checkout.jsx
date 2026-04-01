@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import API from '../api/axios';
 import { useCart } from '../context/CartContext';
 import { formatPrice } from '../utils/formatPrice';
+import { showOrderSuccess } from '../utils/showOrderSuccess';
 import toast from 'react-hot-toast';
 
 const areaOptionsByCity = {
@@ -123,8 +124,7 @@ const Checkout = () => {
       });
 
       clearCart();
-      toast.success('Order placed successfully!');
-      navigate('/my-orders');
+      await showOrderSuccess(navigate);
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to place order');
     } finally {

@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -23,6 +24,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import { initializeAppleAlertStyles } from './utils/showOrderSuccess';
 
 const UserLayout = ({ children }) => (
   <div className="flex flex-col gap-0">
@@ -33,6 +35,10 @@ const UserLayout = ({ children }) => (
 );
 
 function App() {
+  useEffect(() => {
+    initializeAppleAlertStyles();
+  }, []);
+
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors">
       <Routes>
