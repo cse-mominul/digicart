@@ -18,6 +18,12 @@ const Footer = () => {
     { label: 'Home & Living', href: '/products/home-living' },
     { label: 'Beauty & Care', href: '/products/beauty-care' },
   ]);
+  const [contactInfo, setContactInfo] = useState({
+    contactAddress: '125 Market Street, Gulshan Avenue, Dhaka 1212',
+    contactPhone: '+880 1700-123456',
+    supportEmail: 'support@digicart.com',
+    salesEmail: 'sales@digicart.com',
+  });
 
   useEffect(() => {
     const fetchRandomCategories = async () => {
@@ -37,6 +43,24 @@ const Footer = () => {
     };
 
     fetchRandomCategories();
+  }, []);
+
+  useEffect(() => {
+    const fetchFooterContact = async () => {
+      try {
+        const { data } = await API.get('/settings');
+        setContactInfo({
+          contactAddress: data?.contactAddress || '125 Market Street, Gulshan Avenue, Dhaka 1212',
+          contactPhone: data?.contactPhone || '+880 1700-123456',
+          supportEmail: data?.supportEmail || 'support@digicart.com',
+          salesEmail: data?.salesEmail || 'sales@digicart.com',
+        });
+      } catch (error) {
+        console.error('Failed to fetch footer contact settings:', error);
+      }
+    };
+
+    fetchFooterContact();
   }, []);
 
   const handleScrollToTop = () => {
@@ -121,7 +145,7 @@ const Footer = () => {
                     <path d="M12 2a7 7 0 0 0-7 7c0 5.07 6.13 11.93 6.39 12.22a.83.83 0 0 0 1.22 0C12.87 20.93 19 14.07 19 9a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5Z" />
                   </svg>
                 </span>
-                <span className="line-clamp-2">125 Market Street, Gulshan Avenue, Dhaka 1212</span>
+                <span className="line-clamp-2">{contactInfo.contactAddress}</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="mt-0.5 text-gray-400 flex-shrink-0" aria-hidden="true">
@@ -129,7 +153,7 @@ const Footer = () => {
                     <path d="M19.59 15.17a1 1 0 0 0-1.06-.23l-2.54.85a1 1 0 0 1-1-.24l-3.74-3.74a1 1 0 0 1-.24-1l.85-2.54a1 1 0 0 0-.23-1.06L9.4 3.84a1 1 0 0 0-1-.27A6.38 6.38 0 0 0 3.57 8.4 16.17 16.17 0 0 0 15.6 20.43a6.38 6.38 0 0 0 4.83-4.83 1 1 0 0 0-.27-1Z" />
                   </svg>
                 </span>
-                <span>+880 1700-123456</span>
+                <span>{contactInfo.contactPhone}</span>
               </li>
               <li className="flex items-start gap-2.5">
                 <span className="mt-0.5 text-gray-400" aria-hidden="true">
@@ -137,7 +161,7 @@ const Footer = () => {
                     <path d="M20 4H4a2 2 0 0 0-2 2v.24l10 5.56 10-5.56V6a2 2 0 0 0-2-2Zm2 5.03-9.51 5.28a1 1 0 0 1-.98 0L2 9.03V18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9.03Z" />
                   </svg>
                 </span>
-                <span>support@digicart.com</span>
+                <span>{contactInfo.supportEmail}</span>
               </li>
               <li className="flex items-start gap-2.5">
                 <span className="mt-0.5 text-gray-400" aria-hidden="true">
@@ -145,7 +169,7 @@ const Footer = () => {
                     <path d="M20 4H4a2 2 0 0 0-2 2v.24l10 5.56 10-5.56V6a2 2 0 0 0-2-2Zm2 5.03-9.51 5.28a1 1 0 0 1-.98 0L2 9.03V18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9.03Z" />
                   </svg>
                 </span>
-                <span>sales@digicart.com</span>
+                <span>{contactInfo.salesEmail}</span>
               </li>
             </ul>
           </div>
