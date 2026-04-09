@@ -19,7 +19,6 @@ import Campaigns from './pages/admin/Campaigns';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
 import Navbar from './components/Navbar';
-import LatestBlogSection from './components/LatestBlogSection';
 import Footer from './components/Footer';
 import { initializeAppleAlertStyles } from './utils/showOrderSuccess';
 
@@ -27,9 +26,6 @@ const UserLayout = ({ children }) => (
   <div className="flex flex-col gap-0">
     <Navbar />
     {children}
-    <div className="mx-auto w-full max-w-7xl px-4">
-      <LatestBlogSection />
-    </div>
     <Footer />
   </div>
 );
