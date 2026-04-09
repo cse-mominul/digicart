@@ -11,6 +11,9 @@ const Settings = () => {
     contactPhone: '+880 1700-123456',
     supportEmail: 'support@digicart.com',
     salesEmail: 'sales@digicart.com',
+    siteTitle: 'DigiCart',
+    siteLogoUrl: '',
+    faviconUrl: '',
   });
   const [loading, setLoading] = useState(true);
   const [savingSettings, setSavingSettings] = useState(false);
@@ -26,6 +29,9 @@ const Settings = () => {
           contactPhone: data?.contactPhone || '+880 1700-123456',
           supportEmail: data?.supportEmail || 'support@digicart.com',
           salesEmail: data?.salesEmail || 'sales@digicart.com',
+          siteTitle: data?.siteTitle || 'DigiCart',
+          siteLogoUrl: data?.siteLogoUrl || '',
+          faviconUrl: data?.faviconUrl || '',
         });
       } catch (error) {
         toast.error(error.response?.data?.message || 'Failed to load settings');
@@ -48,6 +54,9 @@ const Settings = () => {
       contactPhone: settingsForm.contactPhone,
       supportEmail: settingsForm.supportEmail,
       salesEmail: settingsForm.salesEmail,
+      siteTitle: settingsForm.siteTitle,
+      siteLogoUrl: settingsForm.siteLogoUrl,
+      faviconUrl: settingsForm.faviconUrl,
     });
 
     setSettingsForm({
@@ -57,6 +66,9 @@ const Settings = () => {
       contactPhone: data?.contactPhone || settingsForm.contactPhone,
       supportEmail: data?.supportEmail || settingsForm.supportEmail,
       salesEmail: data?.salesEmail || settingsForm.salesEmail,
+      siteTitle: data?.siteTitle || settingsForm.siteTitle,
+      siteLogoUrl: data?.siteLogoUrl || settingsForm.siteLogoUrl,
+      faviconUrl: data?.faviconUrl || settingsForm.faviconUrl,
     });
 
     toast.success(successMessage);
@@ -121,6 +133,24 @@ const Settings = () => {
     }
   };
 
+  const handleSaveSiteSettings = async (event) => {
+    event.preventDefault();
+
+    if (!settingsForm.siteTitle?.trim()) {
+      toast.error('Site title is required');
+      return;
+    }
+
+    setSavingSettings(true);
+    try {
+      await saveSettings('Site settings updated');
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to update settings');
+    } finally {
+      setSavingSettings(false);
+    }
+  };
+
   return (
     <div>
       <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">Settings</h2>
@@ -151,6 +181,17 @@ const Settings = () => {
               }`}
             >
               Company Settings
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('site')}
+              className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                activeTab === 'site'
+                  ? 'bg-pink-500 text-white'
+                  : 'text-gray-300 hover:text-white'
+              }`}
+            >
+              Site Settings
             </button>
           </div>
 
@@ -194,7 +235,7 @@ const Settings = () => {
                 {savingSettings ? 'Saving...' : 'Save Delivery Settings'}
               </button>
             </form>
-          ) : (
+          ) : activeTab === 'company' ? (
             <form onSubmit={handleSaveCompanySettings} className="space-y-5">
               <p className="text-sm text-gray-400">Configure company contact information for the footer.</p>
 
@@ -254,6 +295,58 @@ const Settings = () => {
                 className="w-full md:w-auto rounded-xl bg-pink-500 text-white px-6 py-2.5 font-semibold hover:bg-pink-600 transition-colors disabled:opacity-60"
               >
                 {savingSettings ? 'Saving...' : 'Save Company Settings'}
+              </button>
+            </form>
+          ) : (
+            <form onSubmit={handleSaveSiteSettings} className="space-y-5">
+              <p className="text-sm text-gray-400">Configure site title, header logo, and browser favicon.</p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="md:col-span-2">
+                  <label className="block text-sm text-gray-300 mb-1">Site Title</label>
+                  <input
+                    type="text"
+                    value={settingsForm.siteTitle}
+                    onChange={(event) =>
+                      setSettingsForm((prev) => ({ ...prev, siteTitle: event.target.value }))
+                    }
+                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm text-gray-300 mb-1">Logo URL</label>
+                  <input
+                    type="url"
+                    value={settingsForm.siteLogoUrl}
+                    onChange={(event) =>
+                      setSettingsForm((prev) => ({ ...prev, siteLogoUrl: event.target.value }))
+                    }
+                    placeholder="https://example.com/logo.png"
+                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm text-gray-300 mb-1">Favicon URL</label>
+                  <input
+                    type="url"
+                    value={settingsForm.faviconUrl}
+                    onChange={(event) =>
+                      setSettingsForm((prev) => ({ ...prev, faviconUrl: event.target.value }))
+                    }
+                    placeholder="https://example.com/favicon.ico"
+                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={savingSettings}
+                className="w-full md:w-auto rounded-xl bg-pink-500 text-white px-6 py-2.5 font-semibold hover:bg-pink-600 transition-colors disabled:opacity-60"
+              >
+                {savingSettings ? 'Saving...' : 'Save Site Settings'}
               </button>
             </form>
           )}

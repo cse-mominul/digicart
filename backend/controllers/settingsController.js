@@ -11,6 +11,9 @@ const ensureDefaultSettings = async () => {
       contactPhone: '+880 1700-123456',
       supportEmail: 'support@digicart.com',
       salesEmail: 'sales@digicart.com',
+      siteTitle: 'DigiCart',
+      siteLogoUrl: '',
+      faviconUrl: '',
     });
   }
 
@@ -31,7 +34,17 @@ const getSettings = async (req, res) => {
 // @desc  Update app settings (admin only)
 // @route PATCH /api/settings
 const updateSettings = async (req, res) => {
-  const { insideDhakaCharge, outsideDhakaCharge, contactAddress, contactPhone, supportEmail, salesEmail } = req.body;
+  const {
+    insideDhakaCharge,
+    outsideDhakaCharge,
+    contactAddress,
+    contactPhone,
+    supportEmail,
+    salesEmail,
+    siteTitle,
+    siteLogoUrl,
+    faviconUrl,
+  } = req.body;
 
   const insideCharge = Number(insideDhakaCharge);
   const outsideCharge = Number(outsideDhakaCharge);
@@ -63,6 +76,18 @@ const updateSettings = async (req, res) => {
       typeof salesEmail === 'string' && salesEmail.trim()
         ? salesEmail.trim()
         : existingSettings.salesEmail;
+    const resolvedSiteTitle =
+      typeof siteTitle === 'string' && siteTitle.trim()
+        ? siteTitle.trim()
+        : existingSettings.siteTitle || 'DigiCart';
+    const resolvedSiteLogoUrl =
+      typeof siteLogoUrl === 'string'
+        ? siteLogoUrl.trim()
+        : existingSettings.siteLogoUrl || '';
+    const resolvedFaviconUrl =
+      typeof faviconUrl === 'string'
+        ? faviconUrl.trim()
+        : existingSettings.faviconUrl || '';
 
     if (!resolvedContactAddress) {
       return res.status(400).json({ message: 'Contact address is required' });
@@ -80,6 +105,10 @@ const updateSettings = async (req, res) => {
       return res.status(400).json({ message: 'Sales email is required' });
     }
 
+    if (!resolvedSiteTitle) {
+      return res.status(400).json({ message: 'Site title is required' });
+    }
+
     const updatedSettings = await Setting.findOneAndUpdate(
       {},
       {
@@ -89,6 +118,9 @@ const updateSettings = async (req, res) => {
         contactPhone: resolvedContactPhone,
         supportEmail: resolvedSupportEmail,
         salesEmail: resolvedSalesEmail,
+        siteTitle: resolvedSiteTitle,
+        siteLogoUrl: resolvedSiteLogoUrl,
+        faviconUrl: resolvedFaviconUrl,
       },
       {
         new: true,

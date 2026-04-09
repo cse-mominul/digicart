@@ -32,6 +32,21 @@ const settingSchema = new mongoose.Schema(
       default: 'sales@digicart.com',
       trim: true,
     },
+    siteTitle: {
+      type: String,
+      default: 'DigiCart',
+      trim: true,
+    },
+    siteLogoUrl: {
+      type: String,
+      default: '',
+      trim: true,
+    },
+    faviconUrl: {
+      type: String,
+      default: '',
+      trim: true,
+    },
   },
   {
     timestamps: true,

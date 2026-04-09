@@ -35,6 +35,10 @@ const Navbar = () => {
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [categoryLinks, setCategoryLinks] = useState(['All']);
+  const [siteBranding, setSiteBranding] = useState({
+    siteTitle: 'DigiCart',
+    siteLogoUrl: '',
+  });
   const accountRef = useRef(null);
   const searchRef = useRef(null);
 
@@ -121,6 +125,22 @@ const Navbar = () => {
     fetchCategories();
   }, []);
 
+  useEffect(() => {
+    const fetchSiteBranding = async () => {
+      try {
+        const { data } = await API.get('/settings');
+        setSiteBranding({
+          siteTitle: data?.siteTitle || 'DigiCart',
+          siteLogoUrl: data?.siteLogoUrl || '',
+        });
+      } catch (error) {
+        console.error('Failed to fetch site branding:', error);
+      }
+    };
+
+    fetchSiteBranding();
+  }, []);
+
   const handleLogout = () => {
     logout();
     navigate('/login');
@@ -181,7 +201,15 @@ const Navbar = () => {
               </button>
 
               <Link to="/" className="flex items-center gap-2 text-[#ff3366]">
-                <span className="text-[28px] leading-none font-bold tracking-tight">DigiCart</span>
+                {siteBranding.siteLogoUrl ? (
+                  <img
+                    src={siteBranding.siteLogoUrl}
+                    alt={siteBranding.siteTitle}
+                    className="h-9 w-auto max-w-[150px] object-contain"
+                  />
+                ) : (
+                  <span className="text-[28px] leading-none font-bold tracking-tight">{siteBranding.siteTitle}</span>
+                )}
               </Link>
 
               <button
@@ -248,7 +276,15 @@ const Navbar = () => {
 
           <div className="hidden sm:flex items-center gap-2 sm:gap-3 md:gap-6">
             <Link to="/" className="text-lg sm:text-xl md:text-2xl font-extrabold text-[#ff3366] tracking-tight flex-shrink-0">
-              DigiCart
+              {siteBranding.siteLogoUrl ? (
+                <img
+                  src={siteBranding.siteLogoUrl}
+                  alt={siteBranding.siteTitle}
+                  className="h-8 w-auto max-w-[170px] object-contain"
+                />
+              ) : (
+                siteBranding.siteTitle
+              )}
             </Link>
 
             <div className="hidden sm:flex flex-1 max-w-3xl mx-auto">
@@ -429,7 +465,15 @@ const Navbar = () => {
           <aside className="relative h-full w-[86%] max-w-[360px] overflow-y-auto bg-[#f4f5f7] px-4 pb-8 pt-4 shadow-[8px_0_30px_rgba(15,23,42,0.2)]">
             <div className="flex items-center justify-between">
               <Link to="/" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2 text-[#ff3366]">
-                <span className="text-[22px] leading-none font-bold tracking-tight">DigiCart</span>
+                {siteBranding.siteLogoUrl ? (
+                  <img
+                    src={siteBranding.siteLogoUrl}
+                    alt={siteBranding.siteTitle}
+                    className="h-8 w-auto max-w-[140px] object-contain"
+                  />
+                ) : (
+                  <span className="text-[22px] leading-none font-bold tracking-tight">{siteBranding.siteTitle}</span>
+                )}
               </Link>
 
               <button

@@ -20,6 +20,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import API from './api/axios';
 import { initializeAppleAlertStyles } from './utils/showOrderSuccess';
 
 const UserLayout = ({ children }) => (
@@ -33,6 +34,32 @@ const UserLayout = ({ children }) => (
 function App() {
   useEffect(() => {
     initializeAppleAlertStyles();
+  }, []);
+
+  useEffect(() => {
+    const applySiteBranding = async () => {
+      try {
+        const { data } = await API.get('/settings');
+
+        if (data?.siteTitle) {
+          document.title = data.siteTitle;
+        }
+
+        if (data?.faviconUrl) {
+          let favicon = document.querySelector("link[rel='icon']");
+          if (!favicon) {
+            favicon = document.createElement('link');
+            favicon.setAttribute('rel', 'icon');
+            document.head.appendChild(favicon);
+          }
+          favicon.setAttribute('href', data.faviconUrl);
+        }
+      } catch (error) {
+        console.error('Failed to apply site branding:', error);
+      }
+    };
+
+    applySiteBranding();
   }, []);
 
   return (

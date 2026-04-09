@@ -24,6 +24,10 @@ const Footer = () => {
     supportEmail: 'support@digicart.com',
     salesEmail: 'sales@digicart.com',
   });
+  const [siteBranding, setSiteBranding] = useState({
+    siteTitle: 'DigiCart',
+    siteLogoUrl: '',
+  });
 
   useEffect(() => {
     const fetchRandomCategories = async () => {
@@ -54,6 +58,10 @@ const Footer = () => {
           contactPhone: data?.contactPhone || '+880 1700-123456',
           supportEmail: data?.supportEmail || 'support@digicart.com',
           salesEmail: data?.salesEmail || 'sales@digicart.com',
+        });
+        setSiteBranding({
+          siteTitle: data?.siteTitle || 'DigiCart',
+          siteLogoUrl: data?.siteLogoUrl || '',
         });
       } catch (error) {
         console.error('Failed to fetch footer contact settings:', error);
@@ -117,9 +125,19 @@ const Footer = () => {
         <div className="grid grid-cols-2 gap-4 sm:gap-6 md:gap-8 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           <div className="col-span-2 sm:col-span-1 xl:pr-5">
             <div className="inline-flex items-center gap-2 rounded-lg sm:rounded-xl border border-[#2c3755] bg-[#12182a] px-2 sm:px-3 py-1.5 sm:py-2">
-              <span className="h-6 sm:h-7 w-6 sm:w-7 rounded-md bg-[#ff3366] text-center text-xs sm:text-sm font-bold leading-6 sm:leading-7 text-white flex items-center justify-center">D</span>
+              {siteBranding.siteLogoUrl ? (
+                <img
+                  src={siteBranding.siteLogoUrl}
+                  alt={siteBranding.siteTitle}
+                  className="h-6 sm:h-7 w-auto max-w-[90px] object-contain"
+                />
+              ) : (
+                <span className="h-6 sm:h-7 w-6 sm:w-7 rounded-md bg-[#ff3366] text-center text-xs sm:text-sm font-bold leading-6 sm:leading-7 text-white flex items-center justify-center">
+                  {siteBranding.siteTitle?.charAt(0)?.toUpperCase() || 'D'}
+                </span>
+              )}
               <div className="min-w-0">
-                <p className="text-sm sm:text-lg font-semibold leading-none text-[#ff3366] truncate">DigiCart</p>
+                <p className="text-sm sm:text-lg font-semibold leading-none text-[#ff3366] truncate">{siteBranding.siteTitle}</p>
                 <p className="text-[9px] sm:text-[11px] uppercase tracking-[0.12em] text-gray-400">Rebranded Sellzy</p>
               </div>
             </div>
