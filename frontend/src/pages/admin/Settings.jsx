@@ -3,6 +3,7 @@ import API from '../../api/axios';
 import toast from 'react-hot-toast';
 
 const Settings = () => {
+  const [activeTab, setActiveTab] = useState('delivery');
   const [settingsForm, setSettingsForm] = useState({
     insideDhakaCharge: 80,
     outsideDhakaCharge: 120,
@@ -36,7 +37,32 @@ const Settings = () => {
     fetchSettings();
   }, []);
 
-  const handleSaveSettings = async (event) => {
+  const saveSettings = async (successMessage) => {
+    const insideDhakaCharge = Number(settingsForm.insideDhakaCharge);
+    const outsideDhakaCharge = Number(settingsForm.outsideDhakaCharge);
+
+    const { data } = await API.patch('/settings', {
+      insideDhakaCharge,
+      outsideDhakaCharge,
+      contactAddress: settingsForm.contactAddress,
+      contactPhone: settingsForm.contactPhone,
+      supportEmail: settingsForm.supportEmail,
+      salesEmail: settingsForm.salesEmail,
+    });
+
+    setSettingsForm({
+      insideDhakaCharge: Number(data?.insideDhakaCharge) || insideDhakaCharge,
+      outsideDhakaCharge: Number(data?.outsideDhakaCharge) || outsideDhakaCharge,
+      contactAddress: data?.contactAddress || settingsForm.contactAddress,
+      contactPhone: data?.contactPhone || settingsForm.contactPhone,
+      supportEmail: data?.supportEmail || settingsForm.supportEmail,
+      salesEmail: data?.salesEmail || settingsForm.salesEmail,
+    });
+
+    toast.success(successMessage);
+  };
+
+  const handleSaveDeliverySettings = async (event) => {
     event.preventDefault();
 
     const insideDhakaCharge = Number(settingsForm.insideDhakaCharge);
@@ -51,6 +77,19 @@ const Settings = () => {
       toast.error('Outside Dhaka charge must be a valid number');
       return;
     }
+
+    setSavingSettings(true);
+    try {
+      await saveSettings('Delivery settings updated');
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to update settings');
+    } finally {
+      setSavingSettings(false);
+    }
+  };
+
+  const handleSaveCompanySettings = async (event) => {
+    event.preventDefault();
 
     if (!settingsForm.contactAddress?.trim()) {
       toast.error('Contact address is required');
@@ -74,25 +113,7 @@ const Settings = () => {
 
     setSavingSettings(true);
     try {
-      const { data } = await API.patch('/settings', {
-        insideDhakaCharge,
-        outsideDhakaCharge,
-        contactAddress: settingsForm.contactAddress,
-        contactPhone: settingsForm.contactPhone,
-        supportEmail: settingsForm.supportEmail,
-        salesEmail: settingsForm.salesEmail,
-      });
-
-      setSettingsForm({
-        insideDhakaCharge: Number(data?.insideDhakaCharge) || insideDhakaCharge,
-        outsideDhakaCharge: Number(data?.outsideDhakaCharge) || outsideDhakaCharge,
-        contactAddress: data?.contactAddress || settingsForm.contactAddress,
-        contactPhone: data?.contactPhone || settingsForm.contactPhone,
-        supportEmail: data?.supportEmail || settingsForm.supportEmail,
-        salesEmail: data?.salesEmail || settingsForm.salesEmail,
-      });
-
-      toast.success('Delivery charges updated');
+      await saveSettings('Company settings updated');
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to update settings');
     } finally {
@@ -108,95 +129,134 @@ const Settings = () => {
         <div className="bg-gray-900 dark:bg-black border border-gray-800 rounded-2xl h-40 animate-pulse" />
       ) : (
         <div className="bg-gray-900 dark:bg-black border border-gray-800 rounded-2xl shadow-md p-6">
-          <p className="text-sm text-gray-400 mb-5">Configure default delivery charges for landing page checkout.</p>
-
-          <form onSubmit={handleSaveSettings} className="space-y-5">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm text-gray-300 mb-1">Inside Dhaka Charge</label>
-                <input
-                  type="number"
-                  min="0"
-                  value={settingsForm.insideDhakaCharge}
-                  onChange={(event) =>
-                    setSettingsForm((prev) => ({ ...prev, insideDhakaCharge: event.target.value }))
-                  }
-                  className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm text-gray-300 mb-1">Outside Dhaka Charge</label>
-                <input
-                  type="number"
-                  min="0"
-                  value={settingsForm.outsideDhakaCharge}
-                  onChange={(event) =>
-                    setSettingsForm((prev) => ({ ...prev, outsideDhakaCharge: event.target.value }))
-                  }
-                  className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink-500"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="md:col-span-2">
-                <label className="block text-sm text-gray-300 mb-1">Contact Address</label>
-                <input
-                  type="text"
-                  value={settingsForm.contactAddress}
-                  onChange={(event) =>
-                    setSettingsForm((prev) => ({ ...prev, contactAddress: event.target.value }))
-                  }
-                  className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm text-gray-300 mb-1">Contact Phone</label>
-                <input
-                  type="text"
-                  value={settingsForm.contactPhone}
-                  onChange={(event) =>
-                    setSettingsForm((prev) => ({ ...prev, contactPhone: event.target.value }))
-                  }
-                  className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm text-gray-300 mb-1">Support Email</label>
-                <input
-                  type="email"
-                  value={settingsForm.supportEmail}
-                  onChange={(event) =>
-                    setSettingsForm((prev) => ({ ...prev, supportEmail: event.target.value }))
-                  }
-                  className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm text-gray-300 mb-1">Sales Email</label>
-                <input
-                  type="email"
-                  value={settingsForm.salesEmail}
-                  onChange={(event) =>
-                    setSettingsForm((prev) => ({ ...prev, salesEmail: event.target.value }))
-                  }
-                  className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink-500"
-                />
-              </div>
-            </div>
-
+          <div className="mb-5 inline-flex rounded-xl border border-gray-700 bg-gray-800 p-1">
             <button
-              type="submit"
-              disabled={savingSettings}
-              className="w-full md:w-auto rounded-xl bg-pink-500 text-white px-6 py-2.5 font-semibold hover:bg-pink-600 transition-colors disabled:opacity-60"
+              type="button"
+              onClick={() => setActiveTab('delivery')}
+              className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                activeTab === 'delivery'
+                  ? 'bg-pink-500 text-white'
+                  : 'text-gray-300 hover:text-white'
+              }`}
             >
-              {savingSettings ? 'Saving...' : 'Save Settings'}
+              Delivery Settings
             </button>
-          </form>
+            <button
+              type="button"
+              onClick={() => setActiveTab('company')}
+              className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                activeTab === 'company'
+                  ? 'bg-pink-500 text-white'
+                  : 'text-gray-300 hover:text-white'
+              }`}
+            >
+              Company Settings
+            </button>
+          </div>
+
+          {activeTab === 'delivery' ? (
+            <form onSubmit={handleSaveDeliverySettings} className="space-y-5">
+              <p className="text-sm text-gray-400">Configure delivery charges for checkout.</p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm text-gray-300 mb-1">Inside Dhaka Charge</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={settingsForm.insideDhakaCharge}
+                    onChange={(event) =>
+                      setSettingsForm((prev) => ({ ...prev, insideDhakaCharge: event.target.value }))
+                    }
+                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm text-gray-300 mb-1">Outside Dhaka Charge</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={settingsForm.outsideDhakaCharge}
+                    onChange={(event) =>
+                      setSettingsForm((prev) => ({ ...prev, outsideDhakaCharge: event.target.value }))
+                    }
+                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={savingSettings}
+                className="w-full md:w-auto rounded-xl bg-pink-500 text-white px-6 py-2.5 font-semibold hover:bg-pink-600 transition-colors disabled:opacity-60"
+              >
+                {savingSettings ? 'Saving...' : 'Save Delivery Settings'}
+              </button>
+            </form>
+          ) : (
+            <form onSubmit={handleSaveCompanySettings} className="space-y-5">
+              <p className="text-sm text-gray-400">Configure company contact information for the footer.</p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="md:col-span-2">
+                  <label className="block text-sm text-gray-300 mb-1">Contact Address</label>
+                  <input
+                    type="text"
+                    value={settingsForm.contactAddress}
+                    onChange={(event) =>
+                      setSettingsForm((prev) => ({ ...prev, contactAddress: event.target.value }))
+                    }
+                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm text-gray-300 mb-1">Contact Phone</label>
+                  <input
+                    type="text"
+                    value={settingsForm.contactPhone}
+                    onChange={(event) =>
+                      setSettingsForm((prev) => ({ ...prev, contactPhone: event.target.value }))
+                    }
+                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm text-gray-300 mb-1">Support Email</label>
+                  <input
+                    type="email"
+                    value={settingsForm.supportEmail}
+                    onChange={(event) =>
+                      setSettingsForm((prev) => ({ ...prev, supportEmail: event.target.value }))
+                    }
+                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm text-gray-300 mb-1">Sales Email</label>
+                  <input
+                    type="email"
+                    value={settingsForm.salesEmail}
+                    onChange={(event) =>
+                      setSettingsForm((prev) => ({ ...prev, salesEmail: event.target.value }))
+                    }
+                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={savingSettings}
+                className="w-full md:w-auto rounded-xl bg-pink-500 text-white px-6 py-2.5 font-semibold hover:bg-pink-600 transition-colors disabled:opacity-60"
+              >
+                {savingSettings ? 'Saving...' : 'Save Company Settings'}
+              </button>
+            </form>
+          )}
         </div>
       )}
     </div>
