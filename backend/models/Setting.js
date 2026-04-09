@@ -47,6 +47,11 @@ const settingSchema = new mongoose.Schema(
       default: '',
       trim: true,
     },
+    siteSlogan: {
+      type: String,
+      default: 'Rebranded Sellzy',
+      trim: true,
+    },
   },
   {
     timestamps: true,

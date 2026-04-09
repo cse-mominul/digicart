@@ -27,6 +27,7 @@ const Footer = () => {
   const [siteBranding, setSiteBranding] = useState({
     siteTitle: 'DigiCart',
     siteLogoUrl: '',
+    siteSlogan: 'Rebranded Sellzy',
   });
 
   useEffect(() => {
@@ -62,6 +63,7 @@ const Footer = () => {
         setSiteBranding({
           siteTitle: data?.siteTitle || 'DigiCart',
           siteLogoUrl: data?.siteLogoUrl || '',
+          siteSlogan: data?.siteSlogan || 'Rebranded Sellzy',
         });
       } catch (error) {
         console.error('Failed to fetch footer contact settings:', error);
@@ -129,16 +131,12 @@ const Footer = () => {
                 <img
                   src={siteBranding.siteLogoUrl}
                   alt={siteBranding.siteTitle}
-                  className="h-6 sm:h-7 w-auto max-w-[90px] object-contain"
+                  className="h-7 sm:h-8 w-auto max-w-[110px] object-contain"
                 />
-              ) : (
-                <span className="h-6 sm:h-7 w-6 sm:w-7 rounded-md bg-[#ff3366] text-center text-xs sm:text-sm font-bold leading-6 sm:leading-7 text-white flex items-center justify-center">
-                  {siteBranding.siteTitle?.charAt(0)?.toUpperCase() || 'D'}
-                </span>
-              )}
+              ) : null}
               <div className="min-w-0">
                 <p className="text-sm sm:text-lg font-semibold leading-none text-[#ff3366] truncate">{siteBranding.siteTitle}</p>
-                <p className="text-[9px] sm:text-[11px] uppercase tracking-[0.12em] text-gray-400">Rebranded Sellzy</p>
+                <p className="text-[9px] sm:text-[11px] uppercase tracking-[0.12em] text-gray-400">{siteBranding.siteSlogan}</p>
               </div>
             </div>
 
