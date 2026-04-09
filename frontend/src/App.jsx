@@ -7,7 +7,6 @@ import ProductDetails from './pages/ProductDetails';
 import CategoryProducts from './pages/CategoryProducts';
 import Checkout from './pages/Checkout';
 import ContactUs from './pages/ContactUs';
-import AccountDashboard from './pages/AccountDashboard';
 import UserAccount from './pages/UserAccount';
 import AdminLayout from './pages/admin/AdminLayout';
 import Dashboard from './pages/admin/Dashboard';
@@ -53,7 +52,7 @@ function App() {
           path="/account/dashboard"
           element={
             <ProtectedRoute>
-              <UserLayout><AccountDashboard /></UserLayout>
+              <Navigate to="/account/profile" replace />
             </ProtectedRoute>
           }
         />
