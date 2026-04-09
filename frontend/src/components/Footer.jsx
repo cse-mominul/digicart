@@ -50,7 +50,7 @@ const Footer = () => {
       <button
         type="button"
         onClick={handleScrollToTop}
-        className="absolute left-1/2 top-0 flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-[#2f3b5e] bg-[#0f8e8e] text-white shadow-lg transition-colors hover:bg-[#10a3a3]"
+        className="absolute left-1/2 top-0 flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-[#ff3366]/40 bg-[#ff3366] text-white shadow-lg transition-colors hover:bg-[#ff1f58]"
         aria-label="Scroll to top"
       >
         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -62,9 +62,9 @@ const Footer = () => {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           <div className="xl:pr-5">
             <div className="inline-flex items-center gap-2 rounded-xl border border-[#2c3755] bg-[#12182a] px-3 py-2">
-              <span className="h-7 w-7 rounded-md bg-[#1f2d57] text-center text-sm font-bold leading-7 text-white">D</span>
+              <span className="h-7 w-7 rounded-md bg-[#ff3366] text-center text-sm font-bold leading-7 text-white">D</span>
               <div>
-                <p className="text-lg font-semibold leading-none text-white">DigiCart</p>
+                <p className="text-lg font-semibold leading-none text-[#ff3366]">DigiCart</p>
                 <p className="text-[11px] uppercase tracking-[0.12em] text-gray-400">Rebranded Sellzy</p>
               </div>
             </div>

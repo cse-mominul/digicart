@@ -8,7 +8,6 @@ import Wishlist from './pages/Wishlist';
 import ProductDetails from './pages/ProductDetails';
 import CategoryProducts from './pages/CategoryProducts';
 import Checkout from './pages/Checkout';
-import MyProfile from './pages/MyProfile';
 import ContactUs from './pages/ContactUs';
 import AccountDashboard from './pages/AccountDashboard';
 import UserAccount from './pages/UserAccount';
@@ -53,18 +52,10 @@ function App() {
         <Route path="/wishlist" element={<UserLayout><Wishlist /></UserLayout>} />
         <Route path="/product/:id" element={<UserLayout><ProductDetails /></UserLayout>} />
         <Route
-          path="/my-account"
+          path="/account/dashboard"
           element={
             <ProtectedRoute>
               <UserLayout><AccountDashboard /></UserLayout>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/my-profile"
-          element={
-            <ProtectedRoute>
-              <UserLayout><MyProfile /></UserLayout>
             </ProtectedRoute>
           }
         />
