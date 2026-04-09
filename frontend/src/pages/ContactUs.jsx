@@ -74,7 +74,7 @@ const ContactUs = () => {
           {contactCards.map((card) => (
             <article
               key={card.title}
-              className="rounded-2xl border border-gray-200 bg-white p-6 shadow-[0_0_0_1px_rgba(17,24,39,0.02)] transition-transform duration-200 hover:-translate-y-1"
+              className="rounded-2xl border border-gray-200 bg-white p-6 shadow-[0_0_0_1px_rgba(17,24,39,0.02)] transition-transform duration-200 hover:-translate-y-1 flex flex-col items-center sm:items-start sm:flex-col text-center sm:text-left"
             >
               <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 text-gray-800">
                 {card.icon}
