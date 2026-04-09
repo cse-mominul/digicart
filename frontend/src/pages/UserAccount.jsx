@@ -8,6 +8,7 @@ import { useWishlist } from '../context/WishlistContext';
 import { formatPrice } from '../utils/formatPrice';
 
 const ADDRESS_STORAGE_KEY = 'digicart_saved_addresses';
+const WISHLIST_ITEMS_PER_PAGE = 6;
 
 const statusColors = {
   Pending: 'bg-yellow-100 text-yellow-800',
@@ -111,6 +112,7 @@ const UserAccount = () => {
   const [addressForm, setAddressForm] = useState(emptyAddressForm);
   const [addressModalOpen, setAddressModalOpen] = useState(false);
   const [editingAddressId, setEditingAddressId] = useState(null);
+  const [wishlistPage, setWishlistPage] = useState(1);
 
   const section = useMemo(() => {
     if (location.pathname === '/account/orders') return 'orders';
@@ -140,6 +142,35 @@ const UserAccount = () => {
       fetchOrders();
     }
   }, [section]);
+
+  const totalWishlistPages = Math.max(1, Math.ceil(wishlistItems.length / WISHLIST_ITEMS_PER_PAGE));
+
+  const paginatedWishlistItems = useMemo(() => {
+    const startIndex = (wishlistPage - 1) * WISHLIST_ITEMS_PER_PAGE;
+    return wishlistItems.slice(startIndex, startIndex + WISHLIST_ITEMS_PER_PAGE);
+  }, [wishlistItems, wishlistPage]);
+
+  useEffect(() => {
+    if (wishlistPage > totalWishlistPages) {
+      setWishlistPage(totalWishlistPages);
+    }
+  }, [wishlistPage, totalWishlistPages]);
+
+  const getWishlistPageNumbers = () => {
+    if (totalWishlistPages <= 7) {
+      return Array.from({ length: totalWishlistPages }, (_, index) => index + 1);
+    }
+
+    if (wishlistPage <= 4) {
+      return [1, 2, 3, 4, 5, '...', totalWishlistPages];
+    }
+
+    if (wishlistPage >= totalWishlistPages - 3) {
+      return [1, '...', totalWishlistPages - 4, totalWishlistPages - 3, totalWishlistPages - 2, totalWishlistPages - 1, totalWishlistPages];
+    }
+
+    return [1, '...', wishlistPage - 1, wishlistPage, wishlistPage + 1, '...', totalWishlistPages];
+  };
 
   const handleProfileSave = (e) => {
     e.preventDefault();
@@ -375,7 +406,7 @@ const UserAccount = () => {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-                  {wishlistItems.map((item) => (
+                  {paginatedWishlistItems.map((item) => (
                     <article key={item._id} className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-900">
                       <div className="flex items-start justify-between gap-3 border-b border-gray-100 pb-4 dark:border-gray-800">
                         <div className="flex items-center gap-3">
@@ -426,6 +457,55 @@ const UserAccount = () => {
                       </div>
                     </article>
                   ))}
+                </div>
+              )}
+
+              {wishlistItems.length > 0 && (
+                <div className="mt-8 flex flex-col gap-4 border-t border-gray-100 pt-6 dark:border-gray-800 sm:flex-row sm:items-center sm:justify-between">
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    Page {wishlistPage} of {totalWishlistPages}
+                  </p>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setWishlistPage((prev) => Math.max(1, prev - 1))}
+                      disabled={wishlistPage === 1}
+                      className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:border-[#ff3366] hover:text-[#ff3366] disabled:cursor-not-allowed disabled:opacity-40 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
+                    >
+                      Prev
+                    </button>
+
+                    {getWishlistPageNumbers().map((page, index) => (
+                      page === '...'
+                        ? (
+                          <span key={`ellipsis-${index}`} className="px-1 text-sm text-gray-400">...</span>
+                        )
+                        : (
+                          <button
+                            key={page}
+                            type="button"
+                            onClick={() => setWishlistPage(page)}
+                            className={`h-10 min-w-[40px] rounded-xl px-3 text-sm font-semibold transition-colors ${
+                              wishlistPage === page
+                                ? 'bg-[#ff3366] text-white shadow-md shadow-pink-500/20'
+                                : 'border border-gray-200 bg-white text-gray-700 hover:border-[#ff3366] hover:text-[#ff3366] dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200'
+                            }`}
+                          >
+                            {page}
+                          </button>
+                        )
+                    ))}
+
+                    <button
+                      type="button"
+                      onClick={() => setWishlistPage((prev) => Math.min(totalWishlistPages, prev + 1))}
+                      disabled={wishlistPage === totalWishlistPages}
+                      className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:border-[#ff3366] hover:text-[#ff3366] disabled:cursor-not-allowed disabled:opacity-40 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
+                    >
+                      Next
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
