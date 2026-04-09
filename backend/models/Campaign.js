@@ -13,9 +13,6 @@ const campaignSchema = new mongoose.Schema(
       trim: true,
     },
     cta: {
-      type: String,
-      required: true,
-      trim: true,
     },
     desktopImage: {
       type: String,
@@ -30,11 +27,6 @@ const campaignSchema = new mongoose.Schema(
     image: {
       type: String,
       trim: true,
-    },
-    bg: {
-      type: String,
-      required: true,
-      default: 'from-pink-500 via-fuchsia-500 to-purple-600',
     },
     isActive: {
       type: Boolean,

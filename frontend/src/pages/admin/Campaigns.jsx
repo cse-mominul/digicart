@@ -10,21 +10,11 @@ const Campaigns = () => {
   const [formData, setFormData] = useState({
     title: '',
     subtitle: '',
-    cta: '',
     image: '',
     desktopImage: '',
     mobileImage: '',
-    bg: 'from-pink-500 via-fuchsia-500 to-purple-600',
     isActive: true,
   });
-
-  const bgOptions = [
-    { name: 'Pink Gradient', value: 'from-pink-500 via-fuchsia-500 to-purple-600' },
-    { name: 'Emerald Gradient', value: 'from-emerald-500 via-teal-500 to-cyan-600' },
-    { name: 'Indigo Gradient', value: 'from-indigo-600 via-violet-600 to-purple-700' },
-    { name: 'Orange Gradient', value: 'from-orange-500 via-red-500 to-pink-500' },
-    { name: 'Blue Gradient', value: 'from-blue-500 via-cyan-500 to-teal-600' },
-  ];
 
   const fetchCampaigns = async () => {
     setLoading(true);
@@ -54,7 +44,7 @@ const Campaigns = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.title || !formData.subtitle || !formData.cta || !formData.desktopImage || !formData.mobileImage) {
+    if (!formData.title || !formData.subtitle || !formData.desktopImage || !formData.mobileImage) {
       toast.error('Please fill all required fields');
       return;
     }
@@ -76,11 +66,9 @@ const Campaigns = () => {
       setFormData({
         title: '',
         subtitle: '',
-        cta: '',
         image: '',
         desktopImage: '',
         mobileImage: '',
-        bg: 'from-pink-500 via-fuchsia-500 to-purple-600',
         isActive: true,
       });
       setEditingId(null);
@@ -121,11 +109,9 @@ const Campaigns = () => {
     setFormData({
       title: '',
       subtitle: '',
-      cta: '',
       image: '',
       desktopImage: '',
       mobileImage: '',
-      bg: 'from-pink-500 via-fuchsia-500 to-purple-600',
       isActive: true,
     });
   };
@@ -181,7 +167,6 @@ const Campaigns = () => {
                       )}
                     </div>
                     <p className="text-sm text-gray-600 dark:text-gray-400">{campaign.subtitle}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">Button: {campaign.cta}</p>
                   </div>
                 </div>
                 <div className="flex gap-2">
@@ -246,20 +231,6 @@ const Campaigns = () => {
                   onChange={handleChange}
                   rows="2"
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent resize-none"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Button Text *
-                </label>
-                <input
-                  type="text"
-                  name="cta"
-                  value={formData.cta}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent"
                   required
                 />
               </div>
@@ -329,24 +300,6 @@ const Campaigns = () => {
                 <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                   This is kept as a fallback for older banner data.
                 </p>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Background Gradient
-                </label>
-                <select
-                  name="bg"
-                  value={formData.bg}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-                >
-                  {bgOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.name}
-                    </option>
-                  ))}
-                </select>
               </div>
 
               <div className="flex items-center gap-2">

@@ -64,12 +64,16 @@ const AiDealsSection = ({ products = [], loading = false }) => {
 
   return (
     <section className="mb-6 sm:mb-8">
-      <div className="mb-3 sm:mb-4 md:mb-5 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2 sm:gap-4">
-        <div>
-          <p className="text-xs sm:text-sm font-semibold uppercase tracking-[0.22em] text-[#ff3366]">AI Picks</p>
-          <h2 className="mt-1 sm:mt-2 text-lg sm:text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white">Daily Discount You&apos;ll Love</h2>
+      <div className="mb-3 flex flex-col gap-2 sm:mb-4 sm:flex-row sm:items-end sm:justify-between sm:gap-4 md:mb-5">
+        <div className="w-full text-center sm:w-auto sm:text-left">
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#ff3366] sm:text-sm">
+            AI Picks
+          </p>
+          <h2 className="mt-1 text-lg font-semibold text-gray-900 dark:text-white sm:mt-2 sm:text-2xl md:text-3xl">
+            Daily Discount You&apos;ll Love
+          </h2>
         </div>
-        <div className="flex items-center gap-2 flex-shrink-0">
+        <div className="flex items-center justify-center gap-2 flex-shrink-0 sm:justify-end">
           <button
             type="button"
             onClick={() => scrollTrack('left')}
@@ -95,7 +99,7 @@ const AiDealsSection = ({ products = [], loading = false }) => {
 
       <div
         ref={trackRef}
-        className="flex gap-2 sm:gap-4 overflow-x-auto scroll-smooth pb-2 pr-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="flex flex-col gap-4 pb-2 sm:flex-row sm:gap-4 sm:overflow-x-auto sm:scroll-smooth sm:pr-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {dealItems.map((product) => {
           const discountPercent = discountOptions[product.name.length % discountOptions.length];
@@ -106,7 +110,7 @@ const AiDealsSection = ({ products = [], loading = false }) => {
             <article
               key={product._id}
               data-deal-card
-              className="group w-[90vw] max-w-[360px] sm:w-[220px] sm:max-w-none md:w-[230px] shrink-0 overflow-hidden rounded-lg sm:rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl active:scale-95 dark:border-gray-800 dark:bg-[#1a1a1a] cursor-pointer"
+              className="group w-full overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl active:scale-95 dark:border-gray-800 dark:bg-[#1a1a1a] cursor-pointer sm:w-[220px] sm:shrink-0 sm:max-w-none sm:rounded-2xl md:w-[230px]"
               onClick={() => navigate(`/product/${product._id}`)}
             >
               <div className="relative p-1.5 sm:p-2.5">

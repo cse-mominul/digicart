@@ -29,23 +29,21 @@ exports.getCampaignById = async (req, res) => {
 };
 
 exports.createCampaign = async (req, res) => {
-  const { title, subtitle, cta, image, desktopImage, mobileImage, bg, isActive } = req.body;
+  const { title, subtitle, image, desktopImage, mobileImage, isActive } = req.body;
   try {
     const resolvedDesktopImage = desktopImage || image;
     const resolvedMobileImage = mobileImage || image;
     const resolvedImage = image || resolvedDesktopImage || resolvedMobileImage;
 
-    if (!title || !subtitle || !cta || !resolvedDesktopImage || !resolvedMobileImage) {
-      return res.status(400).json({ message: 'Title, subtitle, CTA, desktop image, and mobile image are required' });
+    if (!title || !subtitle || !resolvedDesktopImage || !resolvedMobileImage) {
+      return res.status(400).json({ message: 'Title, subtitle, desktop image, and mobile image are required' });
     }
     const campaign = await Campaign.create({
       title,
       subtitle,
-      cta,
       image: resolvedImage,
       desktopImage: resolvedDesktopImage,
       mobileImage: resolvedMobileImage,
-      bg: bg || 'from-pink-500 via-fuchsia-500 to-purple-600',
       isActive: isActive !== undefined ? isActive : true,
     });
     res.status(201).json(campaign);
@@ -55,7 +53,7 @@ exports.createCampaign = async (req, res) => {
 };
 
 exports.updateCampaign = async (req, res) => {
-  const { title, subtitle, cta, image, desktopImage, mobileImage, bg, isActive } = req.body;
+  const { title, subtitle, image, desktopImage, mobileImage, isActive } = req.body;
   try {
     const resolvedDesktopImage = desktopImage || image;
     const resolvedMobileImage = mobileImage || image;
@@ -67,11 +65,9 @@ exports.updateCampaign = async (req, res) => {
         $set: {
           title,
           subtitle,
-          cta,
           image: resolvedImage,
           desktopImage: resolvedDesktopImage,
           mobileImage: resolvedMobileImage,
-          bg,
           isActive,
         },
       },
