@@ -12,11 +12,10 @@ const WISHLIST_ITEMS_PER_PAGE = 6;
 const ORDER_FILTERS = ['All', 'Processing', 'Delivering', 'Completed', 'Cancelled'];
 
 const navItems = [
-  { id: 'dashboard', label: 'Dashboard', to: '/account/dashboard', icon: 'dashboard' },
-  { id: 'orders', label: 'Orders', to: '/account/orders', icon: 'box' },
-    { id: 'wishlist', label: 'Wishlist', to: '/account/wishlist', icon: 'heart' },
-  { id: 'address', label: 'My Address', to: '/account/addresses', icon: 'location' },
   { id: 'profile', label: 'My Account', to: '/account/profile', icon: 'user' },
+  { id: 'orders', label: 'Orders', to: '/account/orders', icon: 'box' },
+  { id: 'wishlist', label: 'Wishlist', to: '/account/wishlist', icon: 'heart' },
+  { id: 'address', label: 'My Address', to: '/account/addresses', icon: 'location' },
   { id: 'logout', label: 'Log Out', to: '/login', icon: 'logout' },
 ];
 

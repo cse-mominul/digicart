@@ -14,12 +14,11 @@ const parseAddresses = () => {
 };
 
 const navItems = [
-  { id: 'dashboard', label: 'Dashboard', to: '/account/dashboard', icon: 'dashboard' },
+  { id: 'details', label: 'My Account', to: '/account/profile', icon: 'user' },
   { id: 'loyalty', label: 'Loyalty Program', to: '#', icon: 'star' },
   { id: 'vouchers', label: 'E-Vouchers', to: '#', icon: 'ticket' },
   { id: 'orders', label: 'Orders', to: '/account/orders', icon: 'box' },
-    { id: 'address', label: 'Address', to: '/account/addresses', icon: 'location' },
-  { id: 'details', label: 'Account Details', to: '/account/profile', icon: 'user' },
+  { id: 'address', label: 'Address', to: '/account/addresses', icon: 'location' },
   { id: 'logout', label: 'Logout', to: '/login', icon: 'logout' },
 ];
 
