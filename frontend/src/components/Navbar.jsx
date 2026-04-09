@@ -352,6 +352,17 @@ const Navbar = () => {
             <div className="mt-5 rounded-2xl border border-gray-300 bg-white p-4">
               <div className="space-y-3">
                 <Link
+                  to="/"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 text-base font-medium text-gray-700"
+                >
+                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#ff3366] text-white">
+                    {renderMobileMenuIcon('home')}
+                  </span>
+                  <span>Home</span>
+                </Link>
+
+                <Link
                   to="/account/wishlist"
                   onClick={() => setMobileMenuOpen(false)}
                   className="flex items-center gap-3 text-base font-medium text-gray-700"
@@ -365,36 +376,18 @@ const Navbar = () => {
                 </Link>
 
                 {user ? (
-                  <>
-                    <Link
-                      to="/account/profile"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="flex items-center gap-3 text-base font-medium text-gray-700"
-                    >
-                      <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#ff3366] text-white">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.121 17.804A9 9 0 1118.88 17.8M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                      </span>
-                      <span>My Profile</span>
-                    </Link>
-
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setMobileMenuOpen(false);
-                        handleLogout();
-                      }}
-                      className="flex w-full items-center gap-3 text-base font-medium text-red-500"
-                    >
-                      <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-red-500 text-white">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                        </svg>
-                      </span>
-                      <span>Logout</span>
-                    </button>
-                  </>
+                  <Link
+                    to="/account/profile"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-3 text-base font-medium text-gray-700"
+                  >
+                    <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#ff3366] text-white">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.121 17.804A9 9 0 1118.88 17.8M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                    </span>
+                    <span>My Profile</span>
+                  </Link>
                 ) : (
                   <Link
                     to="/login"
@@ -410,9 +403,7 @@ const Navbar = () => {
                   </Link>
                 )}
 
-                <div className="my-1 border-t border-gray-200" />
-
-                {mobileMenuItems.map((item) => (
+                {mobileMenuItems.slice(1).map((item) => (
                   <Link
                     key={item.label}
                     to={item.to}
@@ -425,6 +416,24 @@ const Navbar = () => {
                     <span>{item.label}</span>
                   </Link>
                 ))}
+
+                {user && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      handleLogout();
+                    }}
+                    className="flex w-full items-center gap-3 text-base font-medium text-red-500"
+                  >
+                    <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-red-500 text-white">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                      </svg>
+                    </span>
+                    <span>Logout</span>
+                  </button>
+                )}
               </div>
             </div>
           </aside>
