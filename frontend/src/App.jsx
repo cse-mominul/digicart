@@ -9,7 +9,6 @@ import ProductDetails from './pages/ProductDetails';
 import CategoryProducts from './pages/CategoryProducts';
 import Checkout from './pages/Checkout';
 import MyProfile from './pages/MyProfile';
-import ShippingAddress from './pages/ShippingAddress';
 import ContactUs from './pages/ContactUs';
 import AccountDashboard from './pages/AccountDashboard';
 import UserAccount from './pages/UserAccount';
@@ -90,14 +89,6 @@ function App() {
           element={
             <ProtectedRoute>
               <UserLayout><UserAccount /></UserLayout>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/shipping-address"
-          element={
-            <ProtectedRoute>
-              <UserLayout><ShippingAddress /></UserLayout>
             </ProtectedRoute>
           }
         />

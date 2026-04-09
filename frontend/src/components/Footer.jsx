@@ -16,7 +16,7 @@ const Footer = () => {
     { label: 'My Profile', href: '/account/profile' },
     { label: 'My Orders', href: '/my-orders' },
     { label: 'Wishlist', href: '/wishlist' },
-    { label: 'Shipping Address', href: '/shipping-address' },
+    { label: 'Shipping Address', href: '/account/addresses' },
   ];
 
   const categoryLinks = [

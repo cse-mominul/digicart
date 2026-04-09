@@ -7,7 +7,7 @@ const navItems = [
   { id: 'dashboard', label: 'Dashboard', to: '/my-account', icon: 'dashboard' },
   { id: 'orders', label: 'Orders', to: '/my-orders', icon: 'box' },
   { id: 'wishlist', label: 'Wishlist', to: '/wishlist', icon: 'heart' },
-  { id: 'address', label: 'My Address', to: '/shipping-address', icon: 'location' },
+  { id: 'address', label: 'My Address', to: '/account/addresses', icon: 'location' },
   { id: 'profile', label: 'My Account', to: '/my-profile', icon: 'user' },
   { id: 'logout', label: 'Log Out', to: '/login', icon: 'logout' },
 ];

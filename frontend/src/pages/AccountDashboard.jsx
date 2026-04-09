@@ -18,7 +18,7 @@ const navItems = [
   { id: 'loyalty', label: 'Loyalty Program', to: '#', icon: 'star' },
   { id: 'vouchers', label: 'E-Vouchers', to: '#', icon: 'ticket' },
   { id: 'orders', label: 'Orders', to: '/my-orders', icon: 'box' },
-  { id: 'address', label: 'Address', to: '/my-account', icon: 'location' },
+    { id: 'address', label: 'Address', to: '/account/addresses', icon: 'location' },
   { id: 'details', label: 'Account Details', to: '/my-profile', icon: 'user' },
   { id: 'logout', label: 'Logout', to: '/login', icon: 'logout' },
 ];
@@ -138,7 +138,7 @@ const AccountDashboard = () => {
             <div className="flex items-center justify-between mb-8">
               <h1 className="text-xl sm:text-2xl font-semibold text-gray-900">Addresses</h1>
               <Link
-                to="/shipping-address"
+                to="/account/addresses"
                 className="bg-[#ff3366] hover:bg-pink-600 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors"
               >
                 + Add Address
