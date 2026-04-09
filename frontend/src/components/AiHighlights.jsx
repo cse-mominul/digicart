@@ -57,17 +57,21 @@ const Icon = ({ type }) => {
 
 const AiHighlights = () => {
   return (
-    <section className="mb-6 sm:mb-8 grid grid-cols-1 gap-3 sm:gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <section className="mb-6 grid grid-cols-1 gap-4 px-4 sm:mb-8 sm:grid-cols-2 sm:gap-4 sm:px-4 md:px-6 xl:grid-cols-4">
       {highlights.map((item) => (
         <article
           key={item.title}
-          className="group rounded-2xl sm:rounded-3xl border border-slate-200/80 bg-white/90 p-3 sm:p-5 shadow-[0_20px_50px_rgba(15,23,42,0.06)] backdrop-blur dark:border-white/10 dark:bg-[#101319]/90"
+          className="group flex w-full flex-col items-center rounded-2xl border border-gray-200 bg-white p-6 text-center shadow-[0_0_0_1px_rgba(17,24,39,0.02)] transition-transform duration-200 hover:-translate-y-1 dark:border-white/10 dark:bg-[#101319]/90 sm:items-start sm:rounded-3xl sm:p-5 sm:text-left"
         >
-          <div className="mb-3 sm:mb-4 inline-flex h-11 sm:h-14 w-11 sm:w-14 items-center justify-center rounded-xl sm:rounded-2xl bg-pink-50 text-[#ff3366] transition-transform duration-300 group-hover:-translate-y-0.5 dark:bg-[#ff3366]/10 dark:text-[#ff6b8d]">
+          <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-pink-50 text-[#ff3366] transition-transform duration-300 group-hover:-translate-y-0.5 dark:bg-[#ff3366]/10 dark:text-[#ff6b8d] sm:mb-4 sm:h-14 sm:w-14 sm:rounded-2xl">
             <Icon type={item.icon} />
           </div>
-          <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-white">{item.title}</h3>
-          <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm leading-5 sm:leading-6 text-slate-600 dark:text-slate-300">{item.description}</p>
+          <h3 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white sm:text-lg">
+            {item.title}
+          </h3>
+          <p className="mt-2 max-w-[28ch] text-sm leading-6 text-gray-600 break-words dark:text-slate-300 sm:mt-2 sm:max-w-none sm:text-sm sm:leading-6">
+            {item.description}
+          </p>
         </article>
       ))}
     </section>

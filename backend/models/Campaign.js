@@ -17,9 +17,19 @@ const campaignSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    image: {
+    desktopImage: {
       type: String,
       required: true,
+      trim: true,
+    },
+    mobileImage: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    image: {
+      type: String,
+      trim: true,
     },
     bg: {
       type: String,

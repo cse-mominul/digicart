@@ -12,6 +12,8 @@ const Campaigns = () => {
     subtitle: '',
     cta: '',
     image: '',
+    desktopImage: '',
+    mobileImage: '',
     bg: 'from-pink-500 via-fuchsia-500 to-purple-600',
     isActive: true,
   });
@@ -52,17 +54,22 @@ const Campaigns = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.title || !formData.subtitle || !formData.cta || !formData.image) {
+    if (!formData.title || !formData.subtitle || !formData.cta || !formData.desktopImage || !formData.mobileImage) {
       toast.error('Please fill all required fields');
       return;
     }
 
+    const payload = {
+      ...formData,
+      image: formData.image || formData.desktopImage || formData.mobileImage,
+    };
+
     try {
       if (editingId) {
-        await API.put(`/campaigns/${editingId}`, formData);
+        await API.put(`/campaigns/${editingId}`, payload);
         toast.success('Campaign updated successfully');
       } else {
-        await API.post('/campaigns', formData);
+        await API.post('/campaigns', payload);
         toast.success('Campaign created successfully');
       }
 
@@ -71,6 +78,8 @@ const Campaigns = () => {
         subtitle: '',
         cta: '',
         image: '',
+        desktopImage: '',
+        mobileImage: '',
         bg: 'from-pink-500 via-fuchsia-500 to-purple-600',
         isActive: true,
       });
@@ -84,7 +93,11 @@ const Campaigns = () => {
   };
 
   const handleEdit = (campaign) => {
-    setFormData(campaign);
+    setFormData({
+      ...campaign,
+      desktopImage: campaign.desktopImage || campaign.image || '',
+      mobileImage: campaign.mobileImage || campaign.image || '',
+    });
     setEditingId(campaign._id);
     setShowModal(true);
   };
@@ -110,6 +123,8 @@ const Campaigns = () => {
       subtitle: '',
       cta: '',
       image: '',
+      desktopImage: '',
+      mobileImage: '',
       bg: 'from-pink-500 via-fuchsia-500 to-purple-600',
       isActive: true,
     });
@@ -249,28 +264,71 @@ const Campaigns = () => {
                 />
               </div>
 
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Desktop Image URL *
+                  </label>
+                  <input
+                    type="url"
+                    name="desktopImage"
+                    value={formData.desktopImage}
+                    onChange={handleChange}
+                    placeholder="https://example.com/desktop-banner.jpg"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                    required
+                  />
+                  {formData.desktopImage && (
+                    <div className="mt-2 overflow-hidden rounded-lg border border-gray-200 dark:border-gray-800">
+                      <img
+                        src={formData.desktopImage}
+                        alt="Desktop preview"
+                        className="h-28 w-full object-cover"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Mobile Image URL *
+                  </label>
+                  <input
+                    type="url"
+                    name="mobileImage"
+                    value={formData.mobileImage}
+                    onChange={handleChange}
+                    placeholder="https://example.com/mobile-banner.jpg"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                    required
+                  />
+                  {formData.mobileImage && (
+                    <div className="mt-2 overflow-hidden rounded-lg border border-gray-200 dark:border-gray-800">
+                      <img
+                        src={formData.mobileImage}
+                        alt="Mobile preview"
+                        className="h-28 w-full object-cover"
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Image URL *
+                  Legacy Image URL
                 </label>
                 <input
                   type="url"
                   name="image"
                   value={formData.image}
                   onChange={handleChange}
-                  placeholder="https://example.com/image.jpg"
+                  placeholder="Optional fallback image URL"
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-                  required
                 />
-                {formData.image && (
-                  <div className="mt-2">
-                    <img
-                      src={formData.image}
-                      alt="Preview"
-                      className="h-32 w-32 object-cover rounded-lg"
-                    />
-                  </div>
-                )}
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  This is kept as a fallback for older banner data.
+                </p>
               </div>
 
               <div>

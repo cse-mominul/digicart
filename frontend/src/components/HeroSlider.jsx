@@ -5,6 +5,18 @@ const HeroSlider = () => {
   const [slides, setSlides] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(max-width: 639px)');
+
+    const updateViewport = () => setIsMobile(mediaQuery.matches);
+    updateViewport();
+
+    mediaQuery.addEventListener('change', updateViewport);
+
+    return () => mediaQuery.removeEventListener('change', updateViewport);
+  }, []);
 
   useEffect(() => {
     const fetchCampaigns = async () => {
@@ -34,7 +46,7 @@ const HeroSlider = () => {
 
   if (loading) {
     return (
-      <section className="rounded-2xl overflow-hidden shadow-lg mb-8 bg-white dark:bg-gray-900 h-80 animate-pulse" />
+      <section className="rounded-2xl overflow-hidden shadow-lg mb-8 bg-gray-200 dark:bg-gray-800 h-80 animate-pulse" />
     );
   }
 
@@ -43,40 +55,48 @@ const HeroSlider = () => {
   }
 
   const activeSlide = slides[activeIndex];
+  const activeImage = isMobile
+    ? activeSlide?.mobileImage || activeSlide?.image || activeSlide?.desktopImage
+    : activeSlide?.desktopImage || activeSlide?.image || activeSlide?.mobileImage;
 
   return (
-    <section className="rounded-xl sm:rounded-2xl overflow-hidden shadow-lg mb-6 sm:mb-8 bg-white dark:bg-gray-900 transition-colors max-w-full">
-      <div className={`relative bg-gradient-to-r ${activeSlide.bg}`}>
-        <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-4 sm:gap-6">
-          <div className="p-4 sm:p-6 md:p-8 lg:p-10 text-white order-2 md:order-1">
-            <p className="uppercase tracking-wider text-xs sm:text-sm text-white/80 mb-2">Ongoing Campaign</p>
-            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold leading-tight mb-3">{activeSlide.title}</h2>
-            <p className="text-white/90 text-xs sm:text-sm md:text-base max-w-md line-clamp-2 sm:line-clamp-3">{activeSlide.subtitle}</p>
-            <button className="mt-4 sm:mt-5 bg-white text-gray-900 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full font-semibold text-xs sm:text-sm hover:bg-gray-100 active:scale-95 transition-all">
-              {activeSlide.cta}
-            </button>
-          </div>
-
-          <div className="relative h-40 sm:h-56 md:h-64 lg:h-80 order-1 md:order-2">
-            <img
-              src={activeSlide.image}
-              alt={activeSlide.title}
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-black/10 md:bg-black/20" />
-          </div>
-        </div>
+    <section className="rounded-none sm:rounded-2xl overflow-hidden shadow-lg mb-8 max-w-full -mx-3 sm:mx-0">
+      {/* Mobile - Full width with fixed height and object-fit cover */}
+      <div className="sm:hidden relative h-80 w-full bg-gray-300 dark:bg-gray-700 overflow-hidden">
+        <img
+          src={activeImage || 'https://placehold.co/400x300?text=Banner'}
+          alt={activeSlide?.title || 'Campaign Banner'}
+          className="w-full h-full object-cover object-center"
+          onError={(e) => {
+            console.error('Mobile image failed to load:', e.target.src);
+            e.target.src = 'https://placehold.co/400x300?text=Banner';
+          }}
+        />
       </div>
 
-      <div className="flex items-center justify-center gap-2 py-2 sm:py-3 bg-white dark:bg-gray-900 overflow-x-auto">
+      {/* Desktop - Show Campaign Image with aspect ratio */}
+      <div className="hidden sm:block relative h-80 md:h-96 lg:h-[450px] w-full bg-gray-200 dark:bg-gray-800 overflow-hidden">
+        <img
+          src={activeImage || 'https://placehold.co/1200x400?text=Banner'}
+          alt={activeSlide?.title || 'Campaign Banner'}
+          className="w-full h-full object-cover object-center"
+          onError={(e) => {
+            console.error('Image failed to load:', e.target.src);
+            e.target.src = 'https://placehold.co/1200x400?text=Banner';
+          }}
+        />
+      </div>
+
+      {/* Slide indicators */}
+      <div className="flex items-center justify-center gap-2 py-3 sm:py-4 bg-white dark:bg-gray-900 overflow-x-auto">
         {slides.map((slide, idx) => (
           <button
             key={slide._id || idx}
             onClick={() => setActiveIndex(idx)}
-            className={`h-2 sm:h-2.5 rounded-full transition-all flex-shrink-0 ${
+            className={`rounded-full transition-all flex-shrink-0 ${
               idx === activeIndex
-                ? 'w-6 sm:w-8 bg-pink-500'
-                : 'w-2 sm:w-2.5 bg-gray-300 dark:bg-gray-700 hover:bg-gray-400'
+                ? 'w-3 h-3 bg-pink-500'
+                : 'w-2.5 h-2.5 bg-gray-300 dark:bg-gray-600 hover:bg-gray-400'
             }`}
             aria-label={`Go to slide ${idx + 1}`}
           />

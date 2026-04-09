@@ -29,16 +29,22 @@ exports.getCampaignById = async (req, res) => {
 };
 
 exports.createCampaign = async (req, res) => {
-  const { title, subtitle, cta, image, bg, isActive } = req.body;
+  const { title, subtitle, cta, image, desktopImage, mobileImage, bg, isActive } = req.body;
   try {
-    if (!title ||!subtitle || !cta || !image) {
-      return res.status(400).json({ message: 'All fields required' });
+    const resolvedDesktopImage = desktopImage || image;
+    const resolvedMobileImage = mobileImage || image;
+    const resolvedImage = image || resolvedDesktopImage || resolvedMobileImage;
+
+    if (!title || !subtitle || !cta || !resolvedDesktopImage || !resolvedMobileImage) {
+      return res.status(400).json({ message: 'Title, subtitle, CTA, desktop image, and mobile image are required' });
     }
     const campaign = await Campaign.create({
       title,
       subtitle,
       cta,
-      image,
+      image: resolvedImage,
+      desktopImage: resolvedDesktopImage,
+      mobileImage: resolvedMobileImage,
       bg: bg || 'from-pink-500 via-fuchsia-500 to-purple-600',
       isActive: isActive !== undefined ? isActive : true,
     });
@@ -49,11 +55,26 @@ exports.createCampaign = async (req, res) => {
 };
 
 exports.updateCampaign = async (req, res) => {
-  const { title, subtitle, cta, image, bg, isActive } = req.body;
+  const { title, subtitle, cta, image, desktopImage, mobileImage, bg, isActive } = req.body;
   try {
+    const resolvedDesktopImage = desktopImage || image;
+    const resolvedMobileImage = mobileImage || image;
+    const resolvedImage = image || resolvedDesktopImage || resolvedMobileImage;
+
     const campaign = await Campaign.findByIdAndUpdate(
       req.params.id,
-      { $set: { title, subtitle, cta, image, bg, isActive } },
+      {
+        $set: {
+          title,
+          subtitle,
+          cta,
+          image: resolvedImage,
+          desktopImage: resolvedDesktopImage,
+          mobileImage: resolvedMobileImage,
+          bg,
+          isActive,
+        },
+      },
       { new: true, runValidators: true }
     );
     if (!campaign) return res.status(404).json({ message: 'Campaign not found' });
