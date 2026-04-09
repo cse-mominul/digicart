@@ -382,7 +382,9 @@ const ProductDetails = () => {
           <div className="mt-5 rounded-[20px] border border-slate-200 bg-white p-4 dark:border-white/10 dark:bg-white/5">
             {activeTab === 'description' && (
               <div className="space-y-4">
-                <p className="leading-7 text-slate-600 dark:text-slate-300">{product.description}</p>
+                <p className="leading-7 text-slate-600 dark:text-slate-300 break-words [overflow-wrap:anywhere]">
+                  {product.description}
+                </p>
               </div>
             )}
 

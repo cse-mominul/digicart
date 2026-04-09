@@ -17,7 +17,7 @@ const demoUsers = [
   },
   {
     name: 'John Customer',
-    email: 'john@digicart.com',
+    email: 'user@digicart.com',
     password: 'user123',
     role: 'user',
   },
