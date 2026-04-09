@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { formatPrice } from '../utils/formatPrice';
@@ -25,6 +26,7 @@ const getCountdownParts = (remainingMs) => {
 
 const LimitedTimeDealsSection = ({ products = [], loading = false }) => {
   const trackRef = useRef(null);
+  const navigate = useNavigate();
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
 
@@ -140,7 +142,8 @@ const LimitedTimeDealsSection = ({ products = [], loading = false }) => {
                 <article
                   key={product._id}
                   data-hot-deal-card
-                  className="group w-[74vw] max-w-[250px] shrink-0 snap-start rounded-2xl border border-slate-200 bg-white p-2.5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md sm:w-[220px] sm:max-w-none lg:w-[230px] dark:border-slate-700 dark:bg-[#111827]"
+                  className="group w-[74vw] max-w-[250px] shrink-0 snap-start rounded-2xl border border-slate-200 bg-white p-2.5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md sm:w-[220px] sm:max-w-none lg:w-[230px] dark:border-slate-700 dark:bg-[#111827] cursor-pointer"
+                  onClick={() => navigate(`/product/${product._id}`)}
                 >
                   <div className="relative">
                     <span className="absolute left-1.5 top-1.5 z-10 rounded bg-[#ff3366] px-1.5 py-0.5 text-[9px] font-bold uppercase text-white">
@@ -180,7 +183,10 @@ const LimitedTimeDealsSection = ({ products = [], loading = false }) => {
                     <div className="mt-2 flex items-center gap-2">
                       <button
                         type="button"
-                        onClick={() => handleWishlist(product)}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          handleWishlist(product);
+                        }}
                         className={`inline-flex h-7 w-7 items-center justify-center rounded-full border transition-colors ${
                           inWishlist
                             ? 'border-[#ff3366] bg-[#ff3366] text-white'
@@ -195,7 +201,10 @@ const LimitedTimeDealsSection = ({ products = [], loading = false }) => {
 
                       <button
                         type="button"
-                        onClick={() => handleAddToCart(product)}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          handleAddToCart(product);
+                        }}
                         className="inline-flex min-w-0 flex-1 items-center justify-center gap-1 rounded-full bg-[#0f8f84] px-2 py-1.5 text-[10px] font-semibold text-white transition-colors hover:bg-[#117b72] sm:text-[11px]"
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor">

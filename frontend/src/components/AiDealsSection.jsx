@@ -106,7 +106,8 @@ const AiDealsSection = ({ products = [], loading = false }) => {
             <article
               key={product._id}
               data-deal-card
-              className="group w-[220px] shrink-0 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl sm:w-[230px] dark:border-gray-800 dark:bg-[#1a1a1a]"
+              className="group w-[220px] shrink-0 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl sm:w-[230px] dark:border-gray-800 dark:bg-[#1a1a1a] cursor-pointer"
+              onClick={() => navigate(`/product/${product._id}`)}
             >
               <div className="relative p-2.5">
                 <span className="absolute left-2.5 top-2.5 z-10 rounded-full bg-[#ff3366] px-2 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-white shadow-sm">
@@ -115,7 +116,10 @@ const AiDealsSection = ({ products = [], loading = false }) => {
 
                 <button
                   type="button"
-                  onClick={() => handleWishlist(product)}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    handleWishlist(product);
+                  }}
                   className={`absolute right-3 top-3 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full border transition-colors ${
                     inWishlist
                       ? 'border-[#ff3366] bg-[#ff3366] text-white'
@@ -163,7 +167,10 @@ const AiDealsSection = ({ products = [], loading = false }) => {
                 <div className="mt-3 flex items-center gap-2">
                   <button
                     type="button"
-                    onClick={() => navigate(`/product/${product._id}`)}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      navigate(`/product/${product._id}`);
+                    }}
                     className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 bg-white text-[#ff3366] transition-colors hover:border-[#ff3366] hover:bg-pink-50 dark:border-gray-700 dark:bg-gray-900 dark:hover:bg-[#ff3366]/10"
                     aria-label="View product"
                   >
@@ -174,7 +181,10 @@ const AiDealsSection = ({ products = [], loading = false }) => {
 
                   <button
                     type="button"
-                    onClick={() => handleAddToCart(product)}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      handleAddToCart(product);
+                    }}
                     className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-[#0f8f84] px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-[#117b72]"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">

@@ -64,7 +64,8 @@ const NewLaunchProductsSection = ({ products = [], loading = false }) => {
             <article
               key={product.id || product._id || index}
               data-launch-card
-              className="group w-[78vw] max-w-[245px] shrink-0 rounded-[24px] border border-white/10 bg-[rgba(255,255,255,0.06)] p-2.5 shadow-[0_12px_35px_rgba(2,6,23,0.35)] backdrop-blur-sm transition-transform hover:-translate-y-1 sm:w-[220px] sm:max-w-none sm:rounded-[28px] sm:p-3"
+              className="group w-[78vw] max-w-[245px] shrink-0 rounded-[24px] border border-white/10 bg-[rgba(255,255,255,0.06)] p-2.5 shadow-[0_12px_35px_rgba(2,6,23,0.35)] backdrop-blur-sm transition-transform hover:-translate-y-1 sm:w-[220px] sm:max-w-none sm:rounded-[28px] sm:p-3 cursor-pointer"
+              onClick={() => navigate(`/product/${product._id}`)}
             >
               <div className="relative mb-3 flex h-40 items-center justify-center rounded-[18px] bg-white/90 p-3 sm:h-48 sm:rounded-[22px] sm:p-4">
                 <img
@@ -91,10 +92,25 @@ const NewLaunchProductsSection = ({ products = [], loading = false }) => {
                 </div>
 
                 <div className="flex items-center gap-2 pt-3">
-                  <button className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 text-white/70 transition-colors hover:border-[#ff3366] hover:bg-[#ff3366]/15 hover:text-[#ff3366]">
+                  <button
+                    type="button"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      navigate(`/product/${product._id}`);
+                    }}
+                    className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 text-white/70 transition-colors hover:border-[#ff3366] hover:bg-[#ff3366]/15 hover:text-[#ff3366]"
+                    aria-label="View product"
+                  >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
                   </button>
-                  <button className="flex flex-1 items-center justify-center gap-1.5 rounded-full bg-[#ff3366] py-2 text-[11px] font-bold text-white transition-colors hover:bg-[#e11d59]">
+                  <button
+                    type="button"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      navigate(`/product/${product._id}`);
+                    }}
+                    className="flex flex-1 items-center justify-center gap-1.5 rounded-full bg-[#ff3366] py-2 text-[11px] font-bold text-white transition-colors hover:bg-[#e11d59]"
+                  >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
                     Add to Cart
                   </button>
