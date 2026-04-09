@@ -1,4 +1,5 @@
 const Product = require('../models/Product');
+const Order = require('../models/Order');
 
 const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
@@ -63,6 +64,53 @@ const getProductById = async (req, res) => {
   }
 };
 
+// @desc  Get top selling products
+// @route GET /api/products/top-selling
+const getTopSellingProducts = async (req, res) => {
+  try {
+    const limit = Math.min(20, Math.max(1, Number.parseInt(req.query.limit, 10) || 20));
+
+    const products = await Order.aggregate([
+      { $unwind: '$items' },
+      {
+        $group: {
+          _id: '$items.product',
+          soldCount: { $sum: '$items.quantity' },
+        },
+      },
+      { $sort: { soldCount: -1 } },
+      { $limit: limit },
+      {
+        $lookup: {
+          from: Product.collection.name,
+          localField: '_id',
+          foreignField: '_id',
+          as: 'product',
+        },
+      },
+      { $unwind: '$product' },
+      {
+        $project: {
+          _id: '$product._id',
+          name: '$product.name',
+          description: '$product.description',
+          price: '$product.price',
+          image: '$product.image',
+          category: '$product.category',
+          countInStock: '$product.countInStock',
+          stock: '$product.stock',
+          createdAt: '$product.createdAt',
+          soldCount: 1,
+        },
+      },
+    ]);
+
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // @desc  Create a product (admin only)
 // @route POST /api/products
 const createProduct = async (req, res) => {
@@ -107,4 +155,4 @@ const deleteProduct = async (req, res) => {
   }
 };
 
-module.exports = { getProducts, getProductById, createProduct, updateProduct, deleteProduct };
+module.exports = { getProducts, getProductById, getTopSellingProducts, createProduct, updateProduct, deleteProduct };

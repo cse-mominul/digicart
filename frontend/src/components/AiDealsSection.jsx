@@ -7,17 +7,37 @@ import { formatPrice } from '../utils/formatPrice';
 
 const discountOptions = [15, 20, 25, 30, 35];
 
-const AiDealsSection = ({ products = [] }) => {
+const AiDealsSection = ({ products = [], loading = false }) => {
   const navigate = useNavigate();
   const trackRef = useRef(null);
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
 
+  if (loading) {
+    return (
+      <section className="relative mb-8 overflow-hidden rounded-[30px] bg-[linear-gradient(180deg,#a8e86b_0%,#a0e463_100%)] px-4 pb-5 pt-5 shadow-[0_24px_70px_rgba(15,23,42,0.14)] sm:px-6 sm:pb-6 sm:pt-6 dark:bg-[linear-gradient(180deg,#164a43_0%,#0f3b36_100%)]">
+        <div className="mx-auto max-w-fit rounded-b-[32px] bg-white px-6 pb-4 pt-3 text-center shadow-[0_14px_35px_rgba(15,23,42,0.08)] dark:bg-[#101319] sm:px-8 sm:pb-5">
+          <div className="h-6 w-64 rounded-full bg-gray-200 dark:bg-gray-800" />
+          <div className="mx-auto mt-2 h-3 w-40 rounded-full bg-gray-200 dark:bg-gray-800" />
+        </div>
+        <div className="mt-5 flex items-center justify-between gap-3">
+          <div className="h-9 w-9 rounded-full bg-white/70 dark:bg-white/10" />
+          <div className="flex-1 flex gap-4 overflow-hidden">
+            {[...Array(4)].map((_, index) => (
+              <div key={index} className="h-[330px] w-[210px] shrink-0 rounded-2xl bg-white/80 dark:bg-[#1a1a1a]/80 animate-pulse" />
+            ))}
+          </div>
+          <div className="h-9 w-9 rounded-full bg-white/70 dark:bg-white/10" />
+        </div>
+      </section>
+    );
+  }
+
   if (!products.length) {
     return null;
   }
 
-  const dealItems = products.slice(0, 8);
+  const dealItems = products.slice(0, 20);
 
   const scrollTrack = (direction) => {
     if (!trackRef.current) return;

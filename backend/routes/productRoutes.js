@@ -3,6 +3,7 @@ const router = express.Router();
 const {
   getProducts,
   getProductById,
+  getTopSellingProducts,
   createProduct,
   updateProduct,
   deleteProduct,
@@ -11,6 +12,7 @@ const { protect } = require('../middleware/authMiddleware');
 const requireAdmin = require('../middleware/requireAdmin');
 
 router.get('/', getProducts);
+router.get('/top-selling', getTopSellingProducts);
 router.get('/:id', getProductById);
 router.post('/', protect, requireAdmin, createProduct);
 router.put('/:id', protect, requireAdmin, updateProduct);

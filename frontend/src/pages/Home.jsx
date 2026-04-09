@@ -9,7 +9,9 @@ import ProductCard from '../components/ProductCard';
 const Home = () => {
   const { categoryName } = useParams();
   const [products, setProducts] = useState([]);
+  const [topSellingProducts, setTopSellingProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [topSellingLoading, setTopSellingLoading] = useState(true);
   const [category, setCategory] = useState('All');
 
   useEffect(() => {
@@ -40,6 +42,22 @@ const Home = () => {
     fetchProducts();
   }, []);
 
+  useEffect(() => {
+    const fetchTopSellingProducts = async () => {
+      try {
+        const { data } = await API.get('/products/top-selling?limit=20');
+        setTopSellingProducts(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error('Failed to fetch top selling products:', error);
+        setTopSellingProducts([]);
+      } finally {
+        setTopSellingLoading(false);
+      }
+    };
+
+    fetchTopSellingProducts();
+  }, []);
+
   const filtered = products.filter((p) => category === 'All' || p.category === category);
 
   return (
@@ -48,7 +66,7 @@ const Home = () => {
 
       <AiHighlights />
 
-      <AiDealsSection products={products} />
+      <AiDealsSection products={topSellingProducts} loading={topSellingLoading} />
 
       <div className="mb-4 flex flex-col items-center text-center">
         <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">Featured Products</h3>
