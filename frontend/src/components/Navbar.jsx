@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import CartDrawer from './CartDrawer';
+import API from '../api/axios';
 
 const categoryLinks = ['All', 'Laptop', 'Phone', 'Smart Phone'];
 const mobileMenuItems = [
@@ -32,7 +33,10 @@ const Navbar = () => {
   const [accountOpen, setAccountOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const accountRef = useRef(null);
+  const searchRef = useRef(null);
 
   const firstName = user?.name?.trim()?.split(' ')[0] || 'My Account';
 
@@ -40,12 +44,43 @@ const Navbar = () => {
     if (e.key === 'Enter' && searchQuery.trim()) {
       navigate(`/products/all?search=${encodeURIComponent(searchQuery)}`);
       setSearchQuery('');
+      setSuggestions([]);
+      setShowSuggestions(false);
     }
   };
 
   const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
+    const query = e.target.value;
+    setSearchQuery(query);
+    setShowSuggestions(true);
   };
+
+  const handleSuggestionClick = (product) => {
+    navigate(`/product/${product._id}`);
+    setSearchQuery('');
+    setSuggestions([]);
+    setShowSuggestions(false);
+  };
+
+  // Debounced search for suggestions
+  useEffect(() => {
+    const timer = setTimeout(async () => {
+      if (searchQuery.trim().length > 0) {
+        try {
+          const response = await API.get(`/products?search=${encodeURIComponent(searchQuery)}&limit=5`);
+          const products = Array.isArray(response.data) ? response.data : response.data.products || [];
+          setSuggestions(products.slice(0, 5));
+        } catch (error) {
+          console.error('Error fetching suggestions:', error);
+          setSuggestions([]);
+        }
+      } else {
+        setSuggestions([]);
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   useEffect(() => {
     if (darkMode) {
@@ -61,6 +96,9 @@ const Navbar = () => {
     const handleClickOutside = (event) => {
       if (accountRef.current && !accountRef.current.contains(event.target)) {
         setAccountOpen(false);
+      }
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setShowSuggestions(false);
       }
     };
 
@@ -148,7 +186,7 @@ const Navbar = () => {
             </div>
 
             <div className="mt-3">
-              <div className="relative w-full">
+              <div className="relative w-full" ref={searchRef}>
                 <input
                   type="text"
                   placeholder="Search for the Items"
@@ -166,6 +204,28 @@ const Navbar = () => {
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M21 21l-5.2-5.2m0 0A7.5 7.5 0 105.2 5.2a7.5 7.5 0 0010.6 10.6z" />
                 </svg>
+
+                {showSuggestions && suggestions.length > 0 && (
+                  <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50">
+                    {suggestions.map((product) => (
+                      <button
+                        key={product._id}
+                        onClick={() => handleSuggestionClick(product)}
+                        className="w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-800 border-b border-gray-100 dark:border-gray-700 last:border-0 flex items-center gap-3 transition-colors"
+                      >
+                        <img
+                          src={product.image || 'https://placehold.co/40x40?text=Product'}
+                          alt={product.name}
+                          className="w-10 h-10 object-cover rounded"
+                        />
+                        <div className="flex-1">
+                          <p className="text-sm font-medium text-gray-800 dark:text-gray-100 truncate">{product.name}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">${product.price}</p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -177,7 +237,7 @@ const Navbar = () => {
             </Link>
 
             <div className="hidden sm:flex flex-1 max-w-3xl mx-auto">
-              <div className="relative w-full">
+              <div className="relative w-full" ref={searchRef}>
                 <input
                   type="text"
                   placeholder="Search for products..."
@@ -195,6 +255,28 @@ const Navbar = () => {
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-5.2-5.2m0 0A7.5 7.5 0 105.2 5.2a7.5 7.5 0 0010.6 10.6z" />
                 </svg>
+
+                {showSuggestions && suggestions.length > 0 && (
+                  <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50">
+                    {suggestions.map((product) => (
+                      <button
+                        key={product._id}
+                        onClick={() => handleSuggestionClick(product)}
+                        className="w-full px-4 py-2 text-left hover:bg-gray-50 dark:hover:bg-gray-800 border-b border-gray-100 dark:border-gray-700 last:border-0 flex items-center gap-3 transition-colors"
+                      >
+                        <img
+                          src={product.image || 'https://placehold.co/40x40?text=Product'}
+                          alt={product.name}
+                          className="w-10 h-10 object-cover rounded"
+                        />
+                        <div className="flex-1">
+                          <p className="text-sm font-medium text-gray-800 dark:text-gray-100 truncate">{product.name}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">${product.price}</p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 
