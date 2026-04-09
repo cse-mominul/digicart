@@ -17,6 +17,7 @@ const Settings = () => {
     siteSlogan: 'Rebranded Sellzy',
     footerCopyrightText: '© 2026 DigiCart. All rights reserved.',
     siteDescription: 'DigiCart helps modern shoppers discover top-rated products at honest prices, fast delivery, and smooth checkout experiences.',
+    siteWebsiteUrl: 'www.digicart.com',
   });
   const [loading, setLoading] = useState(true);
   const [savingSettings, setSavingSettings] = useState(false);
@@ -38,6 +39,7 @@ const Settings = () => {
           siteSlogan: data?.siteSlogan || 'Rebranded Sellzy',
           footerCopyrightText: data?.footerCopyrightText || '© 2026 DigiCart. All rights reserved.',
           siteDescription: data?.siteDescription || 'DigiCart helps modern shoppers discover top-rated products at honest prices, fast delivery, and smooth checkout experiences.',
+          siteWebsiteUrl: data?.siteWebsiteUrl || 'www.digicart.com',
         });
       } catch (error) {
         toast.error(error.response?.data?.message || 'Failed to load settings');
@@ -66,6 +68,7 @@ const Settings = () => {
       siteSlogan: settingsForm.siteSlogan,
       footerCopyrightText: settingsForm.footerCopyrightText,
       siteDescription: settingsForm.siteDescription,
+      siteWebsiteUrl: settingsForm.siteWebsiteUrl,
     });
 
     setSettingsForm({
@@ -81,6 +84,7 @@ const Settings = () => {
       siteSlogan: data?.siteSlogan || settingsForm.siteSlogan,
       footerCopyrightText: data?.footerCopyrightText || settingsForm.footerCopyrightText,
       siteDescription: data?.siteDescription || settingsForm.siteDescription,
+      siteWebsiteUrl: data?.siteWebsiteUrl || settingsForm.siteWebsiteUrl,
     });
 
     toast.success(successMessage);
@@ -362,6 +366,19 @@ const Settings = () => {
                     }
                     placeholder="Short brand description shown in footer"
                     className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink-500 resize-none"
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-sm text-gray-300 mb-1">Website URL</label>
+                  <input
+                    type="text"
+                    value={settingsForm.siteWebsiteUrl}
+                    onChange={(event) =>
+                      setSettingsForm((prev) => ({ ...prev, siteWebsiteUrl: event.target.value }))
+                    }
+                    placeholder="www.digicart.com"
+                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink-500"
                   />
                 </div>
 

@@ -62,6 +62,11 @@ const settingSchema = new mongoose.Schema(
       default: 'DigiCart helps modern shoppers discover top-rated products at honest prices, fast delivery, and smooth checkout experiences.',
       trim: true,
     },
+    siteWebsiteUrl: {
+      type: String,
+      default: 'www.digicart.com',
+      trim: true,
+    },
   },
   {
     timestamps: true,

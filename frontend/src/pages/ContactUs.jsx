@@ -1,48 +1,75 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-
-const contactCards = [
-  {
-    title: 'Email',
-    value: 'support@digicart.com',
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-6 w-6">
-        <rect x="3" y="5" width="18" height="14" rx="3" />
-        <path d="M4 7l8 6 8-6" />
-      </svg>
-    ),
-  },
-  {
-    title: 'Phone',
-    value: '+1 (555) 123-4567',
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-6 w-6">
-        <path d="M7.5 4.5h1.2c.7 0 1.3.4 1.6 1l1.1 2.5a1.8 1.8 0 0 1-.4 2L9.6 11.4a14 14 0 0 0 3 3l1.4-1.4a1.8 1.8 0 0 1 2-.4l2.5 1.1c.6.3 1 .9 1 1.6v1.2a2.2 2.2 0 0 1-2.2 2.2C10.6 19.7 4.3 13.4 4.3 5.7A1.2 1.2 0 0 1 5.5 4.5Z" />
-      </svg>
-    ),
-  },
-  {
-    title: 'Address',
-    value: '125 Market Street, Gulshan Avenue, Dhaka 1212',
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-6 w-6">
-        <path d="M12 21s6-5.2 6-11a6 6 0 1 0-12 0c0 5.8 6 11 6 11Z" />
-        <circle cx="12" cy="10" r="2.2" />
-      </svg>
-    ),
-  },
-  {
-    title: 'Website',
-    value: 'www.digicart.com',
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-6 w-6">
-        <circle cx="12" cy="12" r="9" />
-        <path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18" />
-      </svg>
-    ),
-  },
-];
+import API from '../api/axios';
 
 const ContactUs = () => {
+  const [contactInfo, setContactInfo] = useState({
+    contactAddress: '125 Market Street, Gulshan Avenue, Dhaka 1212',
+    contactPhone: '+880 1700-123456',
+    supportEmail: 'support@digicart.com',
+    siteWebsiteUrl: 'www.digicart.com',
+  });
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const { data } = await API.get('/settings');
+        setContactInfo({
+          contactAddress: data?.contactAddress || '125 Market Street, Gulshan Avenue, Dhaka 1212',
+          contactPhone: data?.contactPhone || '+880 1700-123456',
+          supportEmail: data?.supportEmail || 'support@digicart.com',
+          siteWebsiteUrl: data?.siteWebsiteUrl || 'www.digicart.com',
+        });
+      } catch (error) {
+        console.error('Failed to fetch contact settings:', error);
+      }
+    };
+
+    fetchSettings();
+  }, []);
+
+  const contactCards = [
+    {
+      title: 'Email',
+      value: contactInfo.supportEmail,
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-6 w-6">
+          <rect x="3" y="5" width="18" height="14" rx="3" />
+          <path d="M4 7l8 6 8-6" />
+        </svg>
+      ),
+    },
+    {
+      title: 'Phone',
+      value: contactInfo.contactPhone,
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-6 w-6">
+          <path d="M7.5 4.5h1.2c.7 0 1.3.4 1.6 1l1.1 2.5a1.8 1.8 0 0 1-.4 2L9.6 11.4a14 14 0 0 0 3 3l1.4-1.4a1.8 1.8 0 0 1 2-.4l2.5 1.1c.6.3 1 .9 1 1.6v1.2a2.2 2.2 0 0 1-2.2 2.2C10.6 19.7 4.3 13.4 4.3 5.7A1.2 1.2 0 0 1 5.5 4.5Z" />
+        </svg>
+      ),
+    },
+    {
+      title: 'Address',
+      value: contactInfo.contactAddress,
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-6 w-6">
+          <path d="M12 21s6-5.2 6-11a6 6 0 1 0-12 0c0 5.8 6 11 6 11Z" />
+          <circle cx="12" cy="10" r="2.2" />
+        </svg>
+      ),
+    },
+    {
+      title: 'Website',
+      value: contactInfo.siteWebsiteUrl,
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-6 w-6">
+          <circle cx="12" cy="12" r="9" />
+          <path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18" />
+        </svg>
+      ),
+    },
+  ];
+
   return (
     <main className="bg-white text-gray-900">
       <section className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
