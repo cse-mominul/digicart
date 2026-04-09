@@ -52,6 +52,11 @@ const settingSchema = new mongoose.Schema(
       default: 'Rebranded Sellzy',
       trim: true,
     },
+    footerCopyrightText: {
+      type: String,
+      default: '© 2026 DigiCart. All rights reserved.',
+      trim: true,
+    },
   },
   {
     timestamps: true,

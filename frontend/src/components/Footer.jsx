@@ -28,6 +28,7 @@ const Footer = () => {
     siteTitle: 'DigiCart',
     siteLogoUrl: '',
     siteSlogan: 'Rebranded Sellzy',
+    footerCopyrightText: '© 2026 DigiCart. All rights reserved.',
   });
 
   useEffect(() => {
@@ -64,6 +65,7 @@ const Footer = () => {
           siteTitle: data?.siteTitle || 'DigiCart',
           siteLogoUrl: data?.siteLogoUrl || '',
           siteSlogan: data?.siteSlogan || 'Rebranded Sellzy',
+          footerCopyrightText: data?.footerCopyrightText || '© 2026 DigiCart. All rights reserved.',
         });
       } catch (error) {
         console.error('Failed to fetch footer contact settings:', error);
@@ -207,7 +209,7 @@ const Footer = () => {
           <div className="grid gap-3 md:grid-cols-3 md:items-center">
             <div className="hidden md:block" />
 
-            <p className="text-center text-sm text-gray-400">© 2026 DigiCart. All rights reserved.</p>
+            <p className="text-center text-sm text-gray-400">{siteBranding.footerCopyrightText}</p>
 
             <div className="flex items-center justify-center gap-4 text-sm md:justify-end">
               <Link to="/terms" className="text-gray-400 transition-colors hover:text-white">

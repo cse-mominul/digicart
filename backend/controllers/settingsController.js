@@ -15,6 +15,7 @@ const ensureDefaultSettings = async () => {
       siteLogoUrl: '',
       faviconUrl: '',
       siteSlogan: 'Rebranded Sellzy',
+      footerCopyrightText: '© 2026 DigiCart. All rights reserved.',
     });
   }
 
@@ -46,6 +47,7 @@ const updateSettings = async (req, res) => {
     siteLogoUrl,
     faviconUrl,
     siteSlogan,
+    footerCopyrightText,
   } = req.body;
 
   const insideCharge = Number(insideDhakaCharge);
@@ -94,6 +96,10 @@ const updateSettings = async (req, res) => {
       typeof siteSlogan === 'string' && siteSlogan.trim()
         ? siteSlogan.trim()
         : existingSettings.siteSlogan || 'Rebranded Sellzy';
+    const resolvedFooterCopyrightText =
+      typeof footerCopyrightText === 'string' && footerCopyrightText.trim()
+        ? footerCopyrightText.trim()
+        : existingSettings.footerCopyrightText || '© 2026 DigiCart. All rights reserved.';
 
     if (!resolvedContactAddress) {
       return res.status(400).json({ message: 'Contact address is required' });
@@ -128,6 +134,7 @@ const updateSettings = async (req, res) => {
         siteLogoUrl: resolvedSiteLogoUrl,
         faviconUrl: resolvedFaviconUrl,
         siteSlogan: resolvedSiteSlogan,
+        footerCopyrightText: resolvedFooterCopyrightText,
       },
       {
         new: true,

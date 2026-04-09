@@ -15,6 +15,7 @@ const Settings = () => {
     siteLogoUrl: '',
     faviconUrl: '',
     siteSlogan: 'Rebranded Sellzy',
+    footerCopyrightText: '© 2026 DigiCart. All rights reserved.',
   });
   const [loading, setLoading] = useState(true);
   const [savingSettings, setSavingSettings] = useState(false);
@@ -34,6 +35,7 @@ const Settings = () => {
           siteLogoUrl: data?.siteLogoUrl || '',
           faviconUrl: data?.faviconUrl || '',
           siteSlogan: data?.siteSlogan || 'Rebranded Sellzy',
+          footerCopyrightText: data?.footerCopyrightText || '© 2026 DigiCart. All rights reserved.',
         });
       } catch (error) {
         toast.error(error.response?.data?.message || 'Failed to load settings');
@@ -60,6 +62,7 @@ const Settings = () => {
       siteLogoUrl: settingsForm.siteLogoUrl,
       faviconUrl: settingsForm.faviconUrl,
       siteSlogan: settingsForm.siteSlogan,
+      footerCopyrightText: settingsForm.footerCopyrightText,
     });
 
     setSettingsForm({
@@ -73,6 +76,7 @@ const Settings = () => {
       siteLogoUrl: data?.siteLogoUrl || settingsForm.siteLogoUrl,
       faviconUrl: data?.faviconUrl || settingsForm.faviconUrl,
       siteSlogan: data?.siteSlogan || settingsForm.siteSlogan,
+      footerCopyrightText: data?.footerCopyrightText || settingsForm.footerCopyrightText,
     });
 
     toast.success(successMessage);
@@ -327,6 +331,19 @@ const Settings = () => {
                       setSettingsForm((prev) => ({ ...prev, siteSlogan: event.target.value }))
                     }
                     placeholder="Your brand tagline"
+                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-sm text-gray-300 mb-1">Footer Copyright Text</label>
+                  <input
+                    type="text"
+                    value={settingsForm.footerCopyrightText}
+                    onChange={(event) =>
+                      setSettingsForm((prev) => ({ ...prev, footerCopyrightText: event.target.value }))
+                    }
+                    placeholder="© 2026 DigiCart. All rights reserved."
                     className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink-500"
                   />
                 </div>
