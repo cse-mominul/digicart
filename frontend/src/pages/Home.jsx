@@ -5,6 +5,7 @@ import HeroSlider from '../components/HeroSlider';
 import AiHighlights from '../components/AiHighlights';
 import AiDealsSection from '../components/AiDealsSection';
 import NewLaunchProductsSection from '../components/NewLaunchProductsSection';
+import LimitedTimeDealsSection from '../components/LimitedTimeDealsSection';
 import ProductCard from '../components/ProductCard';
 
 const Home = () => {
@@ -70,6 +71,8 @@ const Home = () => {
       <AiDealsSection products={topSellingProducts} loading={topSellingLoading} />
 
       <NewLaunchProductsSection products={products} loading={loading} />
+
+      <LimitedTimeDealsSection products={topSellingProducts} loading={topSellingLoading} />
 
       <div className="mb-4 flex flex-col items-center text-center">
         <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">Featured Products</h3>
