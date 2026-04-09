@@ -17,7 +17,7 @@ const navItems = [
   { id: 'dashboard', label: 'Dashboard', to: '/account/dashboard', icon: 'dashboard' },
   { id: 'loyalty', label: 'Loyalty Program', to: '#', icon: 'star' },
   { id: 'vouchers', label: 'E-Vouchers', to: '#', icon: 'ticket' },
-  { id: 'orders', label: 'Orders', to: '/my-orders', icon: 'box' },
+  { id: 'orders', label: 'Orders', to: '/account/orders', icon: 'box' },
     { id: 'address', label: 'Address', to: '/account/addresses', icon: 'location' },
   { id: 'details', label: 'Account Details', to: '/account/profile', icon: 'user' },
   { id: 'logout', label: 'Logout', to: '/login', icon: 'logout' },
@@ -87,7 +87,7 @@ const AccountDashboard = () => {
   const [addresses] = useState(parseAddresses);
 
   const activeItem = useMemo(() => {
-    if (location.pathname === '/my-orders') return 'orders';
+    if (location.pathname === '/account/orders') return 'orders';
     if (location.pathname === '/account/profile') return 'details';
     if (location.pathname === '/account/dashboard') return 'address';
     return 'dashboard';

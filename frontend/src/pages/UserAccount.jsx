@@ -9,18 +9,11 @@ import { formatPrice } from '../utils/formatPrice';
 
 const ADDRESS_STORAGE_KEY = 'digicart_saved_addresses';
 const WISHLIST_ITEMS_PER_PAGE = 6;
-
-const statusColors = {
-  Pending: 'bg-yellow-100 text-yellow-800',
-  Processing: 'bg-blue-100 text-blue-800',
-  Shipped: 'bg-indigo-100 text-indigo-800',
-  Delivered: 'bg-green-100 text-green-800',
-  Cancelled: 'bg-red-100 text-red-800',
-};
+const ORDER_FILTERS = ['All', 'Processing', 'Delivering', 'Completed', 'Cancelled'];
 
 const navItems = [
   { id: 'dashboard', label: 'Dashboard', to: '/account/dashboard', icon: 'dashboard' },
-  { id: 'orders', label: 'Orders', to: '/my-orders', icon: 'box' },
+  { id: 'orders', label: 'Orders', to: '/account/orders', icon: 'box' },
     { id: 'wishlist', label: 'Wishlist', to: '/account/wishlist', icon: 'heart' },
   { id: 'address', label: 'My Address', to: '/account/addresses', icon: 'location' },
   { id: 'profile', label: 'My Account', to: '/account/profile', icon: 'user' },
@@ -107,6 +100,7 @@ const UserAccount = () => {
 
   const [orders, setOrders] = useState([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
+  const [activeOrderFilter, setActiveOrderFilter] = useState('All');
 
   const [addresses, setAddresses] = useState(getStoredAddresses);
   const [addressForm, setAddressForm] = useState(emptyAddressForm);
@@ -172,6 +166,41 @@ const UserAccount = () => {
     return [1, '...', wishlistPage - 1, wishlistPage, wishlistPage + 1, '...', totalWishlistPages];
   };
 
+  const normalizeOrderStatus = (status) => {
+    const rawStatus = String(status || '').toLowerCase();
+
+    if (rawStatus === 'cancelled' || rawStatus === 'canceled') return 'Cancelled';
+    if (rawStatus === 'delivered' || rawStatus === 'completed') return 'Completed';
+    if (rawStatus === 'shipped' || rawStatus === 'delivering' || rawStatus === 'out for delivery') return 'Delivering';
+    if (rawStatus === 'processing' || rawStatus === 'pending') return 'Processing';
+
+    return 'Processing';
+  };
+
+  const getOrderBadgeClasses = (status) => {
+    if (status === 'Cancelled') {
+      return 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300';
+    }
+
+    if (status === 'Completed') {
+      return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300';
+    }
+
+    if (status === 'Delivering') {
+      return 'bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300';
+    }
+
+    return 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300';
+  };
+
+  const filteredOrders = useMemo(() => {
+    if (activeOrderFilter === 'All') {
+      return orders;
+    }
+
+    return orders.filter((order) => normalizeOrderStatus(order.status) === activeOrderFilter);
+  }, [activeOrderFilter, orders]);
+
   const handleProfileSave = (e) => {
     e.preventDefault();
 
@@ -235,6 +264,26 @@ const UserAccount = () => {
   const handleAddToCart = (product) => {
     addToCart(product);
     toast.success(`${product.name} added to cart`);
+  };
+
+  const handleOrderAgain = (order) => {
+    const orderItems = Array.isArray(order?.orderItems) ? order.orderItems : [];
+
+    if (orderItems.length === 0) {
+      toast.error('No order items found to reorder');
+      return;
+    }
+
+    orderItems.forEach((item) => {
+      const quantity = Number(item.qty || item.quantity || 1);
+      addToCart({ ...item, quantity });
+    });
+
+    toast.success('Items added to cart');
+  };
+
+  const handleViewOrderDetails = () => {
+    toast('Order details view coming soon');
   };
 
   const handleNavClick = (item) => {
@@ -347,31 +396,127 @@ const UserAccount = () => {
 
           {section === 'orders' && (
             <div className="rounded-3xl border border-gray-100 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900 sm:p-6 min-h-[460px]">
-              <h1 className="mb-6 text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">My Orders</h1>
+              <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <h1 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">My Orders</h1>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Track, review, and reorder from your latest purchases.</p>
+              </div>
+
+              <div className="mb-6 flex flex-wrap gap-2">
+                {ORDER_FILTERS.map((filter) => {
+                  const isActive = activeOrderFilter === filter;
+
+                  return (
+                    <button
+                      key={filter}
+                      type="button"
+                      onClick={() => setActiveOrderFilter(filter)}
+                      className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
+                        isActive
+                          ? 'bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900'
+                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+                      }`}
+                    >
+                      {filter}
+                    </button>
+                  );
+                })}
+              </div>
+
               {ordersLoading ? (
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {[...Array(3)].map((_, index) => (
-                    <div key={index} className="h-24 animate-pulse rounded-xl bg-gray-100 dark:bg-gray-800" />
+                    <div key={index} className="h-44 animate-pulse rounded-2xl bg-gray-100 dark:bg-gray-800" />
                   ))}
                 </div>
-              ) : orders.length === 0 ? (
+              ) : filteredOrders.length === 0 ? (
                 <div className="flex h-[300px] items-center justify-center text-center">
-                  <p className="text-gray-500 dark:text-gray-400">No orders yet.</p>
+                  <p className="text-gray-500 dark:text-gray-400">
+                    {orders.length === 0 ? 'No orders yet.' : `No ${activeOrderFilter.toLowerCase()} orders found.`}
+                  </p>
                 </div>
               ) : (
-                <div className="space-y-3">
-                  {orders.map((order) => (
-                    <div key={order._id} className="rounded-xl border border-gray-200 p-4 dark:border-gray-700">
-                      <div className="mb-2 flex items-center justify-between gap-3">
-                        <p className="text-xs text-gray-500 dark:text-gray-400">{order._id}</p>
-                        <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${statusColors[order.status] || 'bg-gray-100 text-gray-700'}`}>
-                          {order.status}
-                        </span>
-                      </div>
-                      <p className="text-sm text-gray-600 dark:text-gray-300">{new Date(order.createdAt).toLocaleDateString()}</p>
-                      <p className="mt-1 text-sm font-semibold text-gray-900 dark:text-white">Total: {formatPrice(order.totalAmount)}</p>
-                    </div>
-                  ))}
+                <div className="space-y-6">
+                  {filteredOrders.map((order) => {
+                    const normalizedStatus = normalizeOrderStatus(order.status);
+                    const orderItems = Array.isArray(order.orderItems) ? order.orderItems.length : 0;
+                    const deliveryText =
+                      order?.shippingAddress?.city || order?.shippingAddress?.address || 'Standard Delivery';
+                    const isPaid = Boolean(order.isPaid || String(order?.paymentStatus || '').toLowerCase() === 'paid');
+
+                    return (
+                      <article
+                        key={order._id}
+                        className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-[#1a1a1a]"
+                      >
+                        <div className="mb-4 flex items-center justify-between gap-3 border-b border-gray-100 pb-4 dark:border-gray-700">
+                          <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">Order ID: #{order._id}</p>
+                          <span className={`rounded-full px-3 py-1 text-xs font-semibold ${getOrderBadgeClasses(normalizedStatus)}`}>
+                            {normalizedStatus}
+                          </span>
+                        </div>
+
+                        <div className="space-y-3 text-sm text-gray-600 dark:text-gray-300">
+                          <div className="flex items-center gap-3">
+                            <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300">
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M8 7V3m8 4V3m-9 8h10m-13 8h16a1 1 0 001-1V7a2 2 0 00-2-2H5a2 2 0 00-2 2v11a1 1 0 001 1z" />
+                              </svg>
+                            </span>
+                            <p>{new Date(order.createdAt).toLocaleDateString()}</p>
+                          </div>
+
+                          <div className="flex items-center gap-3">
+                            <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300">
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10" />
+                              </svg>
+                            </span>
+                            <p>{orderItems} item(s)</p>
+                          </div>
+
+                          <div className="flex items-center gap-3">
+                            <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300">
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 17a2 2 0 100 4 2 2 0 000-4zm10 0a2 2 0 100 4 2 2 0 000-4zM1 1h4l2.68 12.39A2 2 0 009.64 15H19a2 2 0 001.95-1.57L23 6H6" />
+                              </svg>
+                            </span>
+                            <p>{deliveryText}</p>
+                          </div>
+
+                          <div className="flex items-center gap-3">
+                            <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300">
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M17 9V7a5 5 0 00-10 0v2m-2 0h14a1 1 0 011 1v10a1 1 0 01-1 1H5a1 1 0 01-1-1V10a1 1 0 011-1z" />
+                              </svg>
+                            </span>
+                            <p>
+                              Amount Payable: <span className="font-semibold text-gray-900 dark:text-gray-100">{formatPrice(order.totalAmount)}</span>{' '}
+                              <span className={isPaid ? 'text-teal-500' : 'text-amber-500'}>
+                                ({isPaid ? 'Paid' : 'Unpaid'})
+                              </span>
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="mt-5 flex flex-col gap-3 border-t border-gray-100 pt-4 sm:flex-row dark:border-gray-700">
+                          <button
+                            type="button"
+                            onClick={handleViewOrderDetails}
+                            className="rounded-xl border border-gray-300 bg-transparent px-4 py-2.5 text-sm font-semibold text-gray-700 transition-colors hover:border-gray-400 hover:text-gray-900 dark:border-gray-600 dark:text-gray-200 dark:hover:border-gray-500 dark:hover:text-white"
+                          >
+                            View Details
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleOrderAgain(order)}
+                            className="rounded-xl bg-teal-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-teal-500"
+                          >
+                            Order Again
+                          </button>
+                        </div>
+                      </article>
+                    );
+                  })}
                 </div>
               )}
             </div>

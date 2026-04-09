@@ -3,7 +3,6 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import MyOrders from './pages/MyOrders';
 import ProductDetails from './pages/ProductDetails';
 import CategoryProducts from './pages/CategoryProducts';
 import Checkout from './pages/Checkout';
@@ -102,7 +101,7 @@ function App() {
           path="/my-orders"
           element={
             <ProtectedRoute>
-              <UserLayout><MyOrders /></UserLayout>
+              <Navigate to="/account/orders" replace />
             </ProtectedRoute>
           }
         />
