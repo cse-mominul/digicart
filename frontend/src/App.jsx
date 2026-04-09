@@ -10,6 +10,7 @@ import CategoryProducts from './pages/CategoryProducts';
 import Checkout from './pages/Checkout';
 import MyProfile from './pages/MyProfile';
 import ShippingAddress from './pages/ShippingAddress';
+import ContactUs from './pages/ContactUs';
 import AccountDashboard from './pages/AccountDashboard';
 import UserAccount from './pages/UserAccount';
 import AdminLayout from './pages/admin/AdminLayout';
@@ -47,6 +48,7 @@ function App() {
         <Route path="/products" element={<UserLayout><CategoryProducts /></UserLayout>} />
         <Route path="/products/:categorySlug" element={<UserLayout><CategoryProducts /></UserLayout>} />
         <Route path="/category/:categoryName" element={<UserLayout><Home /></UserLayout>} />
+        <Route path="/contact-us" element={<UserLayout><ContactUs /></UserLayout>} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/wishlist" element={<UserLayout><Wishlist /></UserLayout>} />
