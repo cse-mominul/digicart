@@ -4,6 +4,7 @@ import API from '../api/axios';
 import HeroSlider from '../components/HeroSlider';
 import AiHighlights from '../components/AiHighlights';
 import AiDealsSection from '../components/AiDealsSection';
+import NewLaunchProductsSection from '../components/NewLaunchProductsSection';
 import ProductCard from '../components/ProductCard';
 
 const Home = () => {
@@ -29,7 +30,7 @@ const Home = () => {
         const latestProducts = Array.isArray(data)
           ? [...data]
               .sort((first, second) => new Date(second.createdAt) - new Date(first.createdAt))
-              .slice(0, 15)
+              .slice(0, 20)
           : [];
 
         setProducts(latestProducts);
@@ -67,6 +68,8 @@ const Home = () => {
       <AiHighlights />
 
       <AiDealsSection products={topSellingProducts} loading={topSellingLoading} />
+
+      <NewLaunchProductsSection products={products} loading={loading} />
 
       <div className="mb-4 flex flex-col items-center text-center">
         <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">Featured Products</h3>
