@@ -103,6 +103,7 @@ const Footer = () => {
           <li key={item.label}>
             <Link
               to={item.href}
+              onClick={handleScrollToTop}
               className="group inline-flex items-center gap-2 text-sm text-gray-300 transition-colors hover:text-white"
             >
               <span className="text-gray-500 transition-colors group-hover:text-gray-300">&gt;</span>
@@ -213,10 +214,10 @@ const Footer = () => {
             <p className="text-center text-sm text-gray-400">{siteBranding.footerCopyrightText}</p>
 
             <div className="flex items-center justify-center gap-4 text-sm md:justify-end">
-              <Link to="/terms" className="text-gray-400 transition-colors hover:text-white">
+              <Link to="/terms" onClick={handleScrollToTop} className="text-gray-400 transition-colors hover:text-white">
                 Terms &amp; Conditions
               </Link>
-              <Link to="/privacy" className="text-gray-400 transition-colors hover:text-white">
+              <Link to="/privacy" onClick={handleScrollToTop} className="text-gray-400 transition-colors hover:text-white">
                 Privacy Policy
               </Link>
             </div>
