@@ -140,7 +140,7 @@ const OurProductsSection = ({ products = [], loading = false }) => {
                       <button
                         type="button"
                         onClick={(event) => handleAddToCart(event, product)}
-                        className="inline-flex min-w-0 flex-1 items-center justify-center gap-1 rounded-full bg-[#0f8f84] px-2 py-1.5 text-[10px] font-semibold text-white transition-colors hover:bg-[#117b72] sm:text-[11px]"
+                        className="inline-flex min-w-0 flex-1 items-center justify-center gap-1 rounded-full bg-[#ff3366] px-2 py-1.5 text-[10px] font-semibold text-white transition-colors hover:bg-[#ff1f58] sm:text-[11px]"
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14l-1 12H6L5 8zm2-3a3 3 0 016 0v1H7V5z" />
@@ -176,8 +176,8 @@ const OurProductsSection = ({ products = [], loading = false }) => {
                   onClick={() => setCurrentPage(pageNumber)}
                   className={`h-9 min-w-9 rounded-full px-3 text-sm font-medium transition-colors ${
                     currentPage === pageNumber
-                      ? 'bg-[#0f8f84] text-white'
-                      : 'border border-slate-200 text-slate-700 hover:border-[#0f8f84] hover:text-[#0f8f84] dark:border-slate-700 dark:text-slate-200'
+                      ? 'bg-[#ff3366] text-white'
+                      : 'border border-slate-200 text-slate-700 hover:border-[#ff3366] hover:text-[#ff3366] dark:border-slate-700 dark:text-slate-200'
                   }`}
                 >
                   {pageNumber}
