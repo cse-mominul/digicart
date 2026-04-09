@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import API from '../api/axios';
 import ProductCard from '../components/ProductCard';
 import HeroSlider from '../components/HeroSlider';
+import AiHighlights from '../components/AiHighlights';
 import FeaturedCategories from '../components/FeaturedCategories';
 
 const Home = () => {
@@ -44,6 +45,8 @@ const Home = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 pb-6 sm:pb-8">
       <HeroSlider />
+
+      <AiHighlights />
 
       <FeaturedCategories />
 
