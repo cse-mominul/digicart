@@ -10,6 +10,29 @@ const emptyForm = {
   image: '',
   category: '',
   stock: '',
+  additionalInfo: [],
+};
+
+const normalizeAdditionalInfo = (input) => {
+  if (Array.isArray(input)) {
+    return input
+      .map((item) => ({
+        label: typeof item?.label === 'string' ? item.label : '',
+        value: typeof item?.value === 'string' ? item.value : '',
+      }))
+      .filter((item) => item.label.trim() || item.value.trim());
+  }
+
+  if (input && typeof input === 'object') {
+    return Object.entries(input)
+      .map(([label, value]) => ({
+        label: String(label || '').trim(),
+        value: String(value || '').trim(),
+      }))
+      .filter((item) => item.label || item.value);
+  }
+
+  return [];
 };
 
 const Products = () => {
@@ -73,21 +96,62 @@ const Products = () => {
       image: product.image,
       category: product.category,
       stock: product.stock,
+      additionalInfo: normalizeAdditionalInfo(product.additionalInfo),
     });
     setEditId(product._id);
     setShowModal(true);
   };
 
+  const handleAdditionalInfoChange = (index, field, value) => {
+    setForm((prev) => {
+      const nextRows = [...(prev.additionalInfo || [])];
+      nextRows[index] = {
+        ...(nextRows[index] || { label: '', value: '' }),
+        [field]: value,
+      };
+
+      return {
+        ...prev,
+        additionalInfo: nextRows,
+      };
+    });
+  };
+
+  const addAdditionalInfoRow = () => {
+    setForm((prev) => ({
+      ...prev,
+      additionalInfo: [...(prev.additionalInfo || []), { label: '', value: '' }],
+    }));
+  };
+
+  const removeAdditionalInfoRow = (index) => {
+    setForm((prev) => ({
+      ...prev,
+      additionalInfo: (prev.additionalInfo || []).filter((_, rowIndex) => rowIndex !== index),
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
+
+    const payload = {
+      ...form,
+      additionalInfo: (form.additionalInfo || [])
+        .map((item) => ({
+          label: String(item?.label || '').trim(),
+          value: String(item?.value || '').trim(),
+        }))
+        .filter((item) => item.label && item.value),
+    };
+
     try {
       if (editId) {
-        await API.put(`/products/${editId}`, form);
+        await API.put(`/products/${editId}`, payload);
         toast.success('Product updated!');
         fetchProducts(currentPage);
       } else {
-        await API.post('/products', form);
+        await API.post('/products', payload);
         toast.success('Product created!');
         setCurrentPage(1);
       }
@@ -335,6 +399,45 @@ const Products = () => {
                     onChange={(e) => setForm({ ...form, stock: e.target.value })}
                     className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   />
+                </div>
+              </div>
+
+              <div className="border-t border-gray-100 dark:border-gray-700 pt-4">
+                <h4 className="text-sm font-semibold text-gray-800 dark:text-white mb-3">Additional Info</h4>
+                <div className="space-y-3">
+                  {(form.additionalInfo || []).map((row, index) => (
+                    <div key={`${index}-${row.label}`} className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_auto] gap-2">
+                      <input
+                        type="text"
+                        value={row.label || ''}
+                        onChange={(e) => handleAdditionalInfoChange(index, 'label', e.target.value)}
+                        placeholder="Field name (e.g. Processor)"
+                        className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      />
+                      <input
+                        type="text"
+                        value={row.value || ''}
+                        onChange={(e) => handleAdditionalInfoChange(index, 'value', e.target.value)}
+                        placeholder="Field value"
+                        className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeAdditionalInfoRow(index)}
+                        className="rounded-lg border border-red-200 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 dark:border-red-500/30 dark:text-red-300 dark:hover:bg-red-500/10"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+
+                  <button
+                    type="button"
+                    onClick={addAdditionalInfoRow}
+                    className="inline-flex items-center rounded-lg border border-indigo-200 px-3 py-2 text-sm font-medium text-indigo-700 hover:bg-indigo-50 dark:border-indigo-500/30 dark:text-indigo-300 dark:hover:bg-indigo-500/10"
+                  >
+                    + Add Info Row
+                  </button>
                 </div>
               </div>
 

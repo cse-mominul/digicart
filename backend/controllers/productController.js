@@ -99,6 +99,7 @@ const getTopSellingProducts = async (req, res) => {
           category: '$product.category',
           countInStock: '$product.countInStock',
           stock: '$product.stock',
+          additionalInfo: '$product.additionalInfo',
           createdAt: '$product.createdAt',
           soldCount: 1,
         },
@@ -114,14 +115,23 @@ const getTopSellingProducts = async (req, res) => {
 // @desc  Create a product (admin only)
 // @route POST /api/products
 const createProduct = async (req, res) => {
-  const { name, description, price, image, category, stock } = req.body;
+  const { name, description, price, image, category, stock, countInStock, additionalInfo } = req.body;
 
   if (!name || !description || !price || !image || !category) {
     return res.status(400).json({ message: 'Please provide all required fields' });
   }
 
   try {
-    const product = await Product.create({ name, description, price, image, category, stock });
+    const product = await Product.create({
+      name,
+      description,
+      price,
+      image,
+      category,
+      stock,
+      countInStock,
+      additionalInfo,
+    });
     res.status(201).json(product);
   } catch (error) {
     res.status(500).json({ message: error.message });

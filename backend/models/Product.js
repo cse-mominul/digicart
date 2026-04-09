@@ -9,6 +9,12 @@ const productSchema = new mongoose.Schema(
     category: { type: String, required: true, trim: true },
     countInStock: { type: Number, required: true, default: 0, min: 0 },
     stock: { type: Number, default: 0, min: 0 },
+    additionalInfo: [
+      {
+        label: { type: String, trim: true, default: '' },
+        value: { type: String, trim: true, default: '' },
+      },
+    ],
   },
   { timestamps: true }
 );

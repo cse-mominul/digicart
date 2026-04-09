@@ -16,6 +16,7 @@ import Users from './pages/admin/Users';
 import CategoryManager from './pages/admin/CategoryManager';
 import Settings from './pages/admin/Settings';
 import Campaigns from './pages/admin/Campaigns';
+import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
 import Navbar from './components/Navbar';
@@ -149,6 +150,8 @@ function App() {
           <Route path="orders" element={<Orders />} />
           <Route path="users" element={<Users />} />
         </Route>
+
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </div>
   );
