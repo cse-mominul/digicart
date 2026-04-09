@@ -6,6 +6,7 @@ const productSchema = new mongoose.Schema(
     description: { type: String, required: true },
     price: { type: Number, required: true, min: 0 },
     image: { type: String, required: true },
+    images: [{ type: String, trim: true }],
     category: { type: String, required: true, trim: true },
     countInStock: { type: Number, required: true, default: 0, min: 0 },
     stock: { type: Number, default: 0, min: 0 },
@@ -35,6 +36,22 @@ productSchema.pre('validate', function (next) {
   if (this.isModified('stock') && !this.isModified('countInStock')) {
     this.countInStock = this.stock;
   }
+
+  const cleanedImages = Array.isArray(this.images)
+    ? this.images
+        .map((item) => (typeof item === 'string' ? item.trim() : ''))
+        .filter(Boolean)
+    : [];
+
+  if (!cleanedImages.length && this.image) {
+    cleanedImages.push(this.image);
+  }
+
+  if (!this.image && cleanedImages.length) {
+    this.image = cleanedImages[0];
+  }
+
+  this.images = cleanedImages;
 
   next();
 });

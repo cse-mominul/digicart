@@ -8,6 +8,7 @@ const emptyForm = {
   description: '',
   price: '',
   image: '',
+  imageUrls: ['', '', '', ''],
   category: '',
   stock: '',
   additionalInfo: [],
@@ -94,6 +95,18 @@ const Products = () => {
       description: product.description,
       price: product.price,
       image: product.image,
+      imageUrls: (() => {
+        const base = Array(4).fill('');
+        const source = Array.isArray(product.images) && product.images.length
+          ? product.images
+          : product.image
+            ? [product.image]
+            : [];
+        source.slice(0, 4).forEach((url, idx) => {
+          base[idx] = url;
+        });
+        return base;
+      })(),
       category: product.category,
       stock: product.stock,
       additionalInfo: normalizeAdditionalInfo(product.additionalInfo),
@@ -135,8 +148,23 @@ const Products = () => {
     e.preventDefault();
     setSubmitting(true);
 
+    const cleanedImages = (form.imageUrls || [])
+      .map((item) => String(item || '').trim())
+      .filter(Boolean)
+      .slice(0, 4);
+
+    const primaryImage = cleanedImages[0] || String(form.image || '').trim();
+
+    if (!primaryImage) {
+      toast.error('Please provide at least one product image URL');
+      setSubmitting(false);
+      return;
+    }
+
     const payload = {
       ...form,
+      image: primaryImage,
+      images: cleanedImages,
       additionalInfo: (form.additionalInfo || [])
         .map((item) => ({
           label: String(item?.label || '').trim(),
@@ -324,7 +352,6 @@ const Products = () => {
             <form onSubmit={handleSubmit} className="space-y-4">
               {[
                 { key: 'name', label: 'Product Name', type: 'text' },
-                { key: 'image', label: 'Image URL', type: 'text' },
               ].map(({ key, label, type }) => (
                 <div key={key}>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -339,6 +366,28 @@ const Products = () => {
                   />
                 </div>
               ))}
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Product Images (3-4 URLs)
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {[0, 1, 2, 3].map((index) => (
+                    <input
+                      key={`image-url-${index}`}
+                      type="text"
+                      value={form.imageUrls?.[index] || ''}
+                      onChange={(e) => {
+                        const next = [...(form.imageUrls || ['', '', '', ''])];
+                        next[index] = e.target.value;
+                        setForm((prev) => ({ ...prev, imageUrls: next }));
+                      }}
+                      placeholder={`Image URL ${index + 1}`}
+                      className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                  ))}
+                </div>
+              </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -441,15 +490,24 @@ const Products = () => {
                 </div>
               </div>
 
-              {form.image && (
+              {((form.imageUrls || []).some((item) => item?.trim()) || form.image) && (
                 <div className="text-center">
                   <p className="text-xs text-gray-500 mb-1">Image Preview</p>
-                  <img
-                    src={form.image}
-                    alt="preview"
-                    className="h-24 w-auto object-cover rounded-lg mx-auto"
-                    onError={(e) => { e.target.src = 'https://placehold.co/96x96?text=Invalid+URL'; }}
-                  />
+                  <div className="grid grid-cols-2 gap-2">
+                    {(form.imageUrls || [])
+                      .map((item) => item?.trim())
+                      .filter(Boolean)
+                      .slice(0, 4)
+                      .map((url) => (
+                        <img
+                          key={url}
+                          src={url}
+                          alt="preview"
+                          className="h-24 w-full object-cover rounded-lg"
+                          onError={(e) => { e.target.src = 'https://placehold.co/160x96?text=Invalid+URL'; }}
+                        />
+                      ))}
+                  </div>
                 </div>
               )}
 

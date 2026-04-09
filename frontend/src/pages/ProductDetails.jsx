@@ -36,7 +36,10 @@ const ProductDetails = () => {
       try {
         const { data } = await API.get(`/products/${id}`);
         setProduct(data);
-        setActiveImage(data?.image || '');
+        const incomingImages = Array.isArray(data?.images)
+          ? data.images.filter((item) => typeof item === 'string' && item.trim())
+          : [];
+        setActiveImage(incomingImages[0] || data?.image || '');
       } catch (error) {
         console.error('Failed to fetch product:', error);
         setProduct(null);
@@ -72,26 +75,17 @@ const ProductDetails = () => {
     );
   }, [deliveryArea, deliverySettings]);
 
-  const shortFeatures = useMemo(() => {
-    if (!product) return [];
-
-    const stockCount = product.countInStock ?? product.stock ?? 0;
-
-    return [
-      'Premium quality build with minimalist design',
-      'Fast delivery and secure packaging',
-      stockCount > 0 ? `${stockCount} units currently in stock` : 'Currently out of stock',
-    ];
-  }, [product]);
-
   const galleryImages = useMemo(() => {
     if (!product) return [];
 
-    return [
+    const candidates = [
+      ...(Array.isArray(product.images) ? product.images : []),
       product.image,
-      product.image,
-      product.image,
-    ];
+    ]
+      .map((item) => (typeof item === 'string' ? item.trim() : ''))
+      .filter(Boolean);
+
+    return Array.from(new Set(candidates));
   }, [product]);
 
   const additionalInfoRows = useMemo(() => {
@@ -319,15 +313,6 @@ const ProductDetails = () => {
           </div>
 
           <div className="mt-5 border-t border-dashed border-slate-200 pt-5 dark:border-white/10">
-            <ul className="space-y-2.5">
-              {shortFeatures.map((feature) => (
-                <li key={feature} className="flex items-start gap-2 text-sm text-slate-700 dark:text-slate-200">
-                  <span className="mt-1 h-2 w-2 rounded-full bg-teal-500" />
-                  <span>{feature}</span>
-                </li>
-              ))}
-            </ul>
-
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
               <button
                 onClick={scrollToOrderForm}

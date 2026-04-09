@@ -32,6 +32,11 @@ const demoProducts = [
     countInStock: 8,
     stock: 8,
     image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800',
+    images: [
+      'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800',
+      'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=801',
+      'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=802',
+    ],
     additionalInfo: [
       { label: 'Processor', value: 'Ryzen 7' },
       { label: 'RAM', value: '16GB' },
@@ -48,6 +53,11 @@ const demoProducts = [
     countInStock: 35,
     stock: 35,
     image: 'https://images.unsplash.com/photo-1527814050087-3793815479db?w=800',
+    images: [
+      'https://images.unsplash.com/photo-1527814050087-3793815479db?w=800',
+      'https://images.unsplash.com/photo-1527814050087-3793815479db?w=801',
+      'https://images.unsplash.com/photo-1527814050087-3793815479db?w=802',
+    ],
     additionalInfo: [
       { label: 'Connectivity', value: '2.4G + Bluetooth' },
       { label: 'DPI', value: 'Adjustable' },
@@ -63,6 +73,11 @@ const demoProducts = [
     countInStock: 20,
     stock: 20,
     image: 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=800',
+    images: [
+      'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=800',
+      'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=801',
+      'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=802',
+    ],
     additionalInfo: [
       { label: 'Switch Type', value: 'Mechanical' },
       { label: 'Layout', value: '87 Keys' },
@@ -78,6 +93,11 @@ const demoProducts = [
     countInStock: 12,
     stock: 12,
     image: 'https://images.unsplash.com/photo-1527443224154-c4b4e0ad64df?w=800',
+    images: [
+      'https://images.unsplash.com/photo-1527443224154-c4b4e0ad64df?w=800',
+      'https://images.unsplash.com/photo-1527443224154-c4b4e0ad64df?w=801',
+      'https://images.unsplash.com/photo-1527443224154-c4b4e0ad64df?w=802',
+    ],
     additionalInfo: [
       { label: 'Resolution', value: '4K UHD' },
       { label: 'Panel', value: 'IPS' },
@@ -93,6 +113,11 @@ const demoProducts = [
     countInStock: 18,
     stock: 18,
     image: 'https://images.unsplash.com/photo-1625948515291-69613efd103f?w=800',
+    images: [
+      'https://images.unsplash.com/photo-1625948515291-69613efd103f?w=800',
+      'https://images.unsplash.com/photo-1625948515291-69613efd103f?w=801',
+      'https://images.unsplash.com/photo-1625948515291-69613efd103f?w=802',
+    ],
     additionalInfo: [
       { label: 'Ports', value: 'HDMI, Ethernet, USB' },
       { label: 'Input', value: 'USB-C' },
@@ -108,6 +133,11 @@ const demoProducts = [
     countInStock: 22,
     stock: 22,
     image: 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=800',
+    images: [
+      'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=800',
+      'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=801',
+      'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=802',
+    ],
     additionalInfo: [
       { label: 'Connectivity', value: 'Bluetooth' },
       { label: 'Noise Cancellation', value: 'Active ANC' },

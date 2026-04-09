@@ -96,6 +96,7 @@ const getTopSellingProducts = async (req, res) => {
           description: '$product.description',
           price: '$product.price',
           image: '$product.image',
+          images: '$product.images',
           category: '$product.category',
           countInStock: '$product.countInStock',
           stock: '$product.stock',
@@ -115,9 +116,17 @@ const getTopSellingProducts = async (req, res) => {
 // @desc  Create a product (admin only)
 // @route POST /api/products
 const createProduct = async (req, res) => {
-  const { name, description, price, image, category, stock, countInStock, additionalInfo } = req.body;
+  const { name, description, price, image, images, category, stock, countInStock, additionalInfo } = req.body;
 
-  if (!name || !description || !price || !image || !category) {
+  const cleanedImages = Array.isArray(images)
+    ? images
+        .map((item) => (typeof item === 'string' ? item.trim() : ''))
+        .filter(Boolean)
+    : [];
+
+  const primaryImage = typeof image === 'string' && image.trim() ? image.trim() : cleanedImages[0] || '';
+
+  if (!name || !description || !price || !primaryImage || !category) {
     return res.status(400).json({ message: 'Please provide all required fields' });
   }
 
@@ -126,7 +135,8 @@ const createProduct = async (req, res) => {
       name,
       description,
       price,
-      image,
+      image: primaryImage,
+      images: cleanedImages,
       category,
       stock,
       countInStock,
