@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import API from '../api/axios';
-import ProductCard from '../components/ProductCard';
 import HeroSlider from '../components/HeroSlider';
 import AiHighlights from '../components/AiHighlights';
-import FeaturedCategories from '../components/FeaturedCategories';
+import AiDealsSection from '../components/AiDealsSection';
+import ProductCard from '../components/ProductCard';
 
 const Home = () => {
   const { categoryName } = useParams();
@@ -48,7 +48,7 @@ const Home = () => {
 
       <AiHighlights />
 
-      <FeaturedCategories />
+      <AiDealsSection products={products} />
 
       <div className="mb-4 flex flex-col items-center text-center">
         <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">Featured Products</h3>
