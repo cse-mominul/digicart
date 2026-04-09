@@ -57,6 +57,11 @@ const settingSchema = new mongoose.Schema(
       default: '© 2026 DigiCart. All rights reserved.',
       trim: true,
     },
+    siteDescription: {
+      type: String,
+      default: 'DigiCart helps modern shoppers discover top-rated products at honest prices, fast delivery, and smooth checkout experiences.',
+      trim: true,
+    },
   },
   {
     timestamps: true,

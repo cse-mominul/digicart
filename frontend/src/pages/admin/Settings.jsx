@@ -16,6 +16,7 @@ const Settings = () => {
     faviconUrl: '',
     siteSlogan: 'Rebranded Sellzy',
     footerCopyrightText: '© 2026 DigiCart. All rights reserved.',
+    siteDescription: 'DigiCart helps modern shoppers discover top-rated products at honest prices, fast delivery, and smooth checkout experiences.',
   });
   const [loading, setLoading] = useState(true);
   const [savingSettings, setSavingSettings] = useState(false);
@@ -36,6 +37,7 @@ const Settings = () => {
           faviconUrl: data?.faviconUrl || '',
           siteSlogan: data?.siteSlogan || 'Rebranded Sellzy',
           footerCopyrightText: data?.footerCopyrightText || '© 2026 DigiCart. All rights reserved.',
+          siteDescription: data?.siteDescription || 'DigiCart helps modern shoppers discover top-rated products at honest prices, fast delivery, and smooth checkout experiences.',
         });
       } catch (error) {
         toast.error(error.response?.data?.message || 'Failed to load settings');
@@ -63,6 +65,7 @@ const Settings = () => {
       faviconUrl: settingsForm.faviconUrl,
       siteSlogan: settingsForm.siteSlogan,
       footerCopyrightText: settingsForm.footerCopyrightText,
+      siteDescription: settingsForm.siteDescription,
     });
 
     setSettingsForm({
@@ -77,6 +80,7 @@ const Settings = () => {
       faviconUrl: data?.faviconUrl || settingsForm.faviconUrl,
       siteSlogan: data?.siteSlogan || settingsForm.siteSlogan,
       footerCopyrightText: data?.footerCopyrightText || settingsForm.footerCopyrightText,
+      siteDescription: data?.siteDescription || settingsForm.siteDescription,
     });
 
     toast.success(successMessage);
@@ -345,6 +349,19 @@ const Settings = () => {
                     }
                     placeholder="© 2026 DigiCart. All rights reserved."
                     className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-sm text-gray-300 mb-1">Footer Description</label>
+                  <textarea
+                    rows="3"
+                    value={settingsForm.siteDescription}
+                    onChange={(event) =>
+                      setSettingsForm((prev) => ({ ...prev, siteDescription: event.target.value }))
+                    }
+                    placeholder="Short brand description shown in footer"
+                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink-500 resize-none"
                   />
                 </div>
 

@@ -29,6 +29,7 @@ const Footer = () => {
     siteLogoUrl: '',
     siteSlogan: 'Rebranded Sellzy',
     footerCopyrightText: '© 2026 DigiCart. All rights reserved.',
+    siteDescription: 'DigiCart helps modern shoppers discover top-rated products at honest prices, fast delivery, and smooth checkout experiences.',
   });
 
   useEffect(() => {
@@ -66,6 +67,7 @@ const Footer = () => {
           siteLogoUrl: data?.siteLogoUrl || '',
           siteSlogan: data?.siteSlogan || 'Rebranded Sellzy',
           footerCopyrightText: data?.footerCopyrightText || '© 2026 DigiCart. All rights reserved.',
+          siteDescription: data?.siteDescription || 'DigiCart helps modern shoppers discover top-rated products at honest prices, fast delivery, and smooth checkout experiences.',
         });
       } catch (error) {
         console.error('Failed to fetch footer contact settings:', error);
@@ -143,8 +145,7 @@ const Footer = () => {
             </div>
 
             <p className="mt-3 sm:mt-4 max-w-xs text-xs sm:text-sm leading-5 sm:leading-6 text-gray-300">
-              DigiCart helps modern shoppers discover top-rated products at honest prices, fast delivery,
-              and smooth checkout experiences.
+              {siteBranding.siteDescription}
             </p>
 
           </div>
