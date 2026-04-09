@@ -27,7 +27,7 @@ const NewLaunchProductsSection = ({ products = [], loading = false }) => {
 
   return (
     <motion.section
-      className="relative mb-10 overflow-hidden rounded-[28px] bg-[linear-gradient(140deg,#0b0f19_0%,#151b2a_55%,#111827_100%)] px-3 pb-6 pt-0 shadow-[0_24px_70px_rgba(2,6,23,0.55)] sm:mb-12 sm:rounded-[45px] sm:px-8 sm:pb-8"
+      className="relative mb-8 -mx-3 overflow-hidden rounded-none bg-[#efe06a] px-3 pb-5 pt-0 shadow-none sm:mx-0 sm:mb-10 md:mb-12 sm:rounded-[28px] md:rounded-[45px] sm:bg-[linear-gradient(140deg,#0b0f19_0%,#151b2a_55%,#111827_100%)] sm:px-3 md:px-8 sm:pb-6 md:pb-8 sm:shadow-[0_24px_70px_rgba(2,6,23,0.55)]"
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -35,24 +35,24 @@ const NewLaunchProductsSection = ({ products = [], loading = false }) => {
     >
       {/* Header with Perfect Curve matching 2nd image */}
       <div className="flex justify-center">
-        <div className="relative flex w-full max-w-[640px] flex-col items-center rounded-b-[36px] bg-white px-6 pb-5 pt-5 text-center shadow-[0_10px_30px_rgba(2,6,23,0.25)] sm:rounded-b-[50px] sm:px-12 sm:pb-6 sm:pt-6">
-          <h2 className="text-xl font-bold tracking-tight text-[#111827] sm:text-3xl">
+        <div className="relative flex w-full max-w-[640px] flex-col items-center rounded-none bg-transparent px-2 pb-4 pt-8 text-center shadow-none sm:rounded-b-[36px] md:rounded-b-[50px] sm:bg-white sm:px-6 md:px-12 sm:pb-5 md:pb-6 sm:pt-5 md:pt-6 sm:shadow-[0_10px_30px_rgba(2,6,23,0.25)]">
+          <h2 className="text-4xl leading-[1.1] font-bold tracking-tight text-[#111827] sm:text-xl md:text-3xl">
             Newly Launched Products
           </h2>
-          <p className="mt-1 flex items-center gap-1 text-[11px] font-medium text-[#475569] sm:text-xs">
+          <p className="mt-2 flex items-center gap-1 text-base font-medium text-[#1f2937] sm:mt-1 sm:text-[11px] md:text-xs sm:text-[#475569]">
             Up to 69% discount for limited time <span className="text-orange-500">🔥</span>
           </p>
           
           {/* Side Curves to make it look smooth like the image */}
-          <div className="absolute -left-10 top-0 hidden h-10 w-10 bg-white [mask-image:radial-gradient(circle_at_0_0,transparent_40px,white_41px)] sm:block" />
-          <div className="absolute -right-10 top-0 hidden h-10 w-10 bg-white [mask-image:radial-gradient(circle_at_100%_0,transparent_40px,white_41px)] sm:block" />
+          <div className="absolute -left-8 sm:-left-10 top-0 hidden h-8 sm:h-10 w-8 sm:w-10 bg-white [mask-image:radial-gradient(circle_at_0_0,transparent_40px,white_41px)] sm:block" />
+          <div className="absolute -right-8 sm:-right-10 top-0 hidden h-8 sm:h-10 w-8 sm:w-10 bg-white [mask-image:radial-gradient(circle_at_100%_0,transparent_40px,white_41px)] sm:block" />
         </div>
       </div>
 
       {/* Product Slider */}
       <div
         ref={trackRef}
-        className="mt-6 flex gap-3 overflow-x-auto scroll-smooth pb-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mt-8 sm:gap-4"
+        className="mt-3 flex flex-col items-center gap-3 pb-2 sm:mt-6 md:mt-8 sm:flex-row sm:items-stretch sm:gap-3 md:gap-4 sm:overflow-x-auto sm:scroll-smooth sm:pb-6 sm:[scrollbar-width:none] sm:[&::-webkit-scrollbar]:hidden"
       >
         {launchProducts.map((product, index) => {
           const price = Number(product.price) || 0;
@@ -64,44 +64,47 @@ const NewLaunchProductsSection = ({ products = [], loading = false }) => {
             <article
               key={product.id || product._id || index}
               data-launch-card
-              className="group w-[78vw] max-w-[245px] shrink-0 rounded-[24px] border border-white/10 bg-[rgba(255,255,255,0.06)] p-2.5 shadow-[0_12px_35px_rgba(2,6,23,0.35)] backdrop-blur-sm transition-transform hover:-translate-y-1 sm:w-[220px] sm:max-w-none sm:rounded-[28px] sm:p-3 cursor-pointer"
+              className="group w-[90vw] max-w-[360px] shrink-0 overflow-hidden rounded-lg sm:rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl active:scale-95 cursor-pointer sm:w-[220px] sm:max-w-none md:w-[230px] dark:border-gray-800 dark:bg-[#1a1a1a]"
               onClick={() => navigate(`/product/${product._id}`)}
             >
-              <div className="relative mb-3 flex h-40 items-center justify-center rounded-[18px] bg-white/90 p-3 sm:h-48 sm:rounded-[22px] sm:p-4">
+              <div className="relative p-1.5 sm:p-2.5">
                 <img
                   src={imageSrc}
                   alt={product.name}
-                  className="h-full w-full object-contain mix-blend-multiply"
+                  className="h-32 sm:h-44 w-full rounded-lg sm:rounded-xl bg-gray-50 p-1.5 sm:p-2.5 object-contain transition-transform duration-300 group-hover:scale-105 dark:bg-gray-900"
+                  onError={(event) => {
+                    event.currentTarget.src = 'https://placehold.co/600x600?text=Product';
+                  }}
                 />
               </div>
 
-              <div className="px-1 space-y-1">
-                <h3 className="min-h-[36px] line-clamp-2 text-[13px] font-medium leading-snug text-white/90">
+              <div className="px-2 sm:px-3 pb-2 sm:pb-3">
+                <h3 className="min-h-[32px] sm:min-h-[38px] text-xs sm:text-sm font-medium leading-4 sm:leading-5 text-gray-900 line-clamp-2 dark:text-gray-100">
                   {product.name}
                 </h3>
                 
-                <div className="flex items-center gap-1">
-                  <span className="text-xs text-[#facc15]">★★★★★</span>
-                  <span className="text-[10px] text-white/55">(189)</span>
+                <div className="mt-0.5 sm:mt-1 flex items-center gap-0.5 sm:gap-1 text-[#0f8f84]">
+                  <span className="text-[10px] sm:text-xs">★★★★★</span>
+                  <span className="ml-0.5 sm:ml-1 text-[8px] sm:text-[11px] text-gray-500 dark:text-gray-400">(189)</span>
                 </div>
 
-                <div className="flex items-center gap-1.5 pt-1">
-                  <span className="text-sm font-bold text-white">{formatPrice(price)}</span>
-                  <span className="text-[10px] text-white/50 line-through">{formatPrice(originalPrice)}</span>
-                  <span className="text-[10px] font-bold text-[#ff5a84]">{discount}% OFF</span>
+                <div className="mt-1 sm:mt-2 flex flex-wrap items-center gap-0.5 sm:gap-2 text-[9px] sm:text-sm">
+                  <span className="font-semibold text-gray-900 dark:text-white">{formatPrice(price)}</span>
+                  <span className="text-[7px] sm:text-[11px] text-gray-400 line-through">{formatPrice(originalPrice)}</span>
+                  <span className="rounded-full bg-pink-50 px-1.5 sm:px-2 py-0.5 text-[7px] sm:text-[9px] font-bold text-[#ff3366] dark:bg-[#ff3366]/10">{discount}% OFF</span>
                 </div>
 
-                <div className="flex items-center gap-2 pt-3">
+                <div className="mt-2 sm:mt-3 flex items-center gap-1 sm:gap-2">
                   <button
                     type="button"
                     onClick={(event) => {
                       event.stopPropagation();
                       navigate(`/product/${product._id}`);
                     }}
-                    className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 text-white/70 transition-colors hover:border-[#ff3366] hover:bg-[#ff3366]/15 hover:text-[#ff3366]"
+                    className="inline-flex h-7 sm:h-8 w-7 sm:w-8 items-center justify-center rounded-full border border-gray-200 bg-white text-[#ff3366] transition-colors hover:border-[#ff3366] hover:bg-pink-50 active:scale-90 dark:border-gray-700 dark:bg-gray-900 dark:hover:bg-[#ff3366]/10 flex-shrink-0"
                     aria-label="View product"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 sm:h-4 w-3 sm:w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12H9m6 0l-2-2m2 2l-2 2M3 12a9 9 0 1118 0 9 9 0 11-18 0z" /></svg>
                   </button>
                   <button
                     type="button"
@@ -109,10 +112,11 @@ const NewLaunchProductsSection = ({ products = [], loading = false }) => {
                       event.stopPropagation();
                       navigate(`/product/${product._id}`);
                     }}
-                    className="flex flex-1 items-center justify-center gap-1.5 rounded-full bg-[#ff3366] py-2 text-[11px] font-bold text-white transition-colors hover:bg-[#e11d59]"
+                    className="flex-1 inline-flex items-center justify-center gap-1 sm:gap-2 rounded-full bg-[#0f8f84] px-2 sm:px-3 py-1.5 sm:py-2 text-[7px] sm:text-xs font-semibold text-white transition-colors hover:bg-[#117b72] active:scale-95"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
-                    Add to Cart
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 sm:h-4 w-3 sm:w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14l-1 12H6L5 8zm2-3a3 3 0 016 0v1H7V5z" /></svg>
+                    <span className="hidden sm:inline">Add to Cart</span>
+                    <span className="sm:hidden">Add</span>
                   </button>
                 </div>
               </div>
@@ -122,7 +126,7 @@ const NewLaunchProductsSection = ({ products = [], loading = false }) => {
       </div>
 
       {/* Footer Nav and Button */}
-      <div className="mt-3 flex flex-col gap-3 sm:mt-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="hidden sm:flex mt-3 flex-col gap-3 sm:mt-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex gap-2">
           <button onClick={() => scrollTrack('left')} className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white/85 backdrop-blur-md transition-colors hover:border-[#ff3366] hover:text-[#ff3366]">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>

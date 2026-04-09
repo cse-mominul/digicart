@@ -89,47 +89,47 @@ const LimitedTimeDealsSection = ({ products = [], loading = false }) => {
   };
 
   return (
-    <section className="mb-10 overflow-hidden rounded-[24px] border border-slate-200 bg-white p-3 shadow-[0_18px_50px_rgba(15,23,42,0.08)] sm:rounded-[30px] sm:p-5 dark:border-slate-800 dark:bg-[#0f172a]">
-      <div className="grid gap-4 lg:grid-cols-[280px_1fr] xl:grid-cols-[320px_1fr]">
-        <div className="rounded-[24px] bg-[linear-gradient(160deg,#f8fafc_0%,#ecfeff_100%)] p-4 sm:p-5 dark:bg-[linear-gradient(160deg,#111827_0%,#0b1222_100%)]">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#ff3366]">Limited Time Offer</p>
-          <h3 className="mt-2 text-2xl font-semibold leading-tight text-slate-900 sm:text-3xl dark:text-white">Hot Deals This Week</h3>
-          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+    <section className="mb-8 sm:mb-10 overflow-hidden rounded-lg sm:rounded-[24px] md:rounded-[30px] border border-slate-200 bg-white p-2.5 sm:p-3 md:p-5 shadow-[0_18px_50px_rgba(15,23,42,0.08)] dark:border-slate-800 dark:bg-[#0f172a]">
+      <div className="grid gap-3 sm:gap-4 lg:grid-cols-[280px_1fr] xl:grid-cols-[320px_1fr]">
+        <div className="rounded-lg sm:rounded-[24px] bg-[linear-gradient(160deg,#f8fafc_0%,#ecfeff_100%)] p-3 sm:p-4 md:p-5 dark:bg-[linear-gradient(160deg,#111827_0%,#0b1222_100%)]">
+          <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.2em] text-[#ff3366]">Limited Time Offer</p>
+          <h3 className="mt-1.5 sm:mt-2 text-lg sm:text-2xl md:text-3xl font-semibold leading-tight text-slate-900 dark:text-white">Hot Deals This Week</h3>
+          <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
             Weekly deals are back with fresh offers. Grab your favorites before the timer ends.
           </p>
 
-          <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
-            <div className="rounded-xl border border-[#ff3366]/20 bg-white px-2 py-2 text-center dark:bg-slate-900">
-              <p className="text-lg font-bold text-[#ff3366]">{days}</p>
-              <p className="text-[10px] uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">Days</p>
+          <div className="mt-3 sm:mt-5 grid grid-cols-2 gap-1.5 sm:gap-2 sm:grid-cols-4">
+            <div className="rounded-lg sm:rounded-xl border border-[#ff3366]/20 bg-white px-1.5 sm:px-2 py-1.5 sm:py-2 text-center dark:bg-slate-900">
+              <p className="text-sm sm:text-lg font-bold text-[#ff3366]">{days}</p>
+              <p className="text-[7px] sm:text-[10px] uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">Days</p>
             </div>
-            <div className="rounded-xl border border-[#ff3366]/20 bg-white px-2 py-2 text-center dark:bg-slate-900">
-              <p className="text-lg font-bold text-[#ff3366]">{hours}</p>
-              <p className="text-[10px] uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">Hours</p>
+            <div className="rounded-lg sm:rounded-xl border border-[#ff3366]/20 bg-white px-1.5 sm:px-2 py-1.5 sm:py-2 text-center dark:bg-slate-900">
+              <p className="text-sm sm:text-lg font-bold text-[#ff3366]">{hours}</p>
+              <p className="text-[7px] sm:text-[10px] uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">Hours</p>
             </div>
-            <div className="rounded-xl border border-[#ff3366]/20 bg-white px-2 py-2 text-center dark:bg-slate-900">
-              <p className="text-lg font-bold text-[#ff3366]">{minutes}</p>
-              <p className="text-[10px] uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">Min</p>
+            <div className="rounded-lg sm:rounded-xl border border-[#ff3366]/20 bg-white px-1.5 sm:px-2 py-1.5 sm:py-2 text-center dark:bg-slate-900">
+              <p className="text-sm sm:text-lg font-bold text-[#ff3366]">{minutes}</p>
+              <p className="text-[7px] sm:text-[10px] uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">Min</p>
             </div>
-            <div className="rounded-xl border border-[#ff3366]/20 bg-white px-2 py-2 text-center dark:bg-slate-900">
-              <p className="text-lg font-bold text-[#ff3366]">{seconds}</p>
-              <p className="text-[10px] uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">Sec</p>
+            <div className="rounded-lg sm:rounded-xl border border-[#ff3366]/20 bg-white px-1.5 sm:px-2 py-1.5 sm:py-2 text-center dark:bg-slate-900">
+              <p className="text-sm sm:text-lg font-bold text-[#ff3366]">{seconds}</p>
+              <p className="text-[7px] sm:text-[10px] uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">Sec</p>
             </div>
           </div>
 
           <button
             type="button"
-            className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#0f8f84] px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-[#117b72] sm:w-auto"
+            className="mt-3 sm:mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#0f8f84] px-3 sm:px-4 py-1.5 sm:py-2 text-[11px] sm:text-xs font-semibold text-white transition-colors hover:bg-[#117b72] active:scale-95 sm:w-auto"
           >
             View All Products
-            <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-white/20">↗</span>
+            <span className="inline-flex h-4 sm:h-5 w-4 sm:w-5 items-center justify-center rounded-full bg-white/20 text-sm">↗</span>
           </button>
         </div>
 
         <div className="min-w-0">
           <div
             ref={trackRef}
-            className="flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth pb-3 pr-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            className="flex snap-x snap-mandatory gap-2 sm:gap-3 overflow-x-auto scroll-smooth pb-3 pr-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           >
             {dealProducts.map((product) => {
               const price = Number(product.price) || 0;
@@ -142,14 +142,14 @@ const LimitedTimeDealsSection = ({ products = [], loading = false }) => {
                 <article
                   key={product._id}
                   data-hot-deal-card
-                  className="group w-[74vw] max-w-[250px] shrink-0 snap-start rounded-2xl border border-slate-200 bg-white p-2.5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md sm:w-[220px] sm:max-w-none lg:w-[230px] dark:border-slate-700 dark:bg-[#111827] cursor-pointer"
+                  className="group w-[90vw] max-w-[360px] sm:w-[220px] sm:max-w-none md:w-[230px] lg:w-[250px] shrink-0 snap-start rounded-lg sm:rounded-2xl border border-slate-200 bg-white p-2 sm:p-2.5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md active:scale-95 dark:border-slate-700 dark:bg-[#111827] cursor-pointer"
                   onClick={() => navigate(`/product/${product._id}`)}
                 >
                   <div className="relative">
-                    <span className="absolute left-1.5 top-1.5 z-10 rounded bg-[#ff3366] px-1.5 py-0.5 text-[9px] font-bold uppercase text-white">
+                    <span className="absolute left-1 sm:left-1.5 top-1 sm:top-1.5 z-10 rounded bg-[#ff3366] px-1 sm:px-1.5 py-0.5 text-[7px] sm:text-[9px] font-bold uppercase text-white">
                       {discount}% OFF
                     </span>
-                    <div className="flex h-24 items-center justify-center rounded-xl bg-slate-50 p-2 sm:h-28 dark:bg-slate-900">
+                    <div className="flex aspect-square sm:h-28 items-center justify-center rounded-lg sm:rounded-xl bg-slate-50 p-1.5 sm:p-2 dark:bg-slate-900">
                       <img
                         src={imageSrc}
                         alt={product.name}

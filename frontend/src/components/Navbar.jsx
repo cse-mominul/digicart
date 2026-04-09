@@ -6,6 +6,12 @@ import { useWishlist } from '../context/WishlistContext';
 import CartDrawer from './CartDrawer';
 
 const categoryLinks = ['All', 'Laptop', 'Phone', 'Smart Phone'];
+const mobileMenuItems = [
+  { label: 'Home', to: '/', icon: 'home' },
+  { label: 'About Us', to: '/contact-us', icon: 'about' },
+  { label: 'Shop', to: '/products/all', icon: 'shop' },
+  { label: 'Contact', to: '/contact-us', icon: 'contact' },
+];
 
 const toSlug = (value = '') =>
   value
@@ -24,6 +30,7 @@ const Navbar = () => {
   const [cartOpen, setCartOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem('theme') === 'dark');
   const [accountOpen, setAccountOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const accountRef = useRef(null);
 
@@ -70,28 +77,119 @@ const Navbar = () => {
     ? decodeURIComponent(location.pathname.split('/products/')[1] || '')
     : '';
 
+  const renderMobileMenuIcon = (type) => {
+    if (type === 'home') {
+      return (
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 11.5L12 4l9 7.5M5 10.5V20h14v-9.5M9 20v-6h6v6" />
+        </svg>
+      );
+    }
+
+    if (type === 'about') {
+      return (
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      );
+    }
+
+    if (type === 'shop') {
+      return (
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.29 2.29a1 1 0 00.7 1.71H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+        </svg>
+      );
+    }
+
+    return (
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 12.414A8 8 0 1112 13.414l4.243 4.243a1 1 0 01-1.414 1.414z" />
+      </svg>
+    );
+  };
+
   return (
     <>
       <header className="sticky top-0 z-50 bg-white dark:bg-gray-950 border-b border-gray-100 dark:border-gray-800">
-        <div className="max-w-7xl mx-auto px-4 py-3">
-          <div className="flex items-center gap-3 md:gap-6">
-            <Link to="/" className="text-xl sm:text-2xl font-extrabold text-[#ff3366] tracking-tight">
-              DigiCart
-            </Link>
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 py-2.5 sm:py-3">
+          <div className="sm:hidden">
+            <div className="flex items-center justify-between gap-3">
+              <button
+                type="button"
+                onClick={() => setMobileMenuOpen((prev) => !prev)}
+                className="inline-flex h-14 w-14 items-center justify-center rounded-full border border-gray-300 bg-gray-50 text-gray-700 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200"
+                aria-label="Toggle mobile menu"
+                aria-expanded={mobileMenuOpen}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M4 7h16M4 12h16M4 17h16" />
+                </svg>
+              </button>
 
-            <div className="flex-1 max-w-3xl mx-auto">
-              <div className="relative">
+              <Link to="/" className="flex items-center gap-2 text-[#ff3366]">
+                <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#ff3366] text-white text-lg font-bold">D</span>
+                <span className="text-[28px] leading-none font-bold tracking-tight">DigiCart</span>
+              </Link>
+
+              <button
+                onClick={() => setCartOpen(true)}
+                className="relative inline-flex h-14 w-14 items-center justify-center rounded-full bg-[#ff3366] text-white"
+                aria-label="Open cart"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14l-1 12H6L5 8zm2-3a3 3 0 016 0v1H7V5z" />
+                </svg>
+                {totalItems > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-[#ff3366] text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">
+                    {totalItems}
+                  </span>
+                )}
+              </button>
+            </div>
+
+            <div className="mt-3">
+              <div className="relative w-full">
                 <input
                   type="text"
-                  placeholder="Search for products, brands and more"
+                  placeholder="Search for the Items"
                   value={searchQuery}
                   onChange={handleSearchChange}
                   onKeyPress={handleSearch}
-                  className="w-full bg-white dark:bg-gray-900 border border-[#ff3366] rounded-full py-2.5 pl-11 pr-4 text-sm text-gray-800 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:outline-none focus:ring-0"
+                  className="w-full bg-white dark:bg-gray-900 border border-[#ff3366]/40 dark:border-[#ff3366]/40 rounded-full py-3 pl-5 pr-14 text-lg text-gray-700 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#ff3366]/20"
                 />
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                  className="h-9 w-9 absolute right-4 top-1/2 -translate-y-1/2 text-[#ff3366]"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M21 21l-5.2-5.2m0 0A7.5 7.5 0 105.2 5.2a7.5 7.5 0 0010.6 10.6z" />
+                </svg>
+              </div>
+            </div>
+
+          </div>
+
+          <div className="hidden sm:flex items-center gap-2 sm:gap-3 md:gap-6">
+            <Link to="/" className="text-lg sm:text-xl md:text-2xl font-extrabold text-[#ff3366] tracking-tight flex-shrink-0">
+              DigiCart
+            </Link>
+
+            <div className="hidden sm:flex flex-1 max-w-3xl mx-auto">
+              <div className="relative w-full">
+                <input
+                  type="text"
+                  placeholder="Search for products..."
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  onKeyPress={handleSearch}
+                  className="w-full bg-white dark:bg-gray-900 border border-[#ff3366] rounded-full py-2 sm:py-2.5 pl-10 sm:pl-11 pr-3 sm:pr-4 text-xs sm:text-sm text-gray-800 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:outline-none focus:ring-0"
+                />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 sm:h-5 w-4 sm:w-5 absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-gray-400"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -101,10 +199,10 @@ const Navbar = () => {
               </div>
             </div>
 
-            <div className="ml-auto flex items-center gap-3 sm:gap-5 text-xs sm:text-sm">
+            <div className="ml-auto flex items-center gap-2 sm:gap-3 md:gap-5 text-xs sm:text-sm">
               <button
                 onClick={() => setDarkMode((prev) => !prev)}
-                className="inline-flex p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200"
+                className="inline-flex p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700"
                 aria-label="Toggle dark mode"
               >
                 {darkMode ? (
@@ -194,7 +292,7 @@ const Navbar = () => {
             </div>
           </div>
 
-          <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-800 flex items-center gap-5 overflow-x-auto whitespace-nowrap">
+          <div className="hidden sm:flex mt-3 pt-3 border-t border-gray-100 dark:border-gray-800 items-center gap-5 overflow-x-auto whitespace-nowrap">
             {categoryLinks.map((category) => {
               const slug = toSlug(category);
               const isActive = slug === 'all'
@@ -222,6 +320,116 @@ const Navbar = () => {
           </div>
         </div>
       </header>
+
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-[70] sm:hidden">
+          <button
+            type="button"
+            className="absolute inset-0 bg-black/30"
+            onClick={() => setMobileMenuOpen(false)}
+            aria-label="Close mobile menu overlay"
+          />
+
+          <aside className="relative h-full w-[86%] max-w-[360px] overflow-y-auto bg-[#f4f5f7] px-4 pb-8 pt-4 shadow-[8px_0_30px_rgba(15,23,42,0.2)]">
+            <div className="flex items-center justify-between">
+              <Link to="/" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2 text-[#ff3366]">
+                <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#ff3366] text-white text-lg font-bold">D</span>
+                <span className="text-[22px] leading-none font-bold tracking-tight">DigiCart</span>
+              </Link>
+
+              <button
+                type="button"
+                onClick={() => setMobileMenuOpen(false)}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 text-gray-600"
+                aria-label="Close mobile menu"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="mt-5 rounded-2xl border border-gray-300 bg-white p-4">
+              <div className="space-y-3">
+                <Link
+                  to="/account/wishlist"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 text-base font-medium text-gray-700"
+                >
+                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#ff3366] text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    </svg>
+                  </span>
+                  <span>Wishlist {wishlistCount > 0 ? `(${wishlistCount})` : ''}</span>
+                </Link>
+
+                {user ? (
+                  <>
+                    <Link
+                      to="/account/profile"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center gap-3 text-base font-medium text-gray-700"
+                    >
+                      <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#ff3366] text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.121 17.804A9 9 0 1118.88 17.8M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                      </span>
+                      <span>My Profile</span>
+                    </Link>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        handleLogout();
+                      }}
+                      className="flex w-full items-center gap-3 text-base font-medium text-red-500"
+                    >
+                      <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-red-500 text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                      </span>
+                      <span>Logout</span>
+                    </button>
+                  </>
+                ) : (
+                  <Link
+                    to="/login"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-3 text-base font-medium text-gray-700"
+                  >
+                    <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#ff3366] text-white">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14M13 5l7 7-7 7" />
+                      </svg>
+                    </span>
+                    <span>Login / Sign Up</span>
+                  </Link>
+                )}
+
+                <div className="my-1 border-t border-gray-200" />
+
+                {mobileMenuItems.map((item) => (
+                  <Link
+                    key={item.label}
+                    to={item.to}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-3 text-base font-medium text-gray-700"
+                  >
+                    <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#ff3366] text-white">
+                      {renderMobileMenuIcon(item.icon)}
+                    </span>
+                    <span>{item.label}</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </aside>
+        </div>
+      )}
 
       <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
     </>

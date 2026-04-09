@@ -59,3 +59,49 @@ body::-webkit-scrollbar-button,
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+/* Scroll reveal animation */
+@keyframes revealFromBottom {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+}
+
+.reveal-visible {
+  animation: revealFromBottom 0.6s ease-out forwards;
+}
+
+/* Responsive text utilities */
+@media (max-width: 640px) {
+  body {
+    font-size: 14px;
+  }
+}
+
+/* Card hover effect optimization for touch devices */
+@media (hover: none) {
+  .group {
+    transform: none;
+  }
+
+  .group:active {
+    transform: scale(0.98);
+  }
+}
+
+/* Prevent accidental horizontal scrolling on mobile */
+html,
+body,
+#root {
+  overflow-x: hidden;
+}

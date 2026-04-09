@@ -49,29 +49,29 @@ const OurProductsSection = ({ products = [], loading = false }) => {
   };
 
   return (
-    <section className="mb-10 rounded-[24px] border border-slate-200 bg-white p-3 shadow-[0_12px_35px_rgba(15,23,42,0.06)] sm:p-5 dark:border-slate-800 dark:bg-[#0f172a]">
-      <div className="mb-4 flex items-start justify-between gap-3">
+    <section className="mb-8 sm:mb-10 rounded-xl sm:rounded-2xl border border-slate-200 bg-white p-2.5 sm:p-3 md:p-5 shadow-[0_12px_35px_rgba(15,23,42,0.06)] dark:border-slate-800 dark:bg-[#0f172a]">
+      <div className="mb-3 sm:mb-4 md:mb-5 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-3">
         <div>
-          <h3 className="text-2xl font-semibold text-slate-900 dark:text-white">Our Products</h3>
-          <p className="text-sm text-slate-500 dark:text-slate-400">
-            {loading ? 'Loading products...' : `${products.length} products`}
+          <h3 className="text-lg sm:text-xl md:text-2xl font-semibold text-slate-900 dark:text-white">Our Products</h3>
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+            {loading ? 'Loading products...' : `${products.length} products available`}
           </p>
         </div>
       </div>
 
       {loading ? (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+        <div className="grid grid-cols-1 gap-2 sm:gap-3 sm:grid-cols-2 lg:grid-cols-5">
           {[...Array(10)].map((_, index) => (
-            <div key={index} className="h-[228px] animate-pulse rounded-2xl border border-slate-200 bg-slate-100 dark:border-slate-700 dark:bg-slate-900" />
+            <div key={index} className="aspect-square sm:aspect-auto sm:h-[228px] animate-pulse rounded-lg sm:rounded-2xl border border-slate-200 bg-slate-100 dark:border-slate-700 dark:bg-slate-900" />
           ))}
         </div>
       ) : visibleProducts.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-slate-300 py-10 text-center text-slate-500 dark:border-slate-700 dark:text-slate-400">
+        <div className="rounded-lg sm:rounded-2xl border border-dashed border-slate-300 py-8 sm:py-10 text-center text-xs sm:text-sm text-slate-500 dark:border-slate-700 dark:text-slate-400">
           No products found.
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+          <div className="grid grid-cols-1 gap-2 sm:gap-3 sm:grid-cols-2 lg:grid-cols-5">
             {visibleProducts.map((product) => {
               const price = Number(product.price) || 0;
               const discount = discountSteps[(product.name || '').length % discountSteps.length];
@@ -82,14 +82,14 @@ const OurProductsSection = ({ products = [], loading = false }) => {
               return (
                 <article
                   key={product._id}
-                  className="group cursor-pointer rounded-2xl border border-slate-200 bg-white p-2.5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md dark:border-slate-700 dark:bg-[#111827]"
+                  className="group cursor-pointer rounded-lg sm:rounded-2xl border border-slate-200 bg-white p-1.5 sm:p-2.5 shadow-sm transition-all active:scale-95 hover:-translate-y-0.5 hover:shadow-md dark:border-slate-700 dark:bg-[#111827]"
                   onClick={() => navigate(`/product/${product._id}`)}
                 >
                   <div className="relative">
-                    <span className="absolute left-1.5 top-1.5 z-10 rounded bg-[#ff3366] px-1.5 py-0.5 text-[9px] font-bold uppercase text-white">
+                    <span className="absolute left-1 sm:left-1.5 top-1 sm:top-1.5 z-10 rounded bg-[#ff3366] px-1 sm:px-1.5 py-0.5 text-[7px] sm:text-[9px] font-bold uppercase text-white">
                       {discount}% OFF
                     </span>
-                    <div className="flex h-24 items-center justify-center rounded-xl bg-slate-50 p-2 sm:h-28 dark:bg-slate-900">
+                    <div className="flex aspect-square sm:h-28 items-center justify-center rounded-lg sm:rounded-xl bg-slate-50 p-1.5 sm:p-2 dark:bg-slate-900">
                       <img
                         src={imageSrc}
                         alt={product.name}
@@ -101,38 +101,38 @@ const OurProductsSection = ({ products = [], loading = false }) => {
                     </div>
                   </div>
 
-                  <div className="mt-2">
-                    <h4 className="min-h-[36px] line-clamp-2 text-[12px] font-medium leading-4 text-slate-800 dark:text-slate-100">
+                  <div className="mt-1 sm:mt-2">
+                    <h4 className="min-h-[32px] sm:min-h-[36px] line-clamp-2 text-[11px] sm:text-[12px] font-medium leading-4 text-slate-800 dark:text-slate-100">
                       {product.name}
                     </h4>
 
-                    <div className="mt-1 flex items-center gap-1 text-[#f59e0b]">
+                    <div className="mt-0.5 sm:mt-1 flex items-center gap-0.5 sm:gap-1 text-[#f59e0b]">
                       {[...Array(5)].map((_, index) => (
-                        <svg key={index} xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 24 24" fill="currentColor">
+                        <svg key={index} xmlns="http://www.w3.org/2000/svg" className="h-2 sm:h-3 w-2 sm:w-3" viewBox="0 0 24 24" fill="currentColor">
                           <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
                         </svg>
                       ))}
-                      <span className="text-[10px] text-slate-400">(189)</span>
+                      <span className="text-[8px] sm:text-[10px] text-slate-400">(189)</span>
                     </div>
 
-                    <div className="mt-1.5 flex items-center gap-1.5">
-                      <span className="text-sm font-semibold text-slate-900 dark:text-white">{formatPrice(price)}</span>
-                      <span className="text-[10px] text-slate-400 line-through">{formatPrice(oldPrice)}</span>
-                      <span className="text-[10px] font-semibold text-[#ff3366]">{discount}% OFF</span>
+                    <div className="mt-1 sm:mt-1.5 flex flex-wrap items-center gap-0.5 sm:gap-1.5 text-[10px] sm:text-sm">
+                      <span className="font-semibold text-slate-900 dark:text-white">{formatPrice(price)}</span>
+                      <span className="text-slate-400 line-through text-[8px] sm:text-[10px]">{formatPrice(oldPrice)}</span>
+                      <span className="font-semibold text-[#ff3366] text-[8px] sm:text-[10px]">{discount}% OFF</span>
                     </div>
 
-                    <div className="mt-2 flex items-center gap-2">
+                    <div className="mt-1.5 sm:mt-2 flex items-center gap-1 sm:gap-2">
                       <button
                         type="button"
                         onClick={(event) => handleWishlist(event, product)}
-                        className={`inline-flex h-7 w-7 items-center justify-center rounded-full border transition-colors ${
+                        className={`inline-flex h-6 sm:h-7 w-6 sm:w-7 items-center justify-center rounded-full border transition-colors flex-shrink-0 ${
                           inWishlist
                             ? 'border-[#ff3366] bg-[#ff3366] text-white'
-                            : 'border-slate-200 text-slate-500 hover:border-[#ff3366] hover:text-[#ff3366] dark:border-slate-700 dark:text-slate-300'
+                            : 'border-slate-200 text-slate-500 hover:border-[#ff3366] hover:text-[#ff3366] active:scale-90 dark:border-slate-700 dark:text-slate-300'
                         }`}
                         aria-label="Toggle wishlist"
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 24 24" fill={inWishlist ? 'currentColor' : 'none'} stroke="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 sm:h-3.5 w-3 sm:w-3.5" viewBox="0 0 24 24" fill={inWishlist ? 'currentColor' : 'none'} stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                         </svg>
                       </button>

@@ -44,7 +44,7 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 pb-6 sm:pb-8">
+    <div className="max-w-7xl mx-auto overflow-x-hidden px-3 pb-6 sm:px-4 md:px-6 lg:px-8 sm:pb-8">
       <HeroSlider />
 
       <AiHighlights />
