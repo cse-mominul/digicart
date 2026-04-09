@@ -25,7 +25,7 @@ const CartDrawer = ({ open, onClose }) => {
 
   const handleOpenWishlist = () => {
     onClose();
-    navigate('/wishlist');
+    navigate('/account/wishlist');
   };
 
   return (

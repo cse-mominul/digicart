@@ -1,10 +1,9 @@
 import { useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import MyOrders from './pages/MyOrders';
-import Wishlist from './pages/Wishlist';
 import ProductDetails from './pages/ProductDetails';
 import CategoryProducts from './pages/CategoryProducts';
 import Checkout from './pages/Checkout';
@@ -49,7 +48,7 @@ function App() {
         <Route path="/contact-us" element={<UserLayout><ContactUs /></UserLayout>} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/wishlist" element={<UserLayout><Wishlist /></UserLayout>} />
+        <Route path="/wishlist" element={<Navigate to="/account/wishlist" replace />} />
         <Route path="/product/:id" element={<UserLayout><ProductDetails /></UserLayout>} />
         <Route
           path="/account/dashboard"
@@ -69,6 +68,14 @@ function App() {
         />
         <Route
           path="/account/orders"
+          element={
+            <ProtectedRoute>
+              <UserLayout><UserAccount /></UserLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/account/wishlist"
           element={
             <ProtectedRoute>
               <UserLayout><UserAccount /></UserLayout>
