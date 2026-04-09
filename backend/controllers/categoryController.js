@@ -12,6 +12,35 @@ const getCategories = async (req, res) => {
   }
 };
 
+// @desc  Get all categories for admin management
+// @route GET /api/categories/all
+const getAllCategories = async (req, res) => {
+  try {
+    const categories = await Category.find().sort({ name: 1 });
+    return res.json(categories);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc  Get random active categories
+// @route GET /api/categories/random
+const getRandomCategories = async (req, res) => {
+  const limit = Math.max(1, Math.min(Number(req.query.limit) || 4, 12));
+
+  try {
+    const categories = await Category.aggregate([
+      { $match: { isActive: true } },
+      { $sample: { size: limit } },
+      { $sort: { name: 1 } },
+    ]);
+
+    return res.json(categories);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 // @desc  Create a category (admin only)
 // @route POST /api/categories
 const createCategory = async (req, res) => {
@@ -109,6 +138,8 @@ const deleteCategory = async (req, res) => {
 
 module.exports = {
   getCategories,
+  getAllCategories,
+  getRandomCategories,
   createCategory,
   updateCategory,
   deleteCategory,

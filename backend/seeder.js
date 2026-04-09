@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const connectDB = require('./config/db');
 const User = require('./models/User');
+const Category = require('./models/Category');
 const Product = require('./models/Product');
 
 dotenv.config();
@@ -79,11 +80,18 @@ const demoProducts = [
   },
 ];
 
+const demoCategories = [...new Set(demoProducts.map((product) => product.category))].map((name) => ({
+  name,
+  iconUrl: '',
+  isActive: true,
+}));
+
 const importData = async () => {
   try {
     await connectDB();
 
     await User.deleteMany();
+    await Category.deleteMany();
     await Product.deleteMany();
 
     const usersWithHashedPasswords = await Promise.all(
@@ -94,9 +102,10 @@ const importData = async () => {
     );
 
     await User.insertMany(usersWithHashedPasswords);
+    await Category.insertMany(demoCategories);
     await Product.insertMany(demoProducts);
 
-    console.log('✅ Demo users and products imported successfully');
+    console.log('✅ Demo users, categories, and products imported successfully');
     process.exit();
   } catch (error) {
     console.error(`❌ Seeder failed: ${error.message}`);

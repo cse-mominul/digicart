@@ -18,7 +18,7 @@ const CategoryManager = () => {
   const fetchCategories = async () => {
     setLoading(true);
     try {
-      const { data } = await API.get('/categories');
+      const { data } = await API.get('/categories/all');
       setCategories(Array.isArray(data) ? data : []);
     } catch {
       toast.error('Failed to load categories');
@@ -116,6 +116,7 @@ const CategoryManager = () => {
                 <tr>
                   <th className="px-6 py-4 text-left font-medium">Icon</th>
                   <th className="px-6 py-4 text-left font-medium">Name</th>
+                  <th className="px-6 py-4 text-left font-medium">Status</th>
                   <th className="px-6 py-4 text-left font-medium">Actions</th>
                 </tr>
               </thead>
@@ -142,6 +143,17 @@ const CategoryManager = () => {
                     </td>
                     <td className="px-6 py-4 text-gray-800 dark:text-gray-100 font-medium">{category.name}</td>
                     <td className="px-6 py-4">
+                      <span
+                        className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${
+                          category.isActive
+                            ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                            : 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400'
+                        }`}
+                      >
+                        {category.isActive ? 'Active' : 'Inactive'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => openEdit(category)}
@@ -162,7 +174,7 @@ const CategoryManager = () => {
 
                 {categories.length === 0 && (
                   <tr>
-                    <td colSpan={3} className="px-6 py-16 text-center text-gray-400 dark:text-gray-500">
+                    <td colSpan={4} className="px-6 py-16 text-center text-gray-400 dark:text-gray-500">
                       No categories yet. Add your first featured category.
                     </td>
                   </tr>

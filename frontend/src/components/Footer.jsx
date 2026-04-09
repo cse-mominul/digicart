@@ -1,6 +1,44 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import API from '../api/axios';
+
+const slugifyCategory = (name = '') =>
+  name
+    .toLowerCase()
+    .trim()
+    .replace(/&/g, 'and')
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-');
 
 const Footer = () => {
+  const [categoryLinks, setCategoryLinks] = useState([
+    { label: 'Fashion', href: '/products/fashion' },
+    { label: 'Electronics', href: '/products/electronics' },
+    { label: 'Home & Living', href: '/products/home-living' },
+    { label: 'Beauty & Care', href: '/products/beauty-care' },
+  ]);
+
+  useEffect(() => {
+    const fetchRandomCategories = async () => {
+      try {
+        const { data } = await API.get('/categories/random?limit=4');
+        if (Array.isArray(data) && data.length > 0) {
+          setCategoryLinks(
+            data.map((category) => ({
+              label: category.name,
+              href: `/products/${slugifyCategory(category.name)}`,
+            }))
+          );
+        }
+      } catch (error) {
+        console.error('Failed to fetch random categories for footer:', error);
+      }
+    };
+
+    fetchRandomCategories();
+  }, []);
+
   const handleScrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -17,13 +55,6 @@ const Footer = () => {
     { label: 'My Orders', href: '/account/orders' },
     { label: 'Wishlist', href: '/account/wishlist' },
     { label: 'Shipping Address', href: '/account/addresses' },
-  ];
-
-  const categoryLinks = [
-    { label: 'Fashion', href: '/products/fashion' },
-    { label: 'Electronics', href: '/products/electronics' },
-    { label: 'Home & Living', href: '/products/home-living' },
-    { label: 'Beauty & Care', href: '/products/beauty-care' },
   ];
 
   const renderLinkList = (title, links) => (
