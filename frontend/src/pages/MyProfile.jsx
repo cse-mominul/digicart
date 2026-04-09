@@ -122,8 +122,8 @@ const MyProfile = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <aside className="lg:col-span-3">
-            <div className="rounded-2xl border border-gray-100 bg-white p-3 shadow-sm">
-              <nav className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-1 lg:pb-0">
+            <div className="rounded-3xl border border-gray-100 bg-white p-3 shadow-sm lg:min-h-[620px]">
+              <nav className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-1 lg:pb-0 lg:pt-2">
                 {navItems.map((item) => {
                   const isActive = item.id === activeItem;
 
@@ -131,7 +131,7 @@ const MyProfile = () => {
                     <button
                       key={item.id}
                       onClick={() => handleNavClick(item)}
-                      className={`min-w-max lg:min-w-0 w-full flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium transition-colors text-left ${
+                      className={`min-w-max lg:min-w-0 w-full flex items-center gap-4 px-4 py-4 rounded-2xl text-base font-medium transition-colors text-left ${
                         isActive
                           ? 'text-white bg-[#0f8e8e]'
                           : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
@@ -147,67 +147,119 @@ const MyProfile = () => {
           </aside>
 
           <section className="lg:col-span-9">
-            <div className="rounded-2xl border border-gray-100 bg-white p-5 sm:p-6 shadow-sm min-h-[460px]">
-              <div className="mb-8 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div className="rounded-3xl border border-gray-100 bg-white p-5 sm:p-6 shadow-sm min-h-[620px]">
+              <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900">My Profile</h1>
-                  <p className="mt-2 text-sm sm:text-base text-gray-500">
-                    Manage your account information and sign-in details.
+                  <h1 className="text-3xl sm:text-4xl font-semibold text-gray-900">My Profile</h1>
+                  <p className="mt-3 max-w-2xl text-sm sm:text-base text-gray-500">
+                    Update your personal details and secure your account from a single place.
                   </p>
                 </div>
-                <div className="hidden sm:block rounded-full bg-gray-100 px-4 py-2 text-sm text-gray-500">
-                  Profile settings
-                </div>
+
+                <button
+                  type="button"
+                  onClick={handleSubmit}
+                  className="self-start rounded-full bg-[#0f8e8e] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-teal-700/10 transition-colors hover:bg-[#0c7d7d]"
+                >
+                  Save Changes
+                </button>
               </div>
 
-              <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4 sm:grid-cols-2 max-w-3xl">
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">Name</label>
-                  <input
-                    type="text"
-                    value={form.name}
-                    onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
-                  />
-                </div>
+              <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
+                <form onSubmit={handleSubmit} className="rounded-[28px] border border-gray-200 bg-white p-5 sm:p-6 shadow-sm">
+                  <div className="mb-5 flex items-center justify-between">
+                    <h2 className="text-xl sm:text-2xl font-semibold text-gray-900">Profile Information</h2>
+                    <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-500">
+                      Editable
+                    </span>
+                  </div>
 
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">Email</label>
-                  <input
-                    type="email"
-                    value={form.email}
-                    onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
-                  />
-                </div>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="mb-1 block text-sm font-medium text-gray-700">Name</label>
+                      <input
+                        type="text"
+                        value={form.name}
+                        onChange={(e) => setForm({ ...form, name: e.target.value })}
+                        className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
+                      />
+                    </div>
 
-                <div className="sm:col-span-2">
-                  <label className="mb-1 block text-sm font-medium text-gray-700">Password</label>
-                  <input
-                    type="password"
-                    value={form.password}
-                    onChange={(e) => setForm({ ...form, password: e.target.value })}
-                    placeholder="Enter new password"
-                    className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
-                  />
-                </div>
+                    <div>
+                      <label className="mb-1 block text-sm font-medium text-gray-700">Email</label>
+                      <input
+                        type="email"
+                        value={form.email}
+                        onChange={(e) => setForm({ ...form, email: e.target.value })}
+                        className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
+                      />
+                    </div>
 
-                <div className="sm:col-span-2 mt-2 flex flex-wrap gap-3">
-                  <button
-                    type="submit"
-                    className="rounded-full bg-[#0f8e8e] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#0c7d7d]"
-                  >
-                    Save Changes
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => navigate('/my-account')}
-                    className="rounded-full border border-gray-200 px-6 py-3 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50"
-                  >
-                    Back to Dashboard
-                  </button>
+                    <div>
+                      <label className="mb-1 block text-sm font-medium text-gray-700">Password</label>
+                      <input
+                        type="password"
+                        value={form.password}
+                        onChange={(e) => setForm({ ...form, password: e.target.value })}
+                        placeholder="Enter new password"
+                        className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="mt-6 flex flex-wrap gap-3">
+                    <button
+                      type="submit"
+                      className="rounded-full bg-[#0f8e8e] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#0c7d7d]"
+                    >
+                      Update Profile
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => navigate('/my-account')}
+                      className="rounded-full border border-gray-200 px-6 py-3 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50"
+                    >
+                      Back to Dashboard
+                    </button>
+                  </div>
+                </form>
+
+                <div className="rounded-[28px] border border-gray-200 bg-white p-5 sm:p-6 shadow-sm">
+                  <div className="mb-5 flex items-center justify-between">
+                    <h2 className="text-xl sm:text-2xl font-semibold text-gray-900">Account Preview</h2>
+                    <span className="rounded-full bg-teal-50 px-3 py-1 text-xs font-medium text-[#0f8e8e]">
+                      Live
+                    </span>
+                  </div>
+
+                  <div className="rounded-2xl bg-gray-50 p-5">
+                    <div className="flex items-center gap-4">
+                      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#0f8e8e] text-white text-lg font-semibold">
+                        {(user?.name || 'U').slice(0, 1).toUpperCase()}
+                      </div>
+                      <div>
+                        <p className="text-lg font-semibold text-gray-900">{user?.name || 'Your Name'}</p>
+                        <p className="text-sm text-gray-500">{user?.email || 'your@email.com'}</p>
+                      </div>
+                    </div>
+
+                    <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                      <div className="rounded-2xl border border-gray-200 bg-white p-4">
+                        <p className="text-xs font-medium uppercase tracking-wide text-gray-400">Member Since</p>
+                        <p className="mt-2 text-sm font-semibold text-gray-900">2026</p>
+                      </div>
+                      <div className="rounded-2xl border border-gray-200 bg-white p-4">
+                        <p className="text-xs font-medium uppercase tracking-wide text-gray-400">Account Status</p>
+                        <p className="mt-2 text-sm font-semibold text-[#0f8e8e]">Active</p>
+                      </div>
+                    </div>
+
+                    <div className="mt-6 rounded-2xl border border-dashed border-gray-300 bg-white p-4 text-sm text-gray-500">
+                      Keep your profile details updated to make checkout and order support faster.
+                    </div>
+                  </div>
                 </div>
-              </form>
+              </div>
             </div>
           </section>
         </div>

@@ -13,7 +13,7 @@ const Footer = () => {
   ];
 
   const accountLinks = [
-    { label: 'My Profile', href: '/my-profile' },
+    { label: 'My Profile', href: '/account/profile' },
     { label: 'My Orders', href: '/my-orders' },
     { label: 'Wishlist', href: '/wishlist' },
     { label: 'Shipping Address', href: '/shipping-address' },
