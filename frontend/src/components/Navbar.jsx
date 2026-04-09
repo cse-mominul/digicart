@@ -3,10 +3,9 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
-import CartDrawer from './CartDrawer';
 import API from '../api/axios';
+import CartDrawer from './CartDrawer';
 
-const categoryLinks = ['All', 'Laptop', 'Phone', 'Smart Phone'];
 const mobileMenuItems = [
   { label: 'Home', to: '/', icon: 'home' },
   { label: 'About Us', to: '/contact-us', icon: 'about' },
@@ -35,6 +34,7 @@ const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [categoryLinks, setCategoryLinks] = useState(['All']);
   const accountRef = useRef(null);
   const searchRef = useRef(null);
 
@@ -104,6 +104,21 @@ const Navbar = () => {
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const { data } = await API.get('/categories');
+        if (Array.isArray(data) && data.length > 0) {
+          setCategoryLinks(['All', ...data.map((category) => category.name).filter(Boolean)]);
+        }
+      } catch (error) {
+        console.error('Failed to fetch categories:', error);
+      }
+    };
+
+    fetchCategories();
   }, []);
 
   const handleLogout = () => {

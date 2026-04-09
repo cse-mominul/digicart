@@ -4,7 +4,6 @@ import toast from 'react-hot-toast';
 
 const initialForm = {
   name: '',
-  iconUrl: '',
 };
 
 const CategoryManager = () => {
@@ -41,7 +40,6 @@ const CategoryManager = () => {
     setEditId(category._id);
     setForm({
       name: category.name || '',
-      iconUrl: category.iconUrl || '',
     });
     setShowModal(true);
   };
@@ -50,7 +48,6 @@ const CategoryManager = () => {
     e.preventDefault();
     const payload = {
       name: form.name.trim(),
-      iconUrl: form.iconUrl.trim(),
     };
 
     if (!payload.name) {
@@ -209,17 +206,6 @@ const CategoryManager = () => {
                   value={form.name}
                   onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
                   placeholder="e.g. Smartphones"
-                  className="w-full rounded-xl border border-gray-100 dark:border-gray-700 bg-white/90 dark:bg-gray-800 px-3 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-600"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm text-gray-600 dark:text-gray-300 mb-1">Icon URL</label>
-                <input
-                  type="url"
-                  value={form.iconUrl}
-                  onChange={(e) => setForm((prev) => ({ ...prev, iconUrl: e.target.value }))}
-                  placeholder="https://example.com/icon.svg"
                   className="w-full rounded-xl border border-gray-100 dark:border-gray-700 bg-white/90 dark:bg-gray-800 px-3 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-600"
                 />
               </div>
