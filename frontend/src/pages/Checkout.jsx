@@ -1,7 +1,8 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import API from '../api/axios';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 import { formatPrice } from '../utils/formatPrice';
 import { showOrderSuccess } from '../utils/showOrderSuccess';
 import toast from 'react-hot-toast';
@@ -29,6 +30,7 @@ const paymentMethods = [
 const Checkout = () => {
   const navigate = useNavigate();
   const { cartItems, totalPrice, clearCart } = useCart();
+  const { user } = useAuth();
 
   const [form, setForm] = useState({
     name: '',
@@ -45,6 +47,51 @@ const Checkout = () => {
   const [shippingMethod, setShippingMethod] = useState('inside-dhaka');
   const [paymentMethod, setPaymentMethod] = useState('cod');
   const [placingOrder, setPlacingOrder] = useState(false);
+  const [savedAddresses, setSavedAddresses] = useState([]);
+  const [selectedAddressId, setSelectedAddressId] = useState('');
+
+  // Load saved addresses when user is logged in
+  useEffect(() => {
+    if (user) {
+      try {
+        const raw = localStorage.getItem('digicart_saved_addresses');
+        const addresses = raw ? JSON.parse(raw) : [];
+        setSavedAddresses(addresses);
+      } catch {
+        setSavedAddresses([]);
+      }
+    }
+  }, [user]);
+
+  // Handle address selection
+  const handleAddressSelect = (e) => {
+    const addressId = e.target.value;
+    setSelectedAddressId(addressId);
+
+    if (addressId) {
+      const selected = savedAddresses.find((addr) => addr.id === addressId);
+      if (selected) {
+        setForm({
+          ...form,
+          name: form.name || '',
+          phone: selected.phone || '',
+          city: selected.city || '',
+          area: selected.area || '',
+          address: selected.address || '',
+          email: form.email || '',
+        });
+      }
+    } else {
+      // Clear address fields when "Add new address" is selected
+      setForm({
+        ...form,
+        phone: '',
+        city: '',
+        area: '',
+        address: '',
+      });
+    }
+  };
 
   const availableAreas = form.city ? areaOptionsByCity[form.city] || [] : [];
 
@@ -156,6 +203,37 @@ const Checkout = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <section className="lg:col-span-2 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-2xl p-5 sm:p-6">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Billing & Shipping</h2>
+
+          {user && savedAddresses.length > 0 && (
+            <div className="mb-5 pb-5 border-b border-gray-200 dark:border-gray-700">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Quick Select Address</label>
+              <div className="flex flex-wrap gap-3">
+                {savedAddresses.map((addr) => (
+                  <button
+                    key={addr.id}
+                    type="button"
+                    onClick={() => {
+                      setSelectedAddressId(addr.id);
+                      setForm({
+                        ...form,
+                        phone: addr.phone || '',
+                        city: addr.city || '',
+                        area: addr.area || '',
+                        address: addr.address || '',
+                      });
+                    }}
+                    className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                      selectedAddressId === addr.id
+                        ? 'bg-pink-500 text-white border-2 border-pink-600'
+                        : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-2 border-gray-200 dark:border-gray-700 hover:border-pink-300 dark:hover:border-pink-600'
+                    }`}
+                  >
+                    {addr.label || 'Unnamed'}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
