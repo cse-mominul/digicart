@@ -94,12 +94,24 @@ const UserAccount = () => {
   const [profileForm, setProfileForm] = useState({
     name: user?.name || '',
     email: user?.email || '',
+    phone: user?.phone || '',
     password: '',
   });
+  const [profileSaving, setProfileSaving] = useState(false);
+
+  useEffect(() => {
+    setProfileForm((prev) => ({
+      ...prev,
+      name: user?.name || '',
+      email: user?.email || '',
+      phone: user?.phone || '',
+    }));
+  }, [user?.name, user?.email, user?.phone]);
 
   const [orders, setOrders] = useState([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
   const [activeOrderFilter, setActiveOrderFilter] = useState('All');
+  const [showProfilePassword, setShowProfilePassword] = useState(false);
 
   const [addresses, setAddresses] = useState(getStoredAddresses);
   const [addressForm, setAddressForm] = useState(emptyAddressForm);
@@ -200,22 +212,35 @@ const UserAccount = () => {
     return orders.filter((order) => normalizeOrderStatus(order.status) === activeOrderFilter);
   }, [activeOrderFilter, orders]);
 
-  const handleProfileSave = (e) => {
+  const handleProfileSave = async (e) => {
     e.preventDefault();
 
-    if (!profileForm.name.trim() || !profileForm.email.trim()) {
-      toast.error('Name and email are required');
+    if (!profileForm.name.trim() || !profileForm.email.trim() || !profileForm.phone.trim()) {
+      toast.error('Name, email and phone are required');
       return;
     }
 
-    login({
-      ...user,
-      name: profileForm.name.trim(),
-      email: profileForm.email.trim(),
-    });
+    setProfileSaving(true);
+    try {
+      const payload = {
+        name: profileForm.name.trim(),
+        email: profileForm.email.trim(),
+        phone: profileForm.phone.trim(),
+      };
 
-    setProfileForm((prev) => ({ ...prev, password: '' }));
-    toast.success('Profile information updated');
+      if (profileForm.password.trim()) {
+        payload.password = profileForm.password.trim();
+      }
+
+      const { data } = await API.put('/auth/profile', payload);
+      login(data);
+      setProfileForm((prev) => ({ ...prev, password: '' }));
+      toast.success('Profile information updated');
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to update profile');
+    } finally {
+      setProfileSaving(false);
+    }
   };
 
   const handleAddressSave = (e) => {
@@ -374,20 +399,41 @@ const UserAccount = () => {
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Phone Number</label>
                   <input
-                    type="password"
-                    value={profileForm.password}
-                    onChange={(e) => setProfileForm({ ...profileForm, password: e.target.value })}
-                    placeholder="Enter new password"
+                    type="text"
+                    value={profileForm.phone}
+                    onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
                     className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:ring-2 focus:ring-pink-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                    placeholder="Enter your phone number"
                   />
+                </div>
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
+                  <div className="relative">
+                    <input
+                      type={showProfilePassword ? 'text' : 'password'}
+                      value={profileForm.password}
+                      onChange={(e) => setProfileForm({ ...profileForm, password: e.target.value })}
+                      placeholder="Enter new password"
+                      className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 pr-16 text-gray-900 outline-none focus:ring-2 focus:ring-pink-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowProfilePassword((prev) => !prev)}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 rounded px-2 py-1 text-xs font-medium text-pink-600 hover:bg-pink-50 dark:text-pink-300 dark:hover:bg-gray-700"
+                      aria-label={showProfilePassword ? 'Hide password' : 'Show password'}
+                    >
+                      {showProfilePassword ? 'Hide' : 'Show'}
+                    </button>
+                  </div>
                 </div>
                 <button
                   type="submit"
+                  disabled={profileSaving}
                   className="rounded-xl bg-[#ff3366] px-5 py-2.5 font-semibold text-white transition-colors hover:bg-[#ff1f58]"
                 >
-                  Save Changes
+                  {profileSaving ? 'Saving...' : 'Save Changes'}
                 </button>
               </form>
             </div>

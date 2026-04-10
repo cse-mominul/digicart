@@ -3,10 +3,15 @@ const Order = require('../models/Order');
 // @desc  Create new order
 // @route POST /api/orders
 const createOrder = async (req, res) => {
-  const { items, totalAmount, shippingAddress } = req.body;
+  const { items, totalAmount, shippingAddress, customer } = req.body;
 
   if (!items || items.length === 0) {
     return res.status(400).json({ message: 'No order items provided' });
+  }
+
+  const profilePhone = String(req.user?.phone || '').trim();
+  if (!profilePhone) {
+    return res.status(400).json({ message: 'Please add your phone number in Profile Information before placing an order' });
   }
 
   try {
@@ -14,7 +19,10 @@ const createOrder = async (req, res) => {
       user: req.user._id,
       items,
       totalAmount,
-      shippingAddress,
+      shippingAddress: {
+        ...(shippingAddress || {}),
+        phone: shippingAddress?.phone || customer?.phone || profilePhone,
+      },
     });
     res.status(201).json(order);
   } catch (error) {

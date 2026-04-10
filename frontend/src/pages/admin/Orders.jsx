@@ -237,6 +237,24 @@ const Orders = () => {
 
                 {isExpanded && (
                   <div className="mt-4 space-y-4 rounded-xl border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-900/40">
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                      <div className="rounded-lg bg-white px-3 py-3 dark:bg-gray-800">
+                        <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Ordered By</p>
+                        <p className="mt-1 text-sm font-semibold text-gray-800 dark:text-gray-100">{order?.user?.name || 'N/A'}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">{order?.user?.email || 'N/A'}</p>
+                      </div>
+
+                      <div className="rounded-lg bg-white px-3 py-3 dark:bg-gray-800">
+                        <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Ordered At</p>
+                        <p className="mt-1 text-sm font-semibold text-gray-800 dark:text-gray-100">
+                          {new Date(order.createdAt).toLocaleDateString()}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          {new Date(order.createdAt).toLocaleTimeString()}
+                        </p>
+                      </div>
+                    </div>
+
                     <div>
                       <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Shipping Address</p>
                       <p className="mt-1 text-sm text-gray-700 dark:text-gray-200">
@@ -244,6 +262,9 @@ const Orders = () => {
                       </p>
                       <p className="text-sm text-gray-500 dark:text-gray-400">
                         {order?.shippingAddress?.postalCode || ''} {order?.shippingAddress?.country || ''}
+                      </p>
+                      <p className="mt-1 text-sm text-gray-700 dark:text-gray-300">
+                        Phone: {order?.shippingAddress?.phone || 'N/A'}
                       </p>
                     </div>
 

@@ -7,7 +7,7 @@ const generateToken = (id) =>
 // @desc  Register a new user
 // @route POST /api/auth/register
 const register = async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, phone } = req.body;
 
   if (!name || !email || !password) {
     return res.status(400).json({ message: 'Please provide all required fields' });
@@ -17,11 +17,12 @@ const register = async (req, res) => {
     const userExists = await User.findOne({ email });
     if (userExists) return res.status(400).json({ message: 'User already exists' });
 
-    const user = await User.create({ name, email, password });
+    const user = await User.create({ name, email, password, phone: String(phone || '').trim() });
     res.status(201).json({
       _id: user._id,
       name: user.name,
       email: user.email,
+      phone: user.phone,
       role: user.role,
       token: generateToken(user._id),
     });
@@ -59,6 +60,7 @@ const login = async (req, res) => {
         _id: user._id,
         name: user.name,
         email: user.email,
+        phone: user.phone,
         role: user.role,
         token: generateToken(user._id),
       });
@@ -68,4 +70,54 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { register, login };
+// @desc  Update user profile
+// @route PUT /api/auth/profile
+const updateProfile = async (req, res) => {
+  const { name, email, phone, password } = req.body;
+
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (typeof name === 'string') {
+      user.name = name.trim();
+    }
+
+    if (typeof email === 'string') {
+      const normalizedEmail = email.trim().toLowerCase();
+      const existingUser = await User.findOne({ email: normalizedEmail, _id: { $ne: user._id } });
+      if (existingUser) {
+        return res.status(400).json({ message: 'Email is already in use' });
+      }
+      user.email = normalizedEmail;
+    }
+
+    if (typeof phone === 'string') {
+      user.phone = phone.trim();
+    }
+
+    if (typeof password === 'string' && password.trim()) {
+      if (password.trim().length < 6) {
+        return res.status(400).json({ message: 'Password must be at least 6 characters' });
+      }
+      user.password = password.trim();
+    }
+
+    await user.save();
+
+    res.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      role: user.role,
+      token: generateToken(user._id),
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { register, login, updateProfile };

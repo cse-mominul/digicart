@@ -60,6 +60,13 @@ const Checkout = () => {
       } catch {
         setSavedAddresses([]);
       }
+
+      setForm((prev) => ({
+        ...prev,
+        name: prev.name || user.name || '',
+        email: prev.email || user.email || '',
+        phone: prev.phone || user.phone || '',
+      }));
     }
   }, [user]);
 
