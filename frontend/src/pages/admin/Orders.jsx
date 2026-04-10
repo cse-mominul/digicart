@@ -5,6 +5,7 @@ import { formatPrice } from '../../utils/formatPrice';
 
 const STATUS_OPTIONS = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
 const FILTER_OPTIONS = ['All', ...STATUS_OPTIONS];
+const ITEMS_PER_PAGE = 7;
 
 const statusColors = {
   Pending: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
@@ -21,6 +22,7 @@ const Orders = () => {
   const [activeFilter, setActiveFilter] = useState('All');
   const [search, setSearch] = useState('');
   const [expandedOrderId, setExpandedOrderId] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -75,6 +77,24 @@ const Orders = () => {
     });
   }, [orders, activeFilter, search]);
 
+  const totalPages = Math.max(1, Math.ceil(filteredOrders.length / ITEMS_PER_PAGE));
+
+  const paginatedOrders = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredOrders.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [filteredOrders, currentPage]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+    setExpandedOrderId(null);
+  }, [activeFilter, search]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
+
   const totalRevenue = useMemo(
     () => orders.reduce((sum, order) => sum + (Number(order?.totalAmount) || 0), 0),
     [orders]
@@ -93,6 +113,22 @@ const Orders = () => {
   const toggleExpand = (orderId) => {
     setExpandedOrderId((prev) => (prev === orderId ? null : orderId));
   };
+
+  const pageItems = useMemo(() => {
+    if (totalPages <= 7) {
+      return Array.from({ length: totalPages }, (_, index) => index + 1);
+    }
+
+    if (currentPage <= 4) {
+      return [1, 2, 3, 4, 5, '...', totalPages];
+    }
+
+    if (currentPage >= totalPages - 3) {
+      return [1, '...', totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+    }
+
+    return [1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages];
+  }, [currentPage, totalPages]);
 
   return (
     <div>
@@ -162,7 +198,7 @@ const Orders = () => {
         </div>
       ) : (
         <div className="space-y-5">
-          {filteredOrders.map((order) => {
+          {paginatedOrders.map((order) => {
             const items = Array.isArray(order?.items) ? order.items : [];
             const isExpanded = expandedOrderId === order._id;
 
@@ -287,6 +323,57 @@ const Orders = () => {
               </article>
             );
           })}
+
+          {filteredOrders.length > ITEMS_PER_PAGE && (
+            <div className="mt-2 flex flex-col gap-3 border-t border-gray-200 pt-4 dark:border-gray-700 sm:flex-row sm:items-center sm:justify-between">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Page {currentPage} of {totalPages}
+              </p>
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                  disabled={currentPage === 1}
+                  className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:border-indigo-400 hover:text-indigo-600 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
+                >
+                  Prev
+                </button>
+
+                {pageItems.map((item, index) => (
+                  item === '...' ? (
+                    <span
+                      key={`ellipsis-${index}`}
+                      className="px-1 text-sm font-semibold text-gray-400 dark:text-gray-500"
+                    >
+                      ...
+                    </span>
+                  ) : (
+                    <button
+                      key={item}
+                      type="button"
+                      onClick={() => setCurrentPage(item)}
+                      className={`rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors ${
+                        currentPage === item
+                          ? 'bg-indigo-600 text-white'
+                          : 'border border-gray-300 bg-white text-gray-700 hover:border-indigo-400 hover:text-indigo-600 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200'
+                      }`}
+                    >
+                      {item}
+                    </button>
+                  )
+                ))}
+
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                  disabled={currentPage === totalPages}
+                  className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:border-indigo-400 hover:text-indigo-600 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
