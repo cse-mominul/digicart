@@ -5,6 +5,8 @@ import toast from 'react-hot-toast';
 import { formatPrice } from '../utils/formatPrice';
 import { useAuth } from '../context/AuthContext';
 
+const ADDRESS_STORAGE_KEY = 'digicart_saved_addresses';
+
 const ProductDetails = () => {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -40,6 +42,9 @@ const ProductDetails = () => {
     phone: '',
     fullAddress: '',
   });
+  const [savedAddresses, setSavedAddresses] = useState([]);
+  const [selectedAddressId, setSelectedAddressId] = useState('');
+  const [addressTypeToSave, setAddressTypeToSave] = useState('Home');
   const orderFormRef = useRef(null);
 
   useEffect(() => {
@@ -128,6 +133,45 @@ const ProductDetails = () => {
     );
   }, [deliveryArea, deliverySettings]);
 
+  useEffect(() => {
+    if (!user) {
+      setSavedAddresses([]);
+      setSelectedAddressId('');
+      return;
+    }
+
+    try {
+      const raw = localStorage.getItem(ADDRESS_STORAGE_KEY);
+      const addresses = raw ? JSON.parse(raw) : [];
+      const safeAddresses = Array.isArray(addresses) ? addresses : [];
+      setSavedAddresses(safeAddresses);
+
+      const homeAddress = safeAddresses.find(
+        (item) => String(item?.label || '').toLowerCase() === 'home'
+      );
+
+      if (homeAddress) {
+        setSelectedAddressId(homeAddress.id);
+        setForm((prev) => ({
+          ...prev,
+          phone: homeAddress.phone || prev.phone,
+          fullAddress: buildAddressText(homeAddress) || prev.fullAddress,
+        }));
+      } else {
+        setSelectedAddressId('');
+      }
+    } catch {
+      setSavedAddresses([]);
+      setSelectedAddressId('');
+    }
+
+    setForm((prev) => ({
+      ...prev,
+      fullName: prev.fullName || user.name || '',
+      phone: prev.phone || user.phone || '',
+    }));
+  }, [user]);
+
   const galleryImages = useMemo(() => {
     if (!product) return [];
 
@@ -172,6 +216,67 @@ const ProductDetails = () => {
   const scrollToOrderForm = () => {
     orderFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
+
+  const buildAddressText = (addressItem) => {
+    const segments = [addressItem?.address, addressItem?.area, addressItem?.city]
+      .map((segment) => String(segment || '').trim())
+      .filter(Boolean);
+
+    return segments.join(', ');
+  };
+
+  const handleAddressSelect = (addressId) => {
+    setSelectedAddressId(addressId);
+
+    if (!addressId) return;
+
+    const selected = savedAddresses.find((item) => item.id === addressId);
+    if (!selected) return;
+
+    setForm((prev) => ({
+      ...prev,
+      phone: selected.phone || prev.phone,
+      fullAddress: buildAddressText(selected) || prev.fullAddress,
+    }));
+  };
+
+  const handleSaveCurrentAddressType = () => {
+    if (!user) return;
+
+    const phone = String(form.phone || '').trim();
+    const fullAddress = String(form.fullAddress || '').trim();
+
+    if (!phone || !fullAddress) {
+      toast.error('Phone number and full address are required to save address');
+      return;
+    }
+
+    const newEntry = {
+      id: Date.now().toString(),
+      label: addressTypeToSave,
+      city: '',
+      area: '',
+      address: fullAddress,
+      phone,
+    };
+
+    const nextAddresses = [
+      ...savedAddresses.filter((item) => String(item?.label || '').toLowerCase() !== addressTypeToSave.toLowerCase()),
+      newEntry,
+    ];
+
+    setSavedAddresses(nextAddresses);
+    setSelectedAddressId(newEntry.id);
+    localStorage.setItem(ADDRESS_STORAGE_KEY, JSON.stringify(nextAddresses));
+    toast.success(`${addressTypeToSave} address saved`);
+  };
+
+  const selectedAddress = useMemo(
+    () => savedAddresses.find((item) => item.id === selectedAddressId) || null,
+    [savedAddresses, selectedAddressId]
+  );
+
+  const isUsingSavedAddress = Boolean(user && selectedAddress);
 
   const ratingLabel = reviewsState.totalReviews > 0
     ? `${reviewsState.averageRating.toFixed(1)} / 5`
@@ -247,10 +352,18 @@ const ProductDetails = () => {
 
     if (!product) return;
 
+    const selectedAddressText = selectedAddress ? buildAddressText(selectedAddress) : '';
+
     const payload = {
-      fullName: form.fullName.trim(),
-      phone: form.phone.trim(),
-      fullAddress: form.fullAddress.trim(),
+      fullName: isUsingSavedAddress
+        ? String(user?.name || form.fullName || '').trim()
+        : form.fullName.trim(),
+      phone: isUsingSavedAddress
+        ? String(selectedAddress?.phone || user?.phone || form.phone || '').trim()
+        : form.phone.trim(),
+      fullAddress: isUsingSavedAddress
+        ? String(selectedAddressText || '').trim()
+        : form.fullAddress.trim(),
     };
 
     if (!payload.fullName || !payload.phone || !payload.fullAddress) {
@@ -658,38 +771,83 @@ const ProductDetails = () => {
           )}
 
           <form onSubmit={handleConfirmOrder} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Full Name</label>
-              <input
-                type="text"
-                value={form.fullName}
-                onChange={(event) => setForm((prev) => ({ ...prev, fullName: event.target.value }))}
-                className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-pink-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
-                placeholder="Enter your full name"
-              />
-            </div>
+            {user && (
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3.5 space-y-3 dark:border-white/10 dark:bg-white/5">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Saved Address</label>
+                  <select
+                    value={selectedAddressId}
+                    onChange={(event) => handleAddressSelect(event.target.value)}
+                    className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-pink-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
+                  >
+                    {savedAddresses.map((addressItem) => (
+                      <option key={addressItem.id} value={addressItem.id}>
+                        {addressItem.label || 'Saved'}
+                      </option>
+                    ))}
+                    <option value="">Use a new address</option>
+                  </select>
+                </div>
 
-            <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Phone Number</label>
-              <input
-                type="text"
-                value={form.phone}
-                onChange={(event) => setForm((prev) => ({ ...prev, phone: event.target.value }))}
-                className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-pink-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
-                placeholder="Enter your phone number"
-              />
-            </div>
+                <div className="grid gap-2 sm:grid-cols-[1fr_auto] sm:items-end">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Save Current Address As</label>
+                    <select
+                      value={addressTypeToSave}
+                      onChange={(event) => setAddressTypeToSave(event.target.value)}
+                      className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-pink-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
+                    >
+                      <option value="Home">Home</option>
+                      <option value="Office">Office</option>
+                    </select>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleSaveCurrentAddressType}
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:border-pink-400 hover:text-pink-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-100"
+                  >
+                    Save
+                  </button>
+                </div>
+              </div>
+            )}
 
-            <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Full Address</label>
-              <textarea
-                rows={4}
-                value={form.fullAddress}
-                onChange={(event) => setForm((prev) => ({ ...prev, fullAddress: event.target.value }))}
-                className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-pink-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
-                placeholder="House, road, area, city"
-              />
-            </div>
+            {!isUsingSavedAddress && (
+              <>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Full Name</label>
+                  <input
+                    type="text"
+                    value={form.fullName}
+                    onChange={(event) => setForm((prev) => ({ ...prev, fullName: event.target.value }))}
+                    className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-pink-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
+                    placeholder="Enter your full name"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Phone Number</label>
+                  <input
+                    type="text"
+                    value={form.phone}
+                    onChange={(event) => setForm((prev) => ({ ...prev, phone: event.target.value }))}
+                    className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-pink-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
+                    placeholder="Enter your phone number"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Full Address</label>
+                  <textarea
+                    rows={4}
+                    value={form.fullAddress}
+                    onChange={(event) => setForm((prev) => ({ ...prev, fullAddress: event.target.value }))}
+                    className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-pink-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
+                    placeholder="House, road, area, city"
+                  />
+                </div>
+              </>
+            )}
 
             <div className="rounded-2xl border border-slate-200 bg-[#fff8fb] p-4 space-y-3 dark:border-white/10 dark:bg-white/5">
               <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">Delivery Area</p>

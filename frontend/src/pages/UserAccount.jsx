@@ -95,7 +95,8 @@ const UserAccount = () => {
     name: user?.name || '',
     email: user?.email || '',
     phone: user?.phone || '',
-    password: '',
+    currentPassword: '',
+    newPassword: '',
   });
   const [profileSaving, setProfileSaving] = useState(false);
 
@@ -111,7 +112,8 @@ const UserAccount = () => {
   const [orders, setOrders] = useState([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
   const [activeOrderFilter, setActiveOrderFilter] = useState('All');
-  const [showProfilePassword, setShowProfilePassword] = useState(false);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
 
   const [addresses, setAddresses] = useState(getStoredAddresses);
   const [addressForm, setAddressForm] = useState(emptyAddressForm);
@@ -228,13 +230,17 @@ const UserAccount = () => {
         phone: profileForm.phone.trim(),
       };
 
-      if (profileForm.password.trim()) {
-        payload.password = profileForm.password.trim();
+      const currentPasswordValue = profileForm.currentPassword.trim();
+      const newPasswordValue = profileForm.newPassword.trim();
+
+      if (currentPasswordValue || newPasswordValue) {
+        payload.currentPassword = currentPasswordValue;
+        payload.newPassword = newPasswordValue;
       }
 
       const { data } = await API.put('/auth/profile', payload);
       login(data);
-      setProfileForm((prev) => ({ ...prev, password: '' }));
+      setProfileForm((prev) => ({ ...prev, currentPassword: '', newPassword: '' }));
       toast.success('Profile information updated');
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to update profile');
@@ -409,22 +415,42 @@ const UserAccount = () => {
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Current Password</label>
                   <div className="relative">
                     <input
-                      type={showProfilePassword ? 'text' : 'password'}
-                      value={profileForm.password}
-                      onChange={(e) => setProfileForm({ ...profileForm, password: e.target.value })}
+                      type={showCurrentPassword ? 'text' : 'password'}
+                      value={profileForm.currentPassword}
+                      onChange={(e) => setProfileForm({ ...profileForm, currentPassword: e.target.value })}
+                      placeholder="Enter current password"
+                      className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 pr-16 text-gray-900 outline-none focus:ring-2 focus:ring-pink-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowCurrentPassword((prev) => !prev)}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 rounded px-2 py-1 text-xs font-medium text-pink-600 hover:bg-pink-50 dark:text-pink-300 dark:hover:bg-gray-700"
+                      aria-label={showCurrentPassword ? 'Hide current password' : 'Show current password'}
+                    >
+                      {showCurrentPassword ? 'Hide' : 'Show'}
+                    </button>
+                  </div>
+                </div>
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">New Password</label>
+                  <div className="relative">
+                    <input
+                      type={showNewPassword ? 'text' : 'password'}
+                      value={profileForm.newPassword}
+                      onChange={(e) => setProfileForm({ ...profileForm, newPassword: e.target.value })}
                       placeholder="Enter new password"
                       className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 pr-16 text-gray-900 outline-none focus:ring-2 focus:ring-pink-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                     />
                     <button
                       type="button"
-                      onClick={() => setShowProfilePassword((prev) => !prev)}
+                      onClick={() => setShowNewPassword((prev) => !prev)}
                       className="absolute right-2 top-1/2 -translate-y-1/2 rounded px-2 py-1 text-xs font-medium text-pink-600 hover:bg-pink-50 dark:text-pink-300 dark:hover:bg-gray-700"
-                      aria-label={showProfilePassword ? 'Hide password' : 'Show password'}
+                      aria-label={showNewPassword ? 'Hide new password' : 'Show new password'}
                     >
-                      {showProfilePassword ? 'Hide' : 'Show'}
+                      {showNewPassword ? 'Hide' : 'Show'}
                     </button>
                   </div>
                 </div>

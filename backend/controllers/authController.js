@@ -73,7 +73,7 @@ const login = async (req, res) => {
 // @desc  Update user profile
 // @route PUT /api/auth/profile
 const updateProfile = async (req, res) => {
-  const { name, email, phone, password } = req.body;
+  const { name, email, phone, currentPassword, newPassword } = req.body;
 
   try {
     const user = await User.findById(req.user._id);
@@ -98,11 +98,28 @@ const updateProfile = async (req, res) => {
       user.phone = phone.trim();
     }
 
-    if (typeof password === 'string' && password.trim()) {
-      if (password.trim().length < 6) {
+    const currentPasswordValue = String(currentPassword || '').trim();
+    const newPasswordValue = String(newPassword || '').trim();
+
+    if (currentPasswordValue && !newPasswordValue) {
+      return res.status(400).json({ message: 'Please provide a new password' });
+    }
+
+    if (newPasswordValue) {
+      if (!currentPasswordValue) {
+        return res.status(400).json({ message: 'Current password is required to change password' });
+      }
+
+      const isCurrentPasswordMatch = await user.matchPassword(currentPasswordValue);
+      if (!isCurrentPasswordMatch) {
+        return res.status(401).json({ message: 'Current password is incorrect' });
+      }
+
+      if (newPasswordValue.length < 6) {
         return res.status(400).json({ message: 'Password must be at least 6 characters' });
       }
-      user.password = password.trim();
+
+      user.password = newPasswordValue;
     }
 
     await user.save();
