@@ -46,6 +46,7 @@ const ProductDetails = () => {
   const [selectedAddressId, setSelectedAddressId] = useState('');
   const [addressTypeToSave, setAddressTypeToSave] = useState('Home');
   const orderFormRef = useRef(null);
+  const productDetailsSectionRef = useRef(null);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -215,6 +216,10 @@ const ProductDetails = () => {
 
   const scrollToOrderForm = () => {
     orderFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  const scrollToProductDetailsSection = () => {
+    productDetailsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   const buildAddressText = (addressItem) => {
@@ -556,7 +561,7 @@ const ProductDetails = () => {
                 Order Now
               </button>
               <button
-                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                onClick={scrollToProductDetailsSection}
                 className="w-full rounded-full border border-slate-200 bg-white py-3 font-semibold text-slate-700 transition-colors hover:border-teal-500 hover:text-teal-600 dark:border-white/10 dark:bg-white/5 dark:text-slate-100"
               >
                 Learn More
@@ -566,7 +571,7 @@ const ProductDetails = () => {
         </div>
       </section>
 
-      <section className="grid gap-6 lg:grid-cols-5 mb-10">
+      <section ref={productDetailsSectionRef} className="grid gap-6 lg:grid-cols-5 mb-10">
         <div className="lg:col-span-3 rounded-[22px] border border-white/70 bg-white/80 p-4 shadow-[0_24px_80px_rgba(15,23,42,0.08)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
