@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import API from '../../api/axios';
 import toast from 'react-hot-toast';
 import { formatPrice } from '../../utils/formatPrice';
+import Swal from 'sweetalert2';
 
 const STATUS_OPTIONS = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
 const FILTER_OPTIONS = ['All', ...STATUS_OPTIONS];
@@ -15,10 +16,72 @@ const statusColors = {
   Cancelled: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
 };
 
+const csvEscape = (value) => {
+  const str = String(value ?? '');
+  if (/[",\n]/.test(str)) {
+    return `"${str.replace(/"/g, '""')}"`;
+  }
+  return str;
+};
+
+const getStatIcon = (type) => {
+  if (type === 'total' || type === 'processing') {
+    return (
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10" />
+      </svg>
+    );
+  }
+
+  if (type === 'pending') {
+    return (
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 8c-2.21 0-4 1.79-4 4m8 0a4 4 0 00-4-4m0 0V4m0 4v4m0 4h.01M7 16.5A6.5 6.5 0 1118.5 7" />
+      </svg>
+    );
+  }
+
+  if (type === 'shipped') {
+    return (
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 17h6m-8 0h.01M17 17h.01M3 7h11v7H3z" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M14 10h3l3 3v1h-6zM5 17a2 2 0 104 0 2 2 0 00-4 0zm10 0a2 2 0 104 0 2 2 0 00-4 0z" />
+      </svg>
+    );
+  }
+
+  if (type === 'delivered') {
+    return (
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 15l2 2 4-4" />
+      </svg>
+    );
+  }
+
+  if (type === 'cancel' || type === 'failed') {
+    return (
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 9l6 6m0-6l-6 6" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 17h6m-8 0h.01M17 17h.01M5 17a2 2 0 104 0 2 2 0 00-4 0zm10 0a2 2 0 104 0 2 2 0 00-4 0z" />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M3 7h11v7H3zm11 3h3l3 3v1h-6z" />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M8 4h8" />
+    </svg>
+  );
+};
+
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
   const [activeFilter, setActiveFilter] = useState('All');
   const [search, setSearch] = useState('');
   const [expandedOrderId, setExpandedOrderId] = useState(null);
@@ -100,18 +163,129 @@ const Orders = () => {
     [orders]
   );
 
-  const deliveredCount = useMemo(
-    () => orders.filter((order) => order.status === 'Delivered').length,
-    [orders]
-  );
+  const orderStats = useMemo(() => {
+    const countBy = (statuses) =>
+      orders.filter((order) =>
+        statuses.some((status) => String(order?.status || '').toLowerCase() === status.toLowerCase())
+      ).length;
 
-  const pendingCount = useMemo(
-    () => orders.filter((order) => order.status === 'Pending').length,
-    [orders]
-  );
+    return {
+      total: orders.length,
+      pending: countBy(['Pending']),
+      processing: countBy(['Processing']),
+      shipped: countBy(['Shipped']),
+      delivered: countBy(['Delivered']),
+      cancel: countBy(['Cancelled', 'Canceled']),
+      returned: countBy(['Returned']),
+      failed: countBy(['Failed']),
+    };
+  }, [orders]);
+
+  const statCards = [
+    { key: 'total', label: 'Total Order', value: orderStats.total, bg: 'bg-[#a8bfdf] dark:bg-[#50688a]' },
+    { key: 'pending', label: 'Pending Payment', value: orderStats.pending, bg: 'bg-[#ece39a] dark:bg-[#7f7544]' },
+    { key: 'processing', label: 'Processing', value: orderStats.processing, bg: 'bg-[#a8d4d6] dark:bg-[#3f787a]' },
+    { key: 'shipped', label: 'Shipped', value: orderStats.shipped, bg: 'bg-[#ecc8ab] dark:bg-[#886046]' },
+    { key: 'delivered', label: 'Delivered', value: orderStats.delivered, bg: 'bg-[#e7d1e2] dark:bg-[#77586f]' },
+    { key: 'cancel', label: 'Cancel', value: orderStats.cancel, bg: 'bg-[#efcb90] dark:bg-[#86602f]' },
+    { key: 'returned', label: 'Returned', value: orderStats.returned, bg: 'bg-[#b5dc9f] dark:bg-[#52733f]' },
+    { key: 'failed', label: 'Failed', value: orderStats.failed, bg: 'bg-[#b3d6e6] dark:bg-[#4a6f82]' },
+  ];
+
+  const handleExport = () => {
+    const rows = filteredOrders;
+
+    if (rows.length === 0) {
+      toast.error('No orders available to export');
+      return;
+    }
+
+    const headers = [
+      'Order ID',
+      'Order Date',
+      'Order Time',
+      'Customer Name',
+      'Customer Email',
+      'Status',
+      'Total Amount',
+      'Delivery City',
+      'Shipping Address',
+      'Phone',
+      'Item Count',
+      'Items',
+    ];
+
+    const lines = rows.map((order) => {
+      const orderedAt = new Date(order.createdAt);
+      const items = Array.isArray(order?.items) ? order.items : [];
+      const itemSummary = items
+        .map((item) => `${item?.name || item?.product?.name || 'Product'} x${Number(item?.quantity) || 1}`)
+        .join(' | ');
+
+      return [
+        order._id,
+        orderedAt.toLocaleDateString(),
+        orderedAt.toLocaleTimeString(),
+        order?.user?.name || 'N/A',
+        order?.user?.email || 'N/A',
+        order?.status || 'N/A',
+        Number(order?.totalAmount) || 0,
+        order?.shippingAddress?.city || 'N/A',
+        order?.shippingAddress?.address || 'N/A',
+        order?.shippingAddress?.phone || 'N/A',
+        items.length,
+        itemSummary,
+      ]
+        .map(csvEscape)
+        .join(',');
+    });
+
+    const csvContent = [headers.map(csvEscape).join(','), ...lines].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+
+    link.href = url;
+    link.download = `orders-export-${timestamp}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    toast.success('CSV exported successfully');
+  };
 
   const toggleExpand = (orderId) => {
     setExpandedOrderId((prev) => (prev === orderId ? null : orderId));
+  };
+
+  const handleDeleteOrder = async (orderId) => {
+    const result = await Swal.fire({
+      title: 'Delete this order?',
+      text: 'This action cannot be undone.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#dc2626',
+      cancelButtonColor: '#64748b',
+      reverseButtons: true,
+    });
+
+    if (!result.isConfirmed) return;
+
+    setDeletingId(orderId);
+    try {
+      const { data } = await API.delete(`/orders/${orderId}`);
+      setOrders((prev) => prev.filter((order) => order._id !== orderId));
+      setExpandedOrderId((prev) => (prev === orderId ? null : prev));
+      toast.success(data?.message || 'Order deleted successfully');
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to delete order');
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   const pageItems = useMemo(() => {
@@ -134,9 +308,42 @@ const Orders = () => {
     <div>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Order Management</h2>
+          <h2 className="text-3xl font-black tracking-tight text-gray-800 dark:text-white">Total Orders</h2>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Manage and track all incoming customer orders.</p>
         </div>
+        <button
+          type="button"
+          onClick={handleExport}
+          className="rounded-full bg-[#0f8f84] px-6 py-2.5 text-base font-bold text-white shadow-sm transition-colors hover:bg-[#117b72]"
+        >
+          Export
+        </button>
+      </div>
+
+      <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {statCards.map((card) => (
+          <div key={card.key} className={`rounded-2xl p-4 ${card.bg}`}>
+            <div className="flex items-center gap-4">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-white/80">
+                {getStatIcon(card.key)}
+              </div>
+              <div>
+                <p className="text-[1.75rem] leading-none font-black text-slate-900">{card.value}</p>
+                <p className="mt-1 text-xl font-semibold tracking-tight text-slate-700">{card.label}</p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="mb-6 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm font-semibold text-gray-600 dark:text-gray-300">Revenue</p>
+          <p className="text-xl font-black text-indigo-600 dark:text-indigo-300">{formatPrice(totalRevenue)}</p>
+        </div>
+      </div>
+
+      <div className="mb-4">
         <input
           type="text"
           value={search}
@@ -144,25 +351,6 @@ const Orders = () => {
           placeholder="Search by customer, order ID, city, item"
           className="w-full max-w-sm rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
         />
-      </div>
-
-      <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-          <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Total Orders</p>
-          <p className="mt-2 text-2xl font-bold text-gray-900 dark:text-white">{orders.length}</p>
-        </div>
-        <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-          <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Pending</p>
-          <p className="mt-2 text-2xl font-bold text-yellow-600 dark:text-yellow-300">{pendingCount}</p>
-        </div>
-        <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-          <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Delivered</p>
-          <p className="mt-2 text-2xl font-bold text-emerald-600 dark:text-emerald-300">{deliveredCount}</p>
-        </div>
-        <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-          <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Total Revenue</p>
-          <p className="mt-2 text-2xl font-bold text-indigo-600 dark:text-indigo-300">{formatPrice(totalRevenue)}</p>
-        </div>
       </div>
 
       <div className="mb-5 flex flex-wrap gap-2">
@@ -260,6 +448,15 @@ const Orders = () => {
                         <option key={s} value={s}>{s}</option>
                       ))}
                     </select>
+
+                    <button
+                      type="button"
+                      disabled={deletingId === order._id}
+                      onClick={() => handleDeleteOrder(order._id)}
+                      className="rounded-xl border border-red-300 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 transition-colors hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-60 dark:border-red-500/40 dark:bg-red-500/10 dark:text-red-300"
+                    >
+                      {deletingId === order._id ? 'Deleting...' : 'Delete'}
+                    </button>
                   </div>
 
                   <button
