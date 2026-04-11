@@ -58,7 +58,10 @@ const AdminLayout = () => {
   const [dark, setDark] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
-  const isOrderSectionOpen = location.pathname.startsWith('/admin/orders') || location.pathname.startsWith('/admin/shipping-delays');
+  const isOrderSectionOpen =
+    location.pathname.startsWith('/admin/orders') ||
+    location.pathname.startsWith('/admin/shipping-delays') ||
+    location.pathname.startsWith('/admin/payment-failures');
   const [ordersDropdownOpen, setOrdersDropdownOpen] = useState(isOrderSectionOpen);
 
   useEffect(() => {
@@ -151,6 +154,18 @@ const AdminLayout = () => {
                           }
                         >
                           Shipping Delays
+                        </NavLink>
+                        <NavLink
+                          to="/admin/payment-failures"
+                          className={({ isActive }) =>
+                            `ml-10 mr-2 flex items-center rounded-lg px-3 py-2 text-xs transition-colors ${
+                              isActive
+                                ? 'bg-indigo-500 text-white'
+                                : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                            }`
+                          }
+                        >
+                          Payment Failures
                         </NavLink>
                       </div>
                     )}
