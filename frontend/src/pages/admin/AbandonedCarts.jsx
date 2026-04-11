@@ -1,6 +1,7 @@
 import { Fragment, useEffect, useMemo, useState } from 'react';
 import API from '../../api/axios';
 import toast from 'react-hot-toast';
+import Swal from 'sweetalert2';
 
 const itemsPerPage = 10;
 
@@ -36,6 +37,8 @@ const AbandonedCarts = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [expandedUserId, setExpandedUserId] = useState(null);
+  const [resolvingUserId, setResolvingUserId] = useState(null);
+  const [deletingUserId, setDeletingUserId] = useState(null);
 
   const paginationItems = useMemo(
     () => getPaginationItems(currentPage, totalPages),
@@ -88,6 +91,62 @@ const AbandonedCarts = () => {
     setCurrentPage(page);
   };
 
+  const handleResolve = async (userId, name) => {
+    const result = await Swal.fire({
+      title: 'Resolve abandoned cart?',
+      text: `Mark ${name || 'this user'} as resolved?`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, resolve',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#2563eb',
+      cancelButtonColor: '#64748b',
+      reverseButtons: true,
+    });
+
+    if (!result.isConfirmed) return;
+
+    setResolvingUserId(userId);
+    try {
+      const { data } = await API.put(`/admin/abandoned-carts/${userId}`);
+      toast.success(data?.message || 'Abandoned cart resolved');
+      await fetchAbandonedCarts(currentPage, searchQuery);
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to resolve abandoned cart');
+    } finally {
+      setResolvingUserId(null);
+      setExpandedUserId((prev) => (prev === userId ? null : prev));
+    }
+  };
+
+  const handleDelete = async (userId, name) => {
+    const result = await Swal.fire({
+      title: 'Delete abandoned entry?',
+      text: `Delete ${name || 'this user'} abandoned cart data?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#dc2626',
+      cancelButtonColor: '#64748b',
+      reverseButtons: true,
+    });
+
+    if (!result.isConfirmed) return;
+
+    setDeletingUserId(userId);
+    try {
+      const { data } = await API.delete(`/admin/abandoned-carts/${userId}`);
+      toast.success(data?.message || 'Abandoned cart entry deleted');
+      await fetchAbandonedCarts(currentPage, searchQuery);
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to delete abandoned cart entry');
+    } finally {
+      setDeletingUserId(null);
+      setExpandedUserId((prev) => (prev === userId ? null : prev));
+    }
+  };
+
   return (
     <div>
       <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
@@ -136,6 +195,7 @@ const AbandonedCarts = () => {
                   <th className="px-6 py-3">Unpurchased</th>
                   <th className="px-6 py-3">Last Active</th>
                   <th className="px-6 py-3">Details</th>
+                  <th className="px-6 py-3">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -175,11 +235,31 @@ const AbandonedCarts = () => {
                             {isExpanded ? 'Hide' : 'View'}
                           </button>
                         </td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() => handleResolve(entry.userId, entry.name)}
+                              disabled={resolvingUserId === entry.userId || deletingUserId === entry.userId}
+                              className="rounded-md bg-emerald-600 px-2.5 py-1 text-xs font-semibold text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
+                            >
+                              {resolvingUserId === entry.userId ? 'Updating...' : 'Update'}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDelete(entry.userId, entry.name)}
+                              disabled={resolvingUserId === entry.userId || deletingUserId === entry.userId}
+                              className="rounded-md bg-red-600 px-2.5 py-1 text-xs font-semibold text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+                            >
+                              {deletingUserId === entry.userId ? 'Deleting...' : 'Delete'}
+                            </button>
+                          </div>
+                        </td>
                       </tr>
 
                       {isExpanded && (
                         <tr className="border-t bg-gray-50/60 dark:border-gray-700 dark:bg-gray-900/30">
-                          <td colSpan={6} className="px-6 py-4">
+                          <td colSpan={7} className="px-6 py-4">
                             <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
                               Unpurchased Products
                             </p>
@@ -215,7 +295,7 @@ const AbandonedCarts = () => {
 
                 {users.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="text-center py-10 text-gray-400">
+                    <td colSpan={7} className="text-center py-10 text-gray-400">
                       No abandoned carts found
                     </td>
                   </tr>

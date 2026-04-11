@@ -2,6 +2,7 @@ const Order = require('../models/Order');
 const User = require('../models/User');
 const UserEngagement = require('../models/UserEngagement');
 const Product = require('../models/Product');
+const mongoose = require('mongoose');
 
 // @desc  Get abandoned cart insights (admin)
 // @route GET /api/admin/abandoned-carts
@@ -150,4 +151,53 @@ const getAbandonedCartInsights = async (req, res) => {
   }
 };
 
-module.exports = { getAbandonedCartInsights };
+// @desc  Resolve abandoned cart entry (admin)
+// @route PUT /api/admin/abandoned-carts/:userId
+const resolveAbandonedCartByAdmin = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: 'Invalid user id' });
+    }
+
+    const engagement = await UserEngagement.findOne({ user: userId });
+    if (!engagement) {
+      return res.status(404).json({ message: 'Abandoned cart entry not found' });
+    }
+
+    engagement.cartProductIds = [];
+    engagement.wishlistProductIds = [];
+    engagement.lastActiveAt = new Date();
+    await engagement.save();
+
+    return res.json({ message: 'Abandoned cart resolved successfully' });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc  Delete abandoned cart entry (admin)
+// @route DELETE /api/admin/abandoned-carts/:userId
+const deleteAbandonedCartByAdmin = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: 'Invalid user id' });
+    }
+
+    const engagement = await UserEngagement.findOneAndDelete({ user: userId });
+    if (!engagement) {
+      return res.status(404).json({ message: 'Abandoned cart entry not found' });
+    }
+
+    return res.json({ message: 'Abandoned cart entry deleted successfully' });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = {
+  getAbandonedCartInsights,
+  resolveAbandonedCartByAdmin,
+  deleteAbandonedCartByAdmin,
+};

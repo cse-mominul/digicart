@@ -6,7 +6,11 @@ const {
 	updateReviewByAdmin,
 	deleteReviewByAdmin,
 } = require('../controllers/reviewController');
-const { getAbandonedCartInsights } = require('../controllers/analyticsController');
+const {
+	getAbandonedCartInsights,
+	resolveAbandonedCartByAdmin,
+	deleteAbandonedCartByAdmin,
+} = require('../controllers/analyticsController');
 const { protect } = require('../middleware/authMiddleware');
 const requireAdmin = require('../middleware/requireAdmin');
 
@@ -17,5 +21,7 @@ router.get('/reviews', protect, requireAdmin, getAllReviews);
 router.put('/reviews/:id', protect, requireAdmin, updateReviewByAdmin);
 router.delete('/reviews/:id', protect, requireAdmin, deleteReviewByAdmin);
 router.get('/abandoned-carts', protect, requireAdmin, getAbandonedCartInsights);
+router.put('/abandoned-carts/:userId', protect, requireAdmin, resolveAbandonedCartByAdmin);
+router.delete('/abandoned-carts/:userId', protect, requireAdmin, deleteAbandonedCartByAdmin);
 
 module.exports = router;
