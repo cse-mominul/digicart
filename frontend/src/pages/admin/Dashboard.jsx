@@ -165,14 +165,15 @@ const Dashboard = () => {
       if (status === 'pending') acc.pending += 1;
       if (status === 'processing') acc.processing += 1;
       if (status === 'cancelled') acc.cancelled += 1;
+      if (status === 'failed') acc.failed += 1;
       return acc;
-    }, { pending: 0, processing: 0, cancelled: 0 });
+    }, { pending: 0, processing: 0, cancelled: 0, failed: 0 });
   }, [orders]);
 
   const topCards = useMemo(() => {
     const shippingDelays = statusCounts.pending + statusCounts.processing;
     const refundRequests = statusCounts.cancelled;
-    const paymentFailures = Math.max(statusCounts.cancelled, Math.round(stats.orders * 0.03));
+    const paymentFailures = statusCounts.pending + statusCounts.failed;
     const abandonedCarts = abandonedStats.abandonedUsers;
 
     return [
@@ -269,12 +270,14 @@ const Dashboard = () => {
                 trendText={card.trendText}
                 trendUp={card.trendUp}
                 bgClass={card.bgClass}
-                clickable={card.title === 'Abandoned Carts' || card.title === 'Stock Products' || card.title === 'Total Customers' || card.title === 'Total Orders' || card.title === 'Shipping Delays'}
+                clickable={card.title === 'Abandoned Carts' || card.title === 'Stock Products' || card.title === 'Total Customers' || card.title === 'Total Orders' || card.title === 'Shipping Delays' || card.title === 'Payment Failures'}
                 onClick={
                   card.title === 'Abandoned Carts'
                     ? () => navigate('/admin/abandoned-carts')
                     : card.title === 'Stock Products'
                       ? () => navigate('/admin/products')
+                      : card.title === 'Payment Failures'
+                        ? () => navigate('/admin/payment-failures')
                       : card.title === 'Shipping Delays'
                         ? () => navigate('/admin/shipping-delays')
                       : card.title === 'Total Orders'

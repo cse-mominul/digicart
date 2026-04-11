@@ -27,12 +27,11 @@ const PaymentFailures = () => {
   }, []);
 
   const filteredOrders = useMemo(() => {
-    const unpaidStatuses = new Set(['pending', 'failed']);
     const q = search.trim().toLowerCase();
 
     return orders.filter((order) => {
       const status = String(order?.status || '').toLowerCase();
-      if (!unpaidStatuses.has(status)) return false;
+      if (status !== 'failed') return false;
 
       if (!q) return true;
 

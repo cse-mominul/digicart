@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 import { formatPrice } from '../../utils/formatPrice';
 import Swal from 'sweetalert2';
 
-const STATUS_OPTIONS = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
+const STATUS_OPTIONS = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'Failed'];
 const FILTER_OPTIONS = ['All', ...STATUS_OPTIONS];
 const ITEMS_PER_PAGE = 7;
 
@@ -14,6 +14,7 @@ const statusColors = {
   Shipped: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-300',
   Delivered: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300',
   Cancelled: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
+  Failed: 'bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-300',
 };
 
 const csvEscape = (value) => {
@@ -459,7 +460,7 @@ const Orders = () => {
                       className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-60 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
                     >
                       {STATUS_OPTIONS.map((s) => (
-                        <option key={s} value={s}>{s}</option>
+                        <option key={s} value={s}>{s === 'Failed' ? 'Payment Failures' : s}</option>
                       ))}
                     </select>
 
