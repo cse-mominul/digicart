@@ -18,6 +18,20 @@ const orderSchema = new mongoose.Schema(
       default: 'Pending',
       enum: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'Failed', 'Refund Requested'],
     },
+    paymentStatus: {
+      type: String,
+      default: 'Unpaid',
+      enum: ['Unpaid', 'Partial', 'Paid'],
+    },
+    amountPaid: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+    isPaid: {
+      type: Boolean,
+      default: false,
+    },
     shippingAddress: {
       address: { type: String },
       city: { type: String },

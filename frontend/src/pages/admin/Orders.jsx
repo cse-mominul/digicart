@@ -5,6 +5,7 @@ import { formatPrice } from '../../utils/formatPrice';
 import Swal from 'sweetalert2';
 
 const STATUS_OPTIONS = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'Failed', 'Refund Requested'];
+const PAYMENT_STATUS_OPTIONS = ['Unpaid', 'Partial', 'Paid'];
 const FILTER_OPTIONS = ['All', ...STATUS_OPTIONS];
 const ITEMS_PER_PAGE = 7;
 
@@ -16,6 +17,12 @@ const statusColors = {
   Cancelled: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
   Failed: 'bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-300',
   'Refund Requested': 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300',
+};
+
+const paymentStatusColors = {
+  Unpaid: 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300',
+  Partial: 'bg-sky-100 text-sky-800 dark:bg-sky-900/30 dark:text-sky-300',
+  Paid: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300',
 };
 
 const csvEscape = (value) => {
@@ -88,6 +95,7 @@ const Orders = () => {
   const [search, setSearch] = useState('');
   const [expandedOrderId, setExpandedOrderId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [paymentDrafts, setPaymentDrafts] = useState({});
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -121,10 +129,85 @@ const Orders = () => {
     setUpdatingId(orderId);
     try {
       const { data } = await API.put(`/orders/${orderId}/status`, { status });
-      setOrders((prev) => prev.map((o) => (o._id === orderId ? { ...o, status: data.status } : o)));
+      setOrders((prev) => prev.map((o) => (o._id === orderId ? { ...o, ...data } : o)));
       toast.success('Order status updated!');
     } catch {
       toast.error('Failed to update status');
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
+  const getNormalizedPayment = (order) => {
+    const raw = String(order?.paymentStatus || '').toLowerCase();
+    if (raw === 'paid') return 'Paid';
+    if (raw === 'partial') return 'Partial';
+    if (raw === 'unpaid') return 'Unpaid';
+
+    if (order?.isPaid) return 'Paid';
+    if (String(order?.status || '').toLowerCase() === 'delivered') return 'Paid';
+    return 'Unpaid';
+  };
+
+  const getPaymentDraft = (order) => {
+    const existingDraft = paymentDrafts[order._id];
+    if (existingDraft) return existingDraft;
+
+    return {
+      paymentStatus: getNormalizedPayment(order),
+      amountPaid: Number(order?.amountPaid) || 0,
+    };
+  };
+
+  const updatePaymentDraft = (order, patch) => {
+    const currentDraft = getPaymentDraft(order);
+    setPaymentDrafts((prev) => ({
+      ...prev,
+      [order._id]: {
+        ...currentDraft,
+        ...patch,
+      },
+    }));
+  };
+
+  const handlePaymentUpdate = async (order) => {
+    const draft = getPaymentDraft(order);
+    const totalAmount = Number(order?.totalAmount) || 0;
+    const normalizedAmountPaid = Number(draft.amountPaid);
+
+    if (!Number.isFinite(normalizedAmountPaid) || normalizedAmountPaid < 0) {
+      toast.error('Amount paid must be a valid non-negative number');
+      return;
+    }
+
+    if (draft.paymentStatus === 'Partial' && (normalizedAmountPaid <= 0 || normalizedAmountPaid >= totalAmount)) {
+      toast.error('For partial payment, amount must be greater than 0 and less than total amount');
+      return;
+    }
+
+    if (normalizedAmountPaid > totalAmount) {
+      toast.error('Amount paid cannot be greater than total amount');
+      return;
+    }
+
+    setUpdatingId(order._id);
+    try {
+      const { data } = await API.put(`/orders/${order._id}/payment`, {
+        paymentStatus: draft.paymentStatus,
+        amountPaid: normalizedAmountPaid,
+      });
+
+      setOrders((prev) => prev.map((o) => (o._id === order._id ? { ...o, ...data } : o)));
+      setPaymentDrafts((prev) => ({
+        ...prev,
+        [order._id]: {
+          paymentStatus: data.paymentStatus,
+          amountPaid: Number(data.amountPaid) || 0,
+        },
+      }));
+      toast.success('Payment status updated!');
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to update payment status');
     } finally {
       setUpdatingId(null);
     }
@@ -405,6 +488,8 @@ const Orders = () => {
           {paginatedOrders.map((order) => {
             const items = Array.isArray(order?.items) ? order.items : [];
             const isExpanded = expandedOrderId === order._id;
+            const paymentDraft = getPaymentDraft(order);
+            const paymentBadge = paymentStatusColors[paymentDraft.paymentStatus] || paymentStatusColors.Unpaid;
 
             return (
               <article
@@ -427,7 +512,7 @@ const Orders = () => {
                   </div>
                 </div>
 
-                <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
                   <div className="rounded-xl bg-gray-50 px-3 py-2 dark:bg-gray-800/60">
                     <p className="text-xs text-gray-500 dark:text-gray-400">Items</p>
                     <p className="text-sm font-semibold text-gray-800 dark:text-white">{items.length} item(s)</p>
@@ -448,6 +533,16 @@ const Orders = () => {
                     <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${statusColors[order.status]}`}>
                       {order.status}
                     </span>
+                  </div>
+
+                  <div className="rounded-xl bg-gray-50 px-3 py-2 dark:bg-gray-800/60">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Payment</p>
+                    <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${paymentBadge}`}>
+                      {paymentDraft.paymentStatus}
+                    </span>
+                    <p className="mt-1 text-xs font-medium text-gray-600 dark:text-gray-300">
+                      Paid: {formatPrice(Number(order?.amountPaid) || 0)}
+                    </p>
                   </div>
                 </div>
 
@@ -472,6 +567,39 @@ const Orders = () => {
                       className="rounded-xl border border-red-300 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 transition-colors hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-60 dark:border-red-500/40 dark:bg-red-500/10 dark:text-red-300"
                     >
                       {deletingId === order._id ? 'Deleting...' : 'Delete'}
+                    </button>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2">
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Payment:</label>
+                    <select
+                      value={paymentDraft.paymentStatus}
+                      disabled={updatingId === order._id}
+                      onChange={(e) => updatePaymentDraft(order, { paymentStatus: e.target.value })}
+                      className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-60 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+                    >
+                      {PAYMENT_STATUS_OPTIONS.map((status) => (
+                        <option key={status} value={status}>{status}</option>
+                      ))}
+                    </select>
+
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={paymentDraft.amountPaid}
+                      disabled={updatingId === order._id}
+                      onChange={(e) => updatePaymentDraft(order, { amountPaid: e.target.value })}
+                      className="w-32 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-60 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+                    />
+
+                    <button
+                      type="button"
+                      disabled={updatingId === order._id}
+                      onClick={() => handlePaymentUpdate(order)}
+                      className="rounded-xl border border-emerald-300 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700 transition-colors hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-60 dark:border-emerald-500/40 dark:bg-emerald-500/10 dark:text-emerald-300"
+                    >
+                      {updatingId === order._id ? 'Saving...' : 'Update Payment'}
                     </button>
                   </div>
 

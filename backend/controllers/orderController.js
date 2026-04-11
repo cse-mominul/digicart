@@ -24,6 +24,9 @@ const createOrder = async (req, res) => {
         phone: shippingAddress?.phone || customer?.phone || profilePhone,
       },
       appliedCoupon: String(appliedCoupon || '').trim().toUpperCase(),
+      paymentStatus: 'Unpaid',
+      amountPaid: 0,
+      isPaid: false,
     });
     res.status(201).json(order);
   } catch (error) {
@@ -69,12 +72,70 @@ const updateOrderStatus = async (req, res) => {
   }
 
   try {
-    const order = await Order.findByIdAndUpdate(
-      req.params.id,
-      { status },
-      { new: true }
-    );
+    const update = { status };
+
+    // Delivered/Completed orders are considered fully paid.
+    if (status === 'Delivered' || status === 'Completed') {
+      const existingOrder = await Order.findById(req.params.id).select('totalAmount');
+      if (!existingOrder) return res.status(404).json({ message: 'Order not found' });
+
+      update.paymentStatus = 'Paid';
+      update.amountPaid = Number(existingOrder.totalAmount) || 0;
+      update.isPaid = true;
+    }
+
+    const order = await Order.findByIdAndUpdate(req.params.id, update, { new: true });
     if (!order) return res.status(404).json({ message: 'Order not found' });
+    res.json(order);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc  Update order payment (admin only)
+// @route PUT /api/orders/:id/payment
+const updateOrderPayment = async (req, res) => {
+  const { paymentStatus, amountPaid } = req.body;
+  const validPaymentStatuses = ['Unpaid', 'Partial', 'Paid'];
+
+  if (!validPaymentStatuses.includes(paymentStatus)) {
+    return res.status(400).json({ message: 'Invalid payment status value' });
+  }
+
+  try {
+    const order = await Order.findById(req.params.id);
+    if (!order) return res.status(404).json({ message: 'Order not found' });
+
+    const totalAmount = Number(order.totalAmount) || 0;
+    let normalizedPaidAmount = Number(amountPaid);
+
+    if (!Number.isFinite(normalizedPaidAmount) || normalizedPaidAmount < 0) {
+      return res.status(400).json({ message: 'Amount paid must be a valid positive number' });
+    }
+
+    if (paymentStatus === 'Unpaid') {
+      normalizedPaidAmount = 0;
+    }
+
+    if (paymentStatus === 'Paid') {
+      normalizedPaidAmount = totalAmount;
+    }
+
+    if (paymentStatus === 'Partial') {
+      if (normalizedPaidAmount <= 0 || normalizedPaidAmount >= totalAmount) {
+        return res.status(400).json({ message: 'For partial payment, amount paid must be greater than 0 and less than total amount' });
+      }
+    }
+
+    if (normalizedPaidAmount > totalAmount) {
+      return res.status(400).json({ message: 'Amount paid cannot exceed total amount' });
+    }
+
+    order.paymentStatus = paymentStatus;
+    order.amountPaid = normalizedPaidAmount;
+    order.isPaid = paymentStatus === 'Paid';
+    await order.save();
+
     res.json(order);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -96,4 +157,4 @@ const deleteOrder = async (req, res) => {
   }
 };
 
-module.exports = { createOrder, getMyOrders, getAllOrders, updateOrderStatus, deleteOrder };
+module.exports = { createOrder, getMyOrders, getAllOrders, updateOrderStatus, updateOrderPayment, deleteOrder };

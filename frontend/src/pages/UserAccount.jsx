@@ -191,6 +191,14 @@ const UserAccount = () => {
     return 'Processing';
   };
 
+  const isOrderPaid = (order) => {
+    const paymentStatus = String(order?.paymentStatus || '').toLowerCase();
+    const rawStatus = String(order?.status || '').toLowerCase();
+    const isCompleted = rawStatus === 'delivered' || rawStatus === 'completed';
+
+    return Boolean(order?.isPaid || paymentStatus === 'paid' || isCompleted);
+  };
+
   const getOrderBadgeClasses = (status) => {
     if (status === 'Cancelled') {
       return 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300';
@@ -519,7 +527,7 @@ const UserAccount = () => {
                     const orderItems = Array.isArray(order.orderItems) ? order.orderItems.length : 0;
                     const deliveryText =
                       order?.shippingAddress?.city || order?.shippingAddress?.address || 'Standard Delivery';
-                    const isPaid = Boolean(order.isPaid || String(order?.paymentStatus || '').toLowerCase() === 'paid');
+                    const isPaid = isOrderPaid(order);
 
                     return (
                       <article
@@ -950,7 +958,7 @@ const UserAccount = () => {
                 <div className="rounded-2xl bg-gray-50 p-4 dark:bg-gray-800">
                   <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Payment</p>
                   <p className="mt-2 text-sm font-semibold text-gray-900 dark:text-white">
-                    {String(selectedOrder?.paymentStatus || '').toLowerCase() === 'paid' || selectedOrder?.isPaid ? 'Paid' : 'Unpaid'}
+                    {isOrderPaid(selectedOrder) ? 'Paid' : 'Unpaid'}
                   </p>
                 </div>
               </div>
