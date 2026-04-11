@@ -11,6 +11,18 @@ const getAllUsers = async (req, res) => {
   }
 };
 
+// @desc  Get single user (admin only)
+// @route GET /api/admin/users/:id
+const getUserById = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).select('-password');
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    return res.json(user);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 // @desc  Delete a user (admin only)
 // @route DELETE /api/admin/users/:id
 const deleteUser = async (req, res) => {
@@ -70,4 +82,4 @@ const updateUserByAdmin = async (req, res) => {
   }
 };
 
-module.exports = { getAllUsers, deleteUser, updateUserByAdmin };
+module.exports = { getAllUsers, getUserById, deleteUser, updateUserByAdmin };

@@ -39,6 +39,10 @@ const AbandonedCarts = () => {
   const [expandedUserId, setExpandedUserId] = useState(null);
   const [resolvingUserId, setResolvingUserId] = useState(null);
   const [deletingUserId, setDeletingUserId] = useState(null);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [productLoading, setProductLoading] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [customerLoading, setCustomerLoading] = useState(false);
 
   const paginationItems = useMemo(
     () => getPaginationItems(currentPage, totalPages),
@@ -147,6 +151,34 @@ const AbandonedCarts = () => {
     }
   };
 
+  const handleViewProduct = async (productId) => {
+    if (!productId) return;
+
+    setProductLoading(true);
+    try {
+      const { data } = await API.get(`/products/${productId}`);
+      setSelectedProduct(data || null);
+    } catch {
+      toast.error('Failed to load product details');
+    } finally {
+      setProductLoading(false);
+    }
+  };
+
+  const handleViewCustomer = async (userId) => {
+    if (!userId) return;
+
+    setCustomerLoading(true);
+    try {
+      const { data } = await API.get(`/admin/users/${userId}`);
+      setSelectedCustomer(data || null);
+    } catch {
+      toast.error('Failed to load customer details');
+    } finally {
+      setCustomerLoading(false);
+    }
+  };
+
   return (
     <div>
       <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
@@ -205,8 +237,14 @@ const AbandonedCarts = () => {
                     <Fragment key={entry.userId}>
                       <tr className="border-t dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
                         <td className="px-6 py-4">
-                          <p className="font-medium text-gray-800 dark:text-white">{entry.name}</p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">{entry.email || 'N/A'}</p>
+                          <button
+                            type="button"
+                            onClick={() => handleViewCustomer(entry.userId)}
+                            className="text-left"
+                          >
+                            <p className="font-medium text-indigo-700 hover:underline dark:text-indigo-300">{entry.name}</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">{entry.email || 'N/A'}</p>
+                          </button>
                         </td>
                         <td className="px-6 py-4">
                           <span className="inline-flex rounded-full bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-700 dark:bg-gray-700 dark:text-gray-200">
@@ -267,7 +305,12 @@ const AbandonedCarts = () => {
                             {Array.isArray(entry.unresolvedProducts) && entry.unresolvedProducts.length > 0 ? (
                               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                                 {entry.unresolvedProducts.map((product) => (
-                                  <div key={product._id} className="flex items-center gap-3 rounded-lg border border-gray-200 bg-white p-2.5 dark:border-gray-700 dark:bg-gray-800">
+                                  <button
+                                    key={product._id}
+                                    type="button"
+                                    onClick={() => handleViewProduct(product._id)}
+                                    className="flex w-full items-center gap-3 rounded-lg border border-gray-200 bg-white p-2.5 text-left transition-colors hover:border-indigo-300 hover:bg-indigo-50/40 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-indigo-500/60 dark:hover:bg-indigo-900/20"
+                                  >
                                     <img
                                       src={product.image || 'https://placehold.co/52x52?text=?'}
                                       alt={product.name}
@@ -279,8 +322,9 @@ const AbandonedCarts = () => {
                                     <div className="min-w-0">
                                       <p className="truncate text-sm font-medium text-gray-800 dark:text-white">{product.name}</p>
                                       <p className="text-xs text-gray-500 dark:text-gray-400">{product.category || 'N/A'}</p>
+                                      <p className="text-[11px] font-medium text-indigo-600 dark:text-indigo-300">Click for details</p>
                                     </div>
-                                  </div>
+                                  </button>
                                 ))}
                               </div>
                             ) : (
@@ -352,6 +396,79 @@ const AbandonedCarts = () => {
                 Next
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {(productLoading || selectedProduct) && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="w-full max-w-xl rounded-2xl bg-white p-5 shadow-xl dark:bg-gray-800">
+            {productLoading ? (
+              <div className="h-44 animate-pulse rounded-xl bg-gray-100 dark:bg-gray-700" />
+            ) : (
+              <>
+                <div className="mb-4 flex items-start justify-between gap-3">
+                  <h3 className="text-lg font-bold text-gray-800 dark:text-white">Product Details</h3>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedProduct(null)}
+                    className="rounded-md bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200"
+                  >
+                    Close
+                  </button>
+                </div>
+
+                <div className="flex flex-col gap-4 sm:flex-row">
+                  <img
+                    src={selectedProduct?.image || 'https://placehold.co/120x120?text=?'}
+                    alt={selectedProduct?.name || 'Product'}
+                    className="h-28 w-28 rounded-xl border border-gray-200 object-cover dark:border-gray-700"
+                    onError={(event) => {
+                      event.currentTarget.src = 'https://placehold.co/120x120?text=?';
+                    }}
+                  />
+                  <div className="min-w-0 flex-1 space-y-1.5 text-sm">
+                    <p><span className="font-semibold text-gray-700 dark:text-gray-300">Name:</span> <span className="text-gray-600 dark:text-gray-400">{selectedProduct?.name || 'N/A'}</span></p>
+                    <p><span className="font-semibold text-gray-700 dark:text-gray-300">Category:</span> <span className="text-gray-600 dark:text-gray-400">{selectedProduct?.category || 'N/A'}</span></p>
+                    <p><span className="font-semibold text-gray-700 dark:text-gray-300">Price:</span> <span className="text-gray-600 dark:text-gray-400">{selectedProduct?.price ?? 'N/A'}</span></p>
+                    <p><span className="font-semibold text-gray-700 dark:text-gray-300">Stock:</span> <span className="text-gray-600 dark:text-gray-400">{selectedProduct?.stock ?? 'N/A'}</span></p>
+                    <p><span className="font-semibold text-gray-700 dark:text-gray-300">Description:</span> <span className="text-gray-600 dark:text-gray-400">{selectedProduct?.description || 'N/A'}</span></p>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      {(customerLoading || selectedCustomer) && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="w-full max-w-lg rounded-2xl bg-white p-5 shadow-xl dark:bg-gray-800">
+            {customerLoading ? (
+              <div className="h-40 animate-pulse rounded-xl bg-gray-100 dark:bg-gray-700" />
+            ) : (
+              <>
+                <div className="mb-4 flex items-start justify-between gap-3">
+                  <h3 className="text-lg font-bold text-gray-800 dark:text-white">Customer Details</h3>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedCustomer(null)}
+                    className="rounded-md bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200"
+                  >
+                    Close
+                  </button>
+                </div>
+
+                <div className="space-y-2 text-sm">
+                  <p><span className="font-semibold text-gray-700 dark:text-gray-300">Name:</span> <span className="text-gray-600 dark:text-gray-400">{selectedCustomer?.name || 'N/A'}</span></p>
+                  <p><span className="font-semibold text-gray-700 dark:text-gray-300">Email:</span> <span className="text-gray-600 dark:text-gray-400">{selectedCustomer?.email || 'N/A'}</span></p>
+                  <p><span className="font-semibold text-gray-700 dark:text-gray-300">Phone:</span> <span className="text-gray-600 dark:text-gray-400">{selectedCustomer?.phone || 'N/A'}</span></p>
+                  <p><span className="font-semibold text-gray-700 dark:text-gray-300">Role:</span> <span className="text-gray-600 dark:text-gray-400">{selectedCustomer?.role || 'N/A'}</span></p>
+                  <p><span className="font-semibold text-gray-700 dark:text-gray-300">Joined:</span> <span className="text-gray-600 dark:text-gray-400">{selectedCustomer?.createdAt ? new Date(selectedCustomer.createdAt).toLocaleString() : 'N/A'}</span></p>
+                  <p><span className="font-semibold text-gray-700 dark:text-gray-300">Last Login:</span> <span className="text-gray-600 dark:text-gray-400">{selectedCustomer?.lastLoginAt ? new Date(selectedCustomer.lastLoginAt).toLocaleString() : 'Never'}</span></p>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
