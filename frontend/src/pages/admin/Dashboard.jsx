@@ -269,8 +269,14 @@ const Dashboard = () => {
                 trendText={card.trendText}
                 trendUp={card.trendUp}
                 bgClass={card.bgClass}
-                clickable={card.title === 'Abandoned Carts'}
-                onClick={card.title === 'Abandoned Carts' ? () => navigate('/admin/abandoned-carts') : undefined}
+                clickable={card.title === 'Abandoned Carts' || card.title === 'Stock Products'}
+                onClick={
+                  card.title === 'Abandoned Carts'
+                    ? () => navigate('/admin/abandoned-carts')
+                    : card.title === 'Stock Products'
+                      ? () => navigate('/admin/products')
+                      : undefined
+                }
               />
             ))}
           </div>
