@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import API from '../../api/axios';
 import toast from 'react-hot-toast';
 import { formatPrice } from '../../utils/formatPrice';
@@ -49,13 +49,17 @@ const Products = () => {
   const [totalProducts, setTotalProducts] = useState(0);
   const [searchInput, setSearchInput] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedStatus, setSelectedStatus] = useState('all');
+  const [selectedStockRange, setSelectedStockRange] = useState('all');
+  const [selectedDateRange, setSelectedDateRange] = useState('all');
   const itemsPerPage = 8;
   const [form, setForm] = useState(emptyForm);
   const [editId, setEditId] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  const fetchProducts = async (page = currentPage, search = searchQuery) => {
+  const fetchProducts = async (page = currentPage, search = searchQuery, category = selectedCategory) => {
     try {
       const params = new URLSearchParams({
         page: String(page),
@@ -67,15 +71,23 @@ const Products = () => {
         params.set('search', trimmedSearch);
       }
 
+      if (category && category !== 'all') {
+        params.set('category', category);
+      }
+
       const { data } = await API.get(`/products?${params.toString()}`);
 
       // Fallback pagination for environments where backend returns plain array.
       if (Array.isArray(data)) {
         const normalizedSearch = trimmedSearch.toLowerCase();
-        const filtered = normalizedSearch
+        const filteredBySearch = normalizedSearch
           ? data.filter((item) => [item?.name, item?.brand, item?.category]
             .some((field) => String(field || '').toLowerCase().includes(normalizedSearch)))
           : data;
+
+        const filtered = category && category !== 'all'
+          ? filteredBySearch.filter((item) => String(item?.category || '').toLowerCase() === String(category).toLowerCase())
+          : filteredBySearch;
 
         const total = filtered.length;
         const pages = Math.max(1, Math.ceil(total / itemsPerPage));
@@ -121,8 +133,8 @@ const Products = () => {
   }, []);
 
   useEffect(() => {
-    fetchProducts(currentPage);
-  }, [currentPage, searchQuery]);
+    fetchProducts(currentPage, searchQuery, selectedCategory);
+  }, [currentPage, searchQuery, selectedCategory]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -133,6 +145,48 @@ const Products = () => {
 
     return () => clearTimeout(timeout);
   }, [searchInput]);
+
+  const displayedProducts = useMemo(() => {
+    const now = Date.now();
+
+    return products.filter((product) => {
+      const stockValue = Number(product.stock || 0);
+
+      if (selectedStatus === 'in-stock' && stockValue <= 0) return false;
+      if (selectedStatus === 'out-of-stock' && stockValue > 0) return false;
+
+      if (selectedStockRange === 'low' && !(stockValue > 0 && stockValue <= 10)) return false;
+      if (selectedStockRange === 'medium' && !(stockValue > 10 && stockValue <= 50)) return false;
+      if (selectedStockRange === 'high' && !(stockValue > 50)) return false;
+
+      if (selectedDateRange !== 'all') {
+        const createdAt = new Date(product.createdAt || 0).getTime();
+        if (!createdAt) return false;
+
+        if (selectedDateRange === 'today' && now - createdAt > 24 * 60 * 60 * 1000) return false;
+        if (selectedDateRange === '7d' && now - createdAt > 7 * 24 * 60 * 60 * 1000) return false;
+        if (selectedDateRange === '30d' && now - createdAt > 30 * 24 * 60 * 60 * 1000) return false;
+      }
+
+      return true;
+    });
+  }, [products, selectedStatus, selectedStockRange, selectedDateRange]);
+
+  const stockSummary = useMemo(() => {
+    const inStock = displayedProducts.filter((item) => Number(item.stock || 0) > 0).length;
+    const lowStock = displayedProducts.filter((item) => {
+      const stock = Number(item.stock || 0);
+      return stock > 0 && stock <= 10;
+    }).length;
+    const outOfStock = displayedProducts.filter((item) => Number(item.stock || 0) <= 0).length;
+
+    return {
+      total: totalProducts,
+      inStock,
+      lowStock,
+      outOfStock,
+    };
+  }, [displayedProducts, totalProducts]);
 
   const openCreate = () => {
     setForm(emptyForm);
@@ -232,7 +286,7 @@ const Products = () => {
       if (editId) {
         await API.put(`/products/${editId}`, payload);
         toast.success('Product updated!');
-        fetchProducts(currentPage, searchQuery);
+        fetchProducts(currentPage, searchQuery, selectedCategory);
       } else {
         await API.post('/products', payload);
         toast.success('Product created!');
@@ -255,11 +309,41 @@ const Products = () => {
       if (products.length === 1 && currentPage > 1) {
         setCurrentPage((prev) => prev - 1);
       } else {
-        fetchProducts(currentPage, searchQuery);
+        fetchProducts(currentPage, searchQuery, selectedCategory);
       }
     } catch {
       toast.error('Delete failed');
     }
+  };
+
+  const handleExport = () => {
+    if (!displayedProducts.length) {
+      toast.error('No products to export');
+      return;
+    }
+
+    const headers = ['Product ID', 'Name', 'Category', 'Price', 'Stock'];
+    const rows = displayedProducts.map((item) => [
+      item._id,
+      item.name,
+      item.category,
+      Number(item.price || 0).toFixed(2),
+      Number(item.stock || 0),
+    ]);
+
+    const csv = [headers, ...rows]
+      .map((row) => row.map((value) => `"${String(value ?? '').replace(/"/g, '""')}"`).join(','))
+      .join('\n');
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `products-${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   const paginationItems = (() => {
@@ -286,37 +370,116 @@ const Products = () => {
 
   return (
     <div>
-      <div className="mb-6 space-y-3">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mb-6 rounded-3xl border border-gray-200 bg-gray-50 p-5 dark:border-gray-700 dark:bg-gray-800/50">
+        <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Product Management</h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400">{totalProducts} items</p>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Stock Products</h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Manage inventory, stock status, and product availability</p>
           </div>
-          <button
-            onClick={openCreate}
-            className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium"
-          >
-            + Add Product
-          </button>
+
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={handleExport}
+              className="rounded-full border border-gray-300 bg-white px-5 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-700"
+            >
+              Download
+            </button>
+
+            <button
+              type="button"
+              onClick={openCreate}
+              className="rounded-full bg-teal-600 px-5 py-2 text-sm font-semibold text-white hover:bg-teal-700"
+            >
+              Add Stock
+            </button>
+          </div>
         </div>
 
-        <div className="relative">
-          <input
-            type="text"
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            placeholder="Search by product name or brand..."
-            className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-800 shadow-sm outline-none transition-colors focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:focus:ring-indigo-900/40"
-          />
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-5">
+          <div className="rounded-3xl bg-[#b8dbdc] p-5">
+            <p className="text-lg font-medium text-gray-700">Total Products</p>
+            <p className="mt-2 text-4xl font-bold text-gray-900">{stockSummary.total}</p>
+          </div>
+          <div className="rounded-3xl bg-[#efe7a8] p-5">
+            <p className="text-lg font-medium text-gray-700">In Stock Products</p>
+            <p className="mt-2 text-4xl font-bold text-gray-900">{stockSummary.inStock}</p>
+          </div>
+          <div className="rounded-3xl bg-[#b8df9f] p-5">
+            <p className="text-lg font-medium text-gray-700">Low Stock Products</p>
+            <p className="mt-2 text-4xl font-bold text-gray-900">{stockSummary.lowStock}</p>
+          </div>
+          <div className="rounded-3xl bg-[#e8d0e3] p-5">
+            <p className="text-lg font-medium text-gray-700">Out of Stock</p>
+            <p className="mt-2 text-4xl font-bold text-gray-900">{stockSummary.outOfStock}</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-[2fr_repeat(4,minmax(0,1fr))] gap-3">
+          <div className="relative">
+            <input
+              type="text"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              placeholder="Search..."
+              className="w-full rounded-full border border-gray-300 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-800 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
+            />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35m1.85-4.65a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+
+          <select
+            value={selectedCategory}
+            onChange={(e) => {
+              setCurrentPage(1);
+              setSelectedCategory(e.target.value);
+            }}
+            className="rounded-full border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-700 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35m1.85-4.65a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
+            <option value="all">Category</option>
+            {categories.map((category) => (
+              <option key={category._id} value={category.name}>{category.name}</option>
+            ))}
+          </select>
+
+          <select
+            value={selectedStatus}
+            onChange={(e) => setSelectedStatus(e.target.value)}
+            className="rounded-full border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-700 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200"
+          >
+            <option value="all">Status</option>
+            <option value="in-stock">In Stock</option>
+            <option value="out-of-stock">Out of Stock</option>
+          </select>
+
+          <select
+            value={selectedStockRange}
+            onChange={(e) => setSelectedStockRange(e.target.value)}
+            className="rounded-full border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-700 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200"
+          >
+            <option value="all">Stock Range</option>
+            <option value="low">Low (1-10)</option>
+            <option value="medium">Medium (11-50)</option>
+            <option value="high">High (50+)</option>
+          </select>
+
+          <select
+            value={selectedDateRange}
+            onChange={(e) => setSelectedDateRange(e.target.value)}
+            className="rounded-full border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-700 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200"
+          >
+            <option value="all">Date</option>
+            <option value="today">Today</option>
+            <option value="7d">Last 7 days</option>
+            <option value="30d">Last 30 days</option>
+          </select>
         </div>
       </div>
 
@@ -338,7 +501,7 @@ const Products = () => {
                 </tr>
               </thead>
               <tbody>
-                {products.map((product) => (
+                {displayedProducts.map((product) => (
                   <tr key={product._id} className="border-t dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750">
                     <td className="px-6 py-4 text-xs font-medium text-gray-500 dark:text-gray-300 whitespace-nowrap" title={product._id}>
                       {String(product._id || '').slice(0, 8)}...
@@ -381,10 +544,12 @@ const Products = () => {
                     </td>
                   </tr>
                 ))}
-                {products.length === 0 && (
+                {displayedProducts.length === 0 && (
                   <tr>
                     <td colSpan={7} className="text-center py-10 text-gray-400">
-                      {searchQuery ? 'No products found for this search.' : 'No products found. Add your first product!'}
+                      {searchQuery || selectedCategory !== 'all' || selectedStatus !== 'all' || selectedStockRange !== 'all' || selectedDateRange !== 'all'
+                        ? 'No products found for this filter.'
+                        : 'No products found. Add your first product!'}
                     </td>
                   </tr>
                 )}

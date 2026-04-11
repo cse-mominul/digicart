@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import API from '../../api/axios';
 import { formatPrice } from '../../utils/formatPrice';
 
@@ -117,8 +118,20 @@ const formatCompactNumber = (value) => {
   }).format(number);
 };
 
-const TopMetricCard = ({ title, value, trendText, trendUp, bgClass }) => (
-  <div className={`rounded-2xl p-4 shadow-sm ${bgClass}`}>
+const TopMetricCard = ({ title, value, trendText, trendUp, bgClass, onClick, clickable = false }) => (
+  <div
+    role={clickable ? 'button' : undefined}
+    tabIndex={clickable ? 0 : undefined}
+    onClick={onClick}
+    onKeyDown={(event) => {
+      if (!clickable) return;
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        onClick?.();
+      }
+    }}
+    className={`rounded-2xl p-4 shadow-sm ${bgClass} ${clickable ? 'cursor-pointer transition-transform hover:-translate-y-0.5' : ''}`}
+  >
     <h3 className="text-lg sm:text-xl font-medium text-slate-700">{title}</h3>
     <div className="mt-2.5 flex items-end gap-2">
       <div className="text-base sm:text-lg leading-none font-semibold text-slate-900">{value}</div>
@@ -137,6 +150,7 @@ const TopMetricCard = ({ title, value, trendText, trendUp, bgClass }) => (
 );
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [stats, setStats] = useState({ products: 0, orders: 0, users: 0, revenue: 0 });
   const [abandonedStats, setAbandonedStats] = useState({ abandonedUsers: 0, abandonedItems: 0 });
   const [orders, setOrders] = useState([]);
@@ -255,6 +269,8 @@ const Dashboard = () => {
                 trendText={card.trendText}
                 trendUp={card.trendUp}
                 bgClass={card.bgClass}
+                clickable={card.title === 'Abandoned Carts'}
+                onClick={card.title === 'Abandoned Carts' ? () => navigate('/admin/abandoned-carts') : undefined}
               />
             ))}
           </div>
