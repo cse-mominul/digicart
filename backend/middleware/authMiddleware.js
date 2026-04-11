@@ -14,6 +14,14 @@ const protect = async (req, res, next) => {
         return res.status(401).json({ message: 'User not found' });
       }
 
+      const now = Date.now();
+      const lastLoginMs = req.user.lastLoginAt ? new Date(req.user.lastLoginAt).getTime() : 0;
+      // Keep a lightweight heartbeat for active sessions without writing on every request.
+      if (!lastLoginMs || now - lastLoginMs > 15 * 60 * 1000) {
+        await User.updateOne({ _id: req.user._id }, { $set: { lastLoginAt: new Date(now) } });
+        req.user.lastLoginAt = new Date(now);
+      }
+
       next();
     } catch (error) {
       return res.status(401).json({ message: 'Not authorized, token failed' });

@@ -34,7 +34,8 @@ const register = async (req, res) => {
 // @desc  Authenticate user & get token
 // @route POST /api/auth/login
 const login = async (req, res) => {
-  const { email, password } = req.body;
+  const email = String(req.body?.email || '').trim().toLowerCase();
+  const password = String(req.body?.password || '');
 
   if (!email || !password) {
     return res.status(400).json({ message: 'Please provide email and password' });
@@ -56,13 +57,21 @@ const login = async (req, res) => {
     }
 
     if (isPasswordMatch) {
+      const now = new Date();
+      const updatedUser = await User.findByIdAndUpdate(
+        user._id,
+        { $set: { lastLoginAt: now } },
+        { new: true }
+      );
+
       res.json({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
-        role: user.role,
-        token: generateToken(user._id),
+        _id: updatedUser._id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        phone: updatedUser.phone,
+        lastLoginAt: updatedUser.lastLoginAt,
+        role: updatedUser.role,
+        token: generateToken(updatedUser._id),
       });
     }
   } catch (error) {

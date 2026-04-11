@@ -32,10 +32,15 @@ const Users = () => {
     };
 
     fetchUsers();
+
+    const intervalId = setInterval(fetchUsers, 30000);
+    return () => clearInterval(intervalId);
   }, []);
 
   const getCustomerStatus = (customer) => {
-    if (String(customer?.phone || '').trim()) return 'active';
+    const lastLogin = customer?.lastLoginAt ? new Date(customer.lastLoginAt).getTime() : 0;
+    if (!lastLogin) return 'inactive';
+    if (Date.now() - lastLogin <= 24 * 60 * 60 * 1000) return 'active';
     return 'inactive';
   };
 
@@ -405,6 +410,7 @@ const Users = () => {
               <p><span className="font-semibold text-gray-700 dark:text-gray-300">Email:</span> <span className="text-gray-600 dark:text-gray-400">{selectedUser.email}</span></p>
               <p><span className="font-semibold text-gray-700 dark:text-gray-300">Phone:</span> <span className="text-gray-600 dark:text-gray-400">{selectedUser.phone || 'N/A'}</span></p>
               <p><span className="font-semibold text-gray-700 dark:text-gray-300">Password:</span> <span className="text-gray-600 dark:text-gray-400">Encrypted (cannot view current password)</span></p>
+              <p><span className="font-semibold text-gray-700 dark:text-gray-300">Last Login:</span> <span className="text-gray-600 dark:text-gray-400">{selectedUser.lastLoginAt ? new Date(selectedUser.lastLoginAt).toLocaleString() : 'Never'}</span></p>
               <p><span className="font-semibold text-gray-700 dark:text-gray-300">Status:</span> <span className="text-gray-600 dark:text-gray-400">{getCustomerStatus(selectedUser) === 'active' ? 'Active' : 'Inactive'}</span></p>
               <p><span className="font-semibold text-gray-700 dark:text-gray-300">Joined:</span> <span className="text-gray-600 dark:text-gray-400">{selectedUser.createdAt ? new Date(selectedUser.createdAt).toLocaleString() : 'N/A'}</span></p>
             </div>
