@@ -328,6 +328,7 @@ const Products = () => {
             <table className="w-full text-sm">
               <thead className="bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-left">
                 <tr>
+                  <th className="px-6 py-3">Product ID</th>
                   <th className="px-6 py-3">Image</th>
                   <th className="px-6 py-3">Name</th>
                   <th className="px-6 py-3">Category</th>
@@ -339,6 +340,9 @@ const Products = () => {
               <tbody>
                 {products.map((product) => (
                   <tr key={product._id} className="border-t dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750">
+                    <td className="px-6 py-4 text-xs font-medium text-gray-500 dark:text-gray-300 whitespace-nowrap" title={product._id}>
+                      {String(product._id || '').slice(0, 8)}...
+                    </td>
                     <td className="px-6 py-4">
                       <img
                         src={product.image}
@@ -379,7 +383,7 @@ const Products = () => {
                 ))}
                 {products.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="text-center py-10 text-gray-400">
+                    <td colSpan={7} className="text-center py-10 text-gray-400">
                       {searchQuery ? 'No products found for this search.' : 'No products found. Add your first product!'}
                     </td>
                   </tr>
