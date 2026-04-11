@@ -156,78 +156,89 @@ const CouponVoucher = () => {
       </div>
 
       {showForm && (
-        <form onSubmit={handleSubmit} className="mb-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 max-w-2xl">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            {editingId ? 'Edit Coupon' : 'Create New Coupon'}
-          </h3>
-
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Coupon Code *</label>
-              <input
-                type="text"
-                value={formData.code}
-                onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
-                placeholder="MOMIN"
-                disabled={editingId !== null}
-                className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-gray-900 outline-none focus:ring-2 focus:ring-pink-500 dark:border-gray-700 dark:bg-gray-900 dark:text-white disabled:opacity-50"
-              />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <form onSubmit={handleSubmit} className="w-full max-w-2xl rounded-2xl border border-gray-200 bg-white p-6 shadow-xl dark:border-gray-700 dark:bg-gray-800 mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                {editingId ? 'Edit Coupon' : 'Create New Coupon'}
+              </h3>
+              <button
+                type="button"
+                onClick={resetForm}
+                className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 text-2xl leading-none"
+              >
+                ✕
+              </button>
             </div>
 
-            <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Discount % *</label>
-              <input
-                type="number"
-                min="0"
-                max="100"
-                value={formData.discountPercent}
-                onChange={(e) => setFormData({ ...formData, discountPercent: e.target.value })}
-                placeholder="12"
-                className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-gray-900 outline-none focus:ring-2 focus:ring-pink-500 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
-              />
-            </div>
-
-            <div className="md:col-span-2">
-              <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
-              <input
-                type="text"
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder="Optional description"
-                className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-gray-900 outline-none focus:ring-2 focus:ring-pink-500 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
-              />
-            </div>
-
-            <div className="md:col-span-2">
-              <label className="inline-flex items-center gap-2 rounded-full border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 dark:border-gray-700 dark:text-gray-200">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Coupon Code *</label>
                 <input
-                  type="checkbox"
-                  checked={Boolean(formData.isActive)}
-                  onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                  className="accent-pink-500"
+                  type="text"
+                  value={formData.code}
+                  onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
+                  placeholder="MOMIN"
+                  disabled={editingId !== null}
+                  className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-gray-900 outline-none focus:ring-2 focus:ring-pink-500 dark:border-gray-700 dark:bg-gray-900 dark:text-white disabled:opacity-50"
                 />
-                Active
-              </label>
-            </div>
-          </div>
+              </div>
 
-          <div className="mt-6 flex gap-3">
-            <button
-              type="submit"
-              disabled={saving}
-              className="px-6 py-2.5 rounded-xl bg-pink-500 text-white text-sm font-semibold hover:bg-pink-600 transition-colors disabled:opacity-60"
-            >
-              {saving ? 'Saving...' : 'Save Coupon'}
-            </button>
-            <button
-              type="button"
-              onClick={resetForm}
-              className="px-6 py-2.5 rounded-xl bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-sm font-semibold hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Discount % *</label>
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  value={formData.discountPercent}
+                  onChange={(e) => setFormData({ ...formData, discountPercent: e.target.value })}
+                  placeholder="12"
+                  className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-gray-900 outline-none focus:ring-2 focus:ring-pink-500 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
+                <input
+                  type="text"
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  placeholder="Optional description"
+                  className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-gray-900 outline-none focus:ring-2 focus:ring-pink-500 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="inline-flex items-center gap-2 rounded-full border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 dark:border-gray-700 dark:text-gray-200">
+                  <input
+                    type="checkbox"
+                    checked={Boolean(formData.isActive)}
+                    onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                    className="accent-pink-500"
+                  />
+                  Active
+                </label>
+              </div>
+            </div>
+
+            <div className="mt-6 flex gap-3">
+              <button
+                type="submit"
+                disabled={saving}
+                className="px-6 py-2.5 rounded-xl bg-pink-500 text-white text-sm font-semibold hover:bg-pink-600 transition-colors disabled:opacity-60"
+              >
+                {saving ? 'Saving...' : 'Save Coupon'}
+              </button>
+              <button
+                type="button"
+                onClick={resetForm}
+                className="px-6 py-2.5 rounded-xl bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-sm font-semibold hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
       )}
 
       {loading ? (
