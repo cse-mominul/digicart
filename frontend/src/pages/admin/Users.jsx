@@ -9,6 +9,8 @@ const Users = () => {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [dateFilter, setDateFilter] = useState('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 8;
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
@@ -70,6 +72,23 @@ const Users = () => {
       return true;
     });
   }, [users, search, statusFilter, dateFilter]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredUsers.length / pageSize));
+
+  const paginatedUsers = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return filteredUsers.slice(start, start + pageSize);
+  }, [filteredUsers, currentPage]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, statusFilter, dateFilter]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
 
   const openCreate = () => {
     setEditingUser(null);
@@ -238,7 +257,7 @@ const Users = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredUsers.map((u) => (
+                {paginatedUsers.map((u) => (
                   <tr key={u._id} className="border-t dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
                     <td className="px-4 py-2.5 text-[11px] font-medium text-gray-600 dark:text-gray-300">
                       #{String(u._id || '').slice(-5).toUpperCase()}
@@ -307,6 +326,35 @@ const Users = () => {
               </tbody>
             </table>
           </div>
+
+          {filteredUsers.length > 0 && (
+            <div className="flex items-center justify-between border-t border-gray-100 px-4 py-3 text-xs dark:border-gray-700">
+              <p className="text-gray-500 dark:text-gray-400">
+                Showing {(currentPage - 1) * pageSize + 1}-{Math.min(currentPage * pageSize, filteredUsers.length)} of {filteredUsers.length}
+              </p>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                  disabled={currentPage === 1}
+                  className="rounded-md border border-gray-300 px-2.5 py-1 text-gray-700 disabled:cursor-not-allowed disabled:opacity-40 dark:border-gray-600 dark:text-gray-200"
+                >
+                  Prev
+                </button>
+                <span className="min-w-[68px] text-center font-medium text-gray-700 dark:text-gray-200">
+                  {currentPage} / {totalPages}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                  disabled={currentPage === totalPages}
+                  className="rounded-md border border-gray-300 px-2.5 py-1 text-gray-700 disabled:cursor-not-allowed disabled:opacity-40 dark:border-gray-600 dark:text-gray-200"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
