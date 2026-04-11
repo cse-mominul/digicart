@@ -43,6 +43,7 @@ app.use('/api/categories', require('./routes/categoryRoutes'));
 app.use('/api/orders', require('./routes/orderRoutes'));
 app.use('/api/settings', require('./routes/settingsRoutes'));
 app.use('/api/campaigns', require('./routes/campaignRoutes'));
+app.use('/api/coupons', require('./routes/couponRoutes'));
 app.use('/api/engagement', require('./routes/engagementRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
 

@@ -5,6 +5,7 @@ const connectDB = require('./config/db');
 const User = require('./models/User');
 const Category = require('./models/Category');
 const Product = require('./models/Product');
+const Coupon = require('./models/Coupon');
 
 dotenv.config();
 
@@ -934,6 +935,15 @@ const demoCategories = [...new Set(demoProducts.map((product) => product.categor
   isActive: true,
 }));
 
+const demoCoupons = [
+  {
+    code: 'MOMIN',
+    discountPercent: 12,
+    isActive: true,
+    description: 'Default welcome coupon for new customers',
+  },
+];
+
 const importData = async () => {
   try {
     await connectDB();
@@ -941,6 +951,7 @@ const importData = async () => {
     await User.deleteMany();
     await Category.deleteMany();
     await Product.deleteMany();
+    await Coupon.deleteMany();
 
     const usersWithHashedPasswords = await Promise.all(
       demoUsers.map(async (user) => ({
@@ -952,8 +963,9 @@ const importData = async () => {
     await User.insertMany(usersWithHashedPasswords);
     await Category.insertMany(demoCategories);
     await Product.insertMany(demoProducts);
+    await Coupon.insertMany(demoCoupons);
 
-    console.log('✅ Demo users, categories, and products imported successfully');
+    console.log('✅ Demo users, categories, products, and coupons imported successfully');
     process.exit();
   } catch (error) {
     console.error(`❌ Seeder failed: ${error.message}`);

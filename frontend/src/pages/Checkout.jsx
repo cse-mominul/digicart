@@ -46,11 +46,7 @@ const Checkout = () => {
   const [couponCode, setCouponCode] = useState('');
   const [discount, setDiscount] = useState(0);
   const [appliedCoupon, setAppliedCoupon] = useState('');
-  const [voucherSettings, setVoucherSettings] = useState({
-    couponCode: '',
-    couponDiscountPercent: 0,
-    couponActive: false,
-  });
+  const [activeCoupons, setActiveCoupons] = useState([]);
   const [shippingMethod, setShippingMethod] = useState('inside-dhaka');
   const [paymentMethod, setPaymentMethod] = useState('cod');
   const [placingOrder, setPlacingOrder] = useState(false);
@@ -78,20 +74,16 @@ const Checkout = () => {
   }, [user]);
 
   useEffect(() => {
-    const fetchVoucherSettings = async () => {
+    const fetchActiveCoupons = async () => {
       try {
-        const { data } = await API.get('/settings');
-        setVoucherSettings({
-          couponCode: String(data?.couponCode || '').trim().toUpperCase(),
-          couponDiscountPercent: Number(data?.couponDiscountPercent) || 0,
-          couponActive: Boolean(data?.couponActive),
-        });
+        const { data } = await API.get('/coupons/active');
+        setActiveCoupons(Array.isArray(data) ? data : []);
       } catch {
-        setVoucherSettings({ couponCode: '', couponDiscountPercent: 0, couponActive: false });
+        setActiveCoupons([]);
       }
     };
 
-    fetchVoucherSettings();
+    fetchActiveCoupons();
   }, []);
 
   // Handle address selection
@@ -153,13 +145,15 @@ const Checkout = () => {
     }
 
     const enteredCode = couponCode.trim().toUpperCase();
-    const activeCode = String(voucherSettings.couponCode || '').trim().toUpperCase();
+    const matchedCoupon = activeCoupons.find(
+      (c) => String(c.code || '').trim().toUpperCase() === enteredCode
+    );
 
-    if (voucherSettings.couponActive && activeCode && enteredCode === activeCode) {
-      const discountPercent = Number(voucherSettings.couponDiscountPercent) || 0;
+    if (matchedCoupon && matchedCoupon.isActive) {
+      const discountPercent = Number(matchedCoupon.discountPercent) || 0;
       const nextDiscount = totalPrice * (discountPercent / 100);
       setDiscount(nextDiscount);
-      setAppliedCoupon(activeCode);
+      setAppliedCoupon(enteredCode);
       Swal.fire({
         icon: 'success',
         title: 'Coupon Applied!',
@@ -205,6 +199,7 @@ const Checkout = () => {
           country: 'Bangladesh',
         },
         paymentMethod,
+        appliedCoupon,
         customer: {
           name: form.name,
           phone: form.phone,

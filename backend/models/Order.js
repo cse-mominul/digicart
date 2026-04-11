@@ -25,6 +25,11 @@ const orderSchema = new mongoose.Schema(
       country: { type: String },
       phone: { type: String },
     },
+    appliedCoupon: {
+      type: String,
+      default: '',
+      trim: true,
+    },
   },
   { timestamps: true }
 );

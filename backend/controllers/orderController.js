@@ -3,7 +3,7 @@ const Order = require('../models/Order');
 // @desc  Create new order
 // @route POST /api/orders
 const createOrder = async (req, res) => {
-  const { items, totalAmount, shippingAddress, customer } = req.body;
+  const { items, totalAmount, shippingAddress, customer, appliedCoupon } = req.body;
 
   if (!items || items.length === 0) {
     return res.status(400).json({ message: 'No order items provided' });
@@ -23,6 +23,7 @@ const createOrder = async (req, res) => {
         ...(shippingAddress || {}),
         phone: shippingAddress?.phone || customer?.phone || profilePhone,
       },
+      appliedCoupon: String(appliedCoupon || '').trim().toUpperCase(),
     });
     res.status(201).json(order);
   } catch (error) {

@@ -5,82 +5,135 @@ import Swal from 'sweetalert2';
 
 const CouponVoucher = () => {
   const [loading, setLoading] = useState(true);
+  const [coupons, setCoupons] = useState([]);
+  const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [settingsForm, setSettingsForm] = useState({
-    couponCode: '',
-    couponDiscountPercent: 0,
-    couponActive: false,
+  const [editingId, setEditingId] = useState(null);
+  const [formData, setFormData] = useState({
+    code: '',
+    discountPercent: 12,
+    description: '',
+    isActive: true,
   });
 
   useEffect(() => {
-    const fetchSettings = async () => {
-      try {
-        const { data } = await API.get('/settings');
-        setSettingsForm({
-          couponCode: String(data?.couponCode || '').trim().toUpperCase(),
-          couponDiscountPercent: Number(data?.couponDiscountPercent) || 0,
-          couponActive: Boolean(data?.couponActive),
-        });
-      } catch (error) {
-        toast.error(error.response?.data?.message || 'Failed to load coupon settings');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSettings();
+    fetchCoupons();
   }, []);
 
-  const saveCouponSettings = async (event) => {
-    event.preventDefault();
-
-    const couponCode = String(settingsForm.couponCode || '').trim().toUpperCase();
-    const couponDiscountPercent = Number(settingsForm.couponDiscountPercent);
-
-    if (settingsForm.couponActive && !couponCode) {
-      toast.error('Coupon code is required when active');
-      return;
+  const fetchCoupons = async () => {
+    setLoading(true);
+    try {
+      const { data } = await API.get('/coupons');
+      setCoupons(data);
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to load coupons');
+    } finally {
+      setLoading(false);
     }
+  };
 
-    if (!Number.isFinite(couponDiscountPercent) || couponDiscountPercent < 0 || couponDiscountPercent > 100) {
-      toast.error('Discount percent must be between 0 and 100');
-      return;
-    }
+  const resetForm = () => {
+    setFormData({
+      code: '',
+      discountPercent: 12,
+      description: '',
+      isActive: true,
+    });
+    setEditingId(null);
+    setShowForm(false);
+  };
 
+  const handleAddNew = () => {
+    resetForm();
+    setShowForm(true);
+  };
+
+  const handleEdit = (coupon) => {
+    setFormData({
+      code: coupon.code,
+      discountPercent: coupon.discountPercent,
+      description: coupon.description || '',
+      isActive: coupon.isActive,
+    });
+    setEditingId(coupon._id);
+    setShowForm(true);
+  };
+
+  const handleDelete = async (id, code) => {
     const result = await Swal.fire({
-      title: 'Save coupon settings?',
-      text: settingsForm.couponActive
-        ? `This coupon will be active as ${couponCode} with ${couponDiscountPercent}% off.`
-        : 'This coupon will be saved as inactive.',
-      icon: 'question',
+      title: 'Delete Coupon?',
+      text: `This will permanently delete the coupon "${code}".`,
+      icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: 'Yes, save',
+      confirmButtonText: 'Yes, delete',
       cancelButtonText: 'Cancel',
-      confirmButtonColor: '#db2777',
+      confirmButtonColor: '#dc2626',
       cancelButtonColor: '#64748b',
-      reverseButtons: true,
     });
 
     if (!result.isConfirmed) return;
 
+    try {
+      await API.delete(`/coupons/${id}`);
+      setCoupons(coupons.filter((c) => c._id !== id));
+      toast.success('Coupon deleted successfully');
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to delete coupon');
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!formData.code || !formData.code.trim()) {
+      toast.error('Coupon code is required');
+      return;
+    }
+
+    if (!Number.isFinite(Number(formData.discountPercent)) || formData.discountPercent < 0 || formData.discountPercent > 100) {
+      toast.error('Discount must be between 0 and 100');
+      return;
+    }
+
     setSaving(true);
     try {
-      const { data } = await API.patch('/settings', {
-        couponCode,
-        couponDiscountPercent,
-        couponActive: Boolean(settingsForm.couponActive),
-      });
-
-      setSettingsForm({
-        couponCode: String(data?.couponCode || couponCode).trim().toUpperCase(),
-        couponDiscountPercent: Number(data?.couponDiscountPercent) || couponDiscountPercent,
-        couponActive: Boolean(data?.couponActive),
-      });
-      toast.success('Coupon settings updated');
+      if (editingId) {
+        const { data } = await API.patch(`/coupons/${editingId}`, {
+          code: formData.code.toUpperCase(),
+          discountPercent: Number(formData.discountPercent),
+          description: formData.description,
+          isActive: Boolean(formData.isActive),
+        });
+        setCoupons(coupons.map((c) => (c._id === editingId ? data : c)));
+        toast.success('Coupon updated successfully');
+      } else {
+        const { data } = await API.post('/coupons', {
+          code: formData.code.toUpperCase(),
+          discountPercent: Number(formData.discountPercent),
+          description: formData.description,
+          isActive: Boolean(formData.isActive),
+        });
+        setCoupons([data, ...coupons]);
+        toast.success('Coupon created successfully');
+      }
+      resetForm();
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to update coupon settings');
+      toast.error(error.response?.data?.message || 'Failed to save coupon');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleToggleActive = async (id, currentStatus) => {
+    const newStatus = !currentStatus;
+    try {
+      const { data } = await API.patch(`/coupons/${id}`, {
+        isActive: newStatus,
+      });
+      setCoupons(coupons.map((c) => (c._id === id ? data : c)));
+      toast.success(`Coupon ${newStatus ? 'activated' : 'deactivated'} successfully`);
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to update coupon');
     }
   };
 
@@ -90,65 +143,164 @@ const CouponVoucher = () => {
         <div>
           <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Coupon / Voucher</h2>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            Manage the active coupon used by checkout validation.
+            Manage multiple coupons for checkout.
           </p>
         </div>
+        <button
+          type="button"
+          onClick={handleAddNew}
+          className="px-4 py-2.5 rounded-xl bg-pink-500 text-white text-sm font-semibold hover:bg-pink-600 transition-colors"
+        >
+          + Add New Coupon
+        </button>
       </div>
 
-      {loading ? (
-        <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm animate-pulse dark:border-gray-700 dark:bg-gray-800 h-64" />
-      ) : (
-        <form onSubmit={saveCouponSettings} className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 space-y-5 max-w-3xl">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Backend Coupon Control</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Checkout will show invalid until this is active.</p>
-            </div>
-            <label className="inline-flex items-center gap-2 rounded-full border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 dark:border-gray-700 dark:text-gray-200">
-              <input
-                type="checkbox"
-                checked={Boolean(settingsForm.couponActive)}
-                onChange={(event) => setSettingsForm((prev) => ({ ...prev, couponActive: event.target.checked }))}
-                className="accent-pink-500"
-              />
-              Active
-            </label>
-          </div>
+      {showForm && (
+        <form onSubmit={handleSubmit} className="mb-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 max-w-2xl">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            {editingId ? 'Edit Coupon' : 'Create New Coupon'}
+          </h3>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Coupon Code</label>
+              <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Coupon Code *</label>
               <input
                 type="text"
-                value={settingsForm.couponCode}
-                onChange={(event) => setSettingsForm((prev) => ({ ...prev, couponCode: event.target.value.toUpperCase() }))}
+                value={formData.code}
+                onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
                 placeholder="MOMIN"
-                className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-gray-900 outline-none focus:ring-2 focus:ring-pink-500 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
+                disabled={editingId !== null}
+                className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-gray-900 outline-none focus:ring-2 focus:ring-pink-500 dark:border-gray-700 dark:bg-gray-900 dark:text-white disabled:opacity-50"
               />
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Discount Percent</label>
+              <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Discount % *</label>
               <input
                 type="number"
                 min="0"
                 max="100"
-                value={settingsForm.couponDiscountPercent}
-                onChange={(event) => setSettingsForm((prev) => ({ ...prev, couponDiscountPercent: event.target.value }))}
+                value={formData.discountPercent}
+                onChange={(e) => setFormData({ ...formData, discountPercent: e.target.value })}
                 placeholder="12"
                 className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-gray-900 outline-none focus:ring-2 focus:ring-pink-500 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
               />
             </div>
+
+            <div className="md:col-span-2">
+              <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
+              <input
+                type="text"
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                placeholder="Optional description"
+                className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-gray-900 outline-none focus:ring-2 focus:ring-pink-500 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
+              />
+            </div>
+
+            <div className="md:col-span-2">
+              <label className="inline-flex items-center gap-2 rounded-full border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 dark:border-gray-700 dark:text-gray-200">
+                <input
+                  type="checkbox"
+                  checked={Boolean(formData.isActive)}
+                  onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                  className="accent-pink-500"
+                />
+                Active
+              </label>
+            </div>
           </div>
 
-          <button
-            type="submit"
-            disabled={saving}
-            className="rounded-xl bg-pink-500 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-pink-600 disabled:opacity-60"
-          >
-            {saving ? 'Saving...' : 'Save Coupon Settings'}
-          </button>
+          <div className="mt-6 flex gap-3">
+            <button
+              type="submit"
+              disabled={saving}
+              className="px-6 py-2.5 rounded-xl bg-pink-500 text-white text-sm font-semibold hover:bg-pink-600 transition-colors disabled:opacity-60"
+            >
+              {saving ? 'Saving...' : 'Save Coupon'}
+            </button>
+            <button
+              type="button"
+              onClick={resetForm}
+              className="px-6 py-2.5 rounded-xl bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-sm font-semibold hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
         </form>
+      )}
+
+      {loading ? (
+        <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm animate-pulse dark:border-gray-700 dark:bg-gray-800 h-64" />
+      ) : coupons.length === 0 ? (
+        <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 text-center">
+          <p className="text-gray-500 dark:text-gray-400">No coupons yet. Create one to get started!</p>
+        </div>
+      ) : (
+        <div className="rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="bg-gray-50 dark:bg-gray-700/50">
+                <tr>
+                  <th className="py-3 px-4 text-left font-semibold text-gray-700 dark:text-gray-300">Code</th>
+                  <th className="py-3 px-4 text-left font-semibold text-gray-700 dark:text-gray-300">Discount</th>
+                  <th className="py-3 px-4 text-left font-semibold text-gray-700 dark:text-gray-300">Usage</th>
+                  <th className="py-3 px-4 text-left font-semibold text-gray-700 dark:text-gray-300">Status</th>
+                  <th className="py-3 px-4 text-left font-semibold text-gray-700 dark:text-gray-300">Description</th>
+                  <th className="py-3 px-4 text-left font-semibold text-gray-700 dark:text-gray-300">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                {coupons.map((coupon) => (
+                  <tr key={coupon._id} className="hover:bg-gray-50 dark:hover:bg-gray-700/30">
+                    <td className="py-3 px-4 font-medium text-gray-900 dark:text-white">{coupon.code}</td>
+                    <td className="py-3 px-4 text-gray-700 dark:text-gray-300">{coupon.discountPercent}%</td>
+                    <td className="py-3 px-4 font-semibold text-gray-900 dark:text-white">{coupon.usageCount || 0}</td>
+                    <td className="py-3 px-4">
+                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${
+                        coupon.isActive
+                          ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+                          : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+                      }`}>
+                        {coupon.isActive ? 'Active' : 'Inactive'}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4 text-gray-600 dark:text-gray-400 text-xs">{coupon.description || '—'}</td>
+                    <td className="py-3 px-4">
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={() => handleEdit(coupon)}
+                          className="px-2.5 py-1.5 rounded-lg text-xs font-medium bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleToggleActive(coupon._id, coupon.isActive)}
+                          className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                            coupon.isActive
+                              ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300 hover:bg-yellow-200 dark:hover:bg-yellow-900/50'
+                              : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                          }`}
+                        >
+                          {coupon.isActive ? 'Deactivate' : 'Activate'}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDelete(coupon._id, coupon.code)}
+                          className="px-2.5 py-1.5 rounded-lg text-xs font-medium bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       )}
     </div>
   );

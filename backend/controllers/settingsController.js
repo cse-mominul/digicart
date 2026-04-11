@@ -42,7 +42,7 @@ const ensureDefaultSettings = async () => {
       siteWebsiteUrl: 'www.digicart.com',
       couponCode: DEFAULT_COUPON_CODE,
       couponDiscountPercent: DEFAULT_COUPON_DISCOUNT_PERCENT,
-      couponActive: false,
+      couponActive: true,
     });
   } else {
     settings = await normalizeCouponDefaults(settings);
@@ -215,4 +215,25 @@ const updateSettings = async (req, res) => {
 module.exports = {
   getSettings,
   updateSettings,
+  getCouponStats: async (req, res) => {
+    try {
+      const Order = require('../models/Order');
+      const settings = await ensureDefaultSettings();
+      
+      const couponCode = String(settings.couponCode || '').trim().toUpperCase();
+      const couponUsageCount = await Order.countDocuments({
+        'appliedCoupon': couponCode
+      });
+
+      return res.json({
+        couponCode,
+        couponDiscountPercent: settings.couponDiscountPercent,
+        couponActive: settings.couponActive,
+        couponUsageCount,
+        totalOrders: await Order.countDocuments({})
+      });
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  }
 };
