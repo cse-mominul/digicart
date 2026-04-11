@@ -122,7 +122,7 @@ const CouponVoucher = () => {
                 type="text"
                 value={settingsForm.couponCode}
                 onChange={(event) => setSettingsForm((prev) => ({ ...prev, couponCode: event.target.value.toUpperCase() }))}
-                placeholder="DIGI10"
+                placeholder="MOMIN"
                 className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-gray-900 outline-none focus:ring-2 focus:ring-pink-500 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
               />
             </div>
@@ -135,7 +135,7 @@ const CouponVoucher = () => {
                 max="100"
                 value={settingsForm.couponDiscountPercent}
                 onChange={(event) => setSettingsForm((prev) => ({ ...prev, couponDiscountPercent: event.target.value }))}
-                placeholder="10"
+                placeholder="12"
                 className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-gray-900 outline-none focus:ring-2 focus:ring-pink-500 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
               />
             </div>

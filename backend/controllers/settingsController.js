@@ -1,5 +1,27 @@
 const Setting = require('../models/Setting');
 
+const DEFAULT_COUPON_CODE = 'MOMIN';
+const DEFAULT_COUPON_DISCOUNT_PERCENT = 12;
+
+const normalizeCouponDefaults = async (settings) => {
+  const nextCouponCode = String(settings.couponCode || '').trim().toUpperCase() || DEFAULT_COUPON_CODE;
+  const parsedCouponDiscountPercent = Number(settings.couponDiscountPercent);
+  const nextCouponDiscountPercent = Number.isFinite(parsedCouponDiscountPercent) && parsedCouponDiscountPercent > 0
+    ? parsedCouponDiscountPercent
+    : DEFAULT_COUPON_DISCOUNT_PERCENT;
+
+  if (
+    nextCouponCode !== settings.couponCode ||
+    nextCouponDiscountPercent !== settings.couponDiscountPercent
+  ) {
+    settings.couponCode = nextCouponCode;
+    settings.couponDiscountPercent = nextCouponDiscountPercent;
+    await settings.save();
+  }
+
+  return settings;
+};
+
 const ensureDefaultSettings = async () => {
   let settings = await Setting.findOne({});
 
@@ -18,10 +40,12 @@ const ensureDefaultSettings = async () => {
       footerCopyrightText: '© 2026 DigiCart. All rights reserved.',
       siteDescription: 'DigiCart helps modern shoppers discover top-rated products at honest prices, fast delivery, and smooth checkout experiences.',
       siteWebsiteUrl: 'www.digicart.com',
-      couponCode: '',
-      couponDiscountPercent: 0,
+      couponCode: DEFAULT_COUPON_CODE,
+      couponDiscountPercent: DEFAULT_COUPON_DISCOUNT_PERCENT,
       couponActive: false,
     });
+  } else {
+    settings = await normalizeCouponDefaults(settings);
   }
 
   return settings;

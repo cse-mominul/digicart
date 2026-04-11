@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { formatPrice } from '../utils/formatPrice';
 import { showOrderSuccess } from '../utils/showOrderSuccess';
 import toast from 'react-hot-toast';
+import Swal from 'sweetalert2';
 
 const areaOptionsByCity = {
   Dhaka: ['Dhanmondi', 'Mirpur', 'Gulshan', 'Uttara', 'Mohammadpur'],
@@ -159,7 +160,13 @@ const Checkout = () => {
       const nextDiscount = totalPrice * (discountPercent / 100);
       setDiscount(nextDiscount);
       setAppliedCoupon(activeCode);
-      toast.success(`Coupon applied: ${discountPercent}% off`);
+      Swal.fire({
+        icon: 'success',
+        title: 'Coupon Applied!',
+        html: `<span class="font-semibold">${discountPercent}% off</span> discount applied.`,
+        showConfirmButton: false,
+        timer: 2000,
+      });
       return;
     }
 
@@ -378,16 +385,6 @@ const Checkout = () => {
                 Apply
               </button>
             </div>
-            <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-              {voucherSettings.couponActive && voucherSettings.couponCode ? (
-                <>
-                  Use <span className="font-semibold text-pink-600 dark:text-pink-400">{voucherSettings.couponCode}</span> for{' '}
-                  <span className="font-semibold text-pink-600 dark:text-pink-400">{voucherSettings.couponDiscountPercent}% off</span>.
-                </>
-              ) : (
-                <span>Coupon / voucher is currently inactive.</span>
-              )}
-            </p>
             {appliedCoupon && (
               <div className="mt-2 inline-flex items-center gap-2 rounded-full bg-green-50 px-3 py-1.5 text-xs font-semibold text-green-700 dark:bg-green-900/20 dark:text-green-300">
                 Applied: {appliedCoupon}
