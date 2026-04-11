@@ -18,6 +18,9 @@ const ensureDefaultSettings = async () => {
       footerCopyrightText: '© 2026 DigiCart. All rights reserved.',
       siteDescription: 'DigiCart helps modern shoppers discover top-rated products at honest prices, fast delivery, and smooth checkout experiences.',
       siteWebsiteUrl: 'www.digicart.com',
+      couponCode: '',
+      couponDiscountPercent: 0,
+      couponActive: false,
     });
   }
 
@@ -38,6 +41,7 @@ const getSettings = async (req, res) => {
 // @desc  Update app settings (admin only)
 // @route PATCH /api/settings
 const updateSettings = async (req, res) => {
+  let existingSettings;
   const {
     insideDhakaCharge,
     outsideDhakaCharge,
@@ -52,21 +56,27 @@ const updateSettings = async (req, res) => {
     footerCopyrightText,
     siteDescription,
     siteWebsiteUrl,
+    couponCode,
+    couponDiscountPercent,
+    couponActive,
   } = req.body;
 
-  const insideCharge = Number(insideDhakaCharge);
-  const outsideCharge = Number(outsideDhakaCharge);
-
-  if (!Number.isFinite(insideCharge) || insideCharge < 0) {
-    return res.status(400).json({ message: 'Inside Dhaka charge must be a valid non-negative number' });
-  }
-
-  if (!Number.isFinite(outsideCharge) || outsideCharge < 0) {
-    return res.status(400).json({ message: 'Outside Dhaka charge must be a valid non-negative number' });
-  }
-
   try {
-    const existingSettings = await ensureDefaultSettings();
+    existingSettings = await ensureDefaultSettings();
+
+    const hasInsideDhakaCharge = insideDhakaCharge !== undefined && insideDhakaCharge !== null && String(insideDhakaCharge).trim() !== '';
+    const hasOutsideDhakaCharge = outsideDhakaCharge !== undefined && outsideDhakaCharge !== null && String(outsideDhakaCharge).trim() !== '';
+
+    const insideCharge = hasInsideDhakaCharge ? Number(insideDhakaCharge) : Number(existingSettings.insideDhakaCharge);
+    const outsideCharge = hasOutsideDhakaCharge ? Number(outsideDhakaCharge) : Number(existingSettings.outsideDhakaCharge);
+
+    if (!Number.isFinite(insideCharge) || insideCharge < 0) {
+      return res.status(400).json({ message: 'Inside Dhaka charge must be a valid non-negative number' });
+    }
+
+    if (!Number.isFinite(outsideCharge) || outsideCharge < 0) {
+      return res.status(400).json({ message: 'Outside Dhaka charge must be a valid non-negative number' });
+    }
 
     const resolvedContactAddress =
       typeof contactAddress === 'string' && contactAddress.trim()
@@ -112,6 +122,16 @@ const updateSettings = async (req, res) => {
       typeof siteWebsiteUrl === 'string' && siteWebsiteUrl.trim()
         ? siteWebsiteUrl.trim()
         : existingSettings.siteWebsiteUrl || 'www.digicart.com';
+    const resolvedCouponCode =
+      typeof couponCode === 'string'
+        ? couponCode.trim().toUpperCase()
+        : String(existingSettings.couponCode || '').trim().toUpperCase();
+    const resolvedCouponDiscountPercent = Number.isFinite(Number(couponDiscountPercent))
+      ? Number(couponDiscountPercent)
+      : Number(existingSettings.couponDiscountPercent) || 0;
+    const resolvedCouponActive = typeof couponActive === 'boolean'
+      ? couponActive
+      : Boolean(existingSettings.couponActive);
 
     if (!resolvedContactAddress) {
       return res.status(400).json({ message: 'Contact address is required' });
@@ -133,6 +153,10 @@ const updateSettings = async (req, res) => {
       return res.status(400).json({ message: 'Site title is required' });
     }
 
+    if (resolvedCouponDiscountPercent < 0 || resolvedCouponDiscountPercent > 100) {
+      return res.status(400).json({ message: 'Coupon discount percent must be between 0 and 100' });
+    }
+
     const updatedSettings = await Setting.findOneAndUpdate(
       {},
       {
@@ -149,6 +173,9 @@ const updateSettings = async (req, res) => {
         footerCopyrightText: resolvedFooterCopyrightText,
         siteDescription: resolvedSiteDescription,
         siteWebsiteUrl: resolvedSiteWebsiteUrl,
+        couponCode: resolvedCouponCode,
+        couponDiscountPercent: resolvedCouponDiscountPercent,
+        couponActive: resolvedCouponActive,
       },
       {
         new: true,

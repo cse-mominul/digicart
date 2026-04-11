@@ -67,6 +67,21 @@ const settingSchema = new mongoose.Schema(
       default: 'www.digicart.com',
       trim: true,
     },
+    couponCode: {
+      type: String,
+      default: '',
+      trim: true,
+    },
+    couponDiscountPercent: {
+      type: Number,
+      default: 0,
+      min: 0,
+      max: 100,
+    },
+    couponActive: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

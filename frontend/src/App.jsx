@@ -11,6 +11,7 @@ import UserAccount from './pages/UserAccount';
 import AdminLayout from './pages/admin/AdminLayout';
 import Dashboard from './pages/admin/Dashboard';
 import Products from './pages/admin/Products';
+import CouponVoucher from './pages/admin/CouponVoucher';
 import Orders from './pages/admin/Orders';
 import AbandonedCarts from './pages/admin/AbandonedCarts';
 import ShippingDelays from './pages/admin/ShippingDelays';
@@ -149,6 +150,7 @@ function App() {
         >
           <Route index element={<Dashboard />} />
           <Route path="products" element={<Products />} />
+          <Route path="coupons" element={<CouponVoucher />} />
           <Route path="categories" element={<CategoryManager />} />
           <Route path="campaigns" element={<Campaigns />} />
           <Route path="settings" element={<Settings />} />

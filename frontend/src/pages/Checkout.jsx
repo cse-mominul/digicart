@@ -44,6 +44,12 @@ const Checkout = () => {
   const [errors, setErrors] = useState({});
   const [couponCode, setCouponCode] = useState('');
   const [discount, setDiscount] = useState(0);
+  const [appliedCoupon, setAppliedCoupon] = useState('');
+  const [voucherSettings, setVoucherSettings] = useState({
+    couponCode: '',
+    couponDiscountPercent: 0,
+    couponActive: false,
+  });
   const [shippingMethod, setShippingMethod] = useState('inside-dhaka');
   const [paymentMethod, setPaymentMethod] = useState('cod');
   const [placingOrder, setPlacingOrder] = useState(false);
@@ -69,6 +75,23 @@ const Checkout = () => {
       }));
     }
   }, [user]);
+
+  useEffect(() => {
+    const fetchVoucherSettings = async () => {
+      try {
+        const { data } = await API.get('/settings');
+        setVoucherSettings({
+          couponCode: String(data?.couponCode || '').trim().toUpperCase(),
+          couponDiscountPercent: Number(data?.couponDiscountPercent) || 0,
+          couponActive: Boolean(data?.couponActive),
+        });
+      } catch {
+        setVoucherSettings({ couponCode: '', couponDiscountPercent: 0, couponActive: false });
+      }
+    };
+
+    fetchVoucherSettings();
+  }, []);
 
   // Handle address selection
   const handleAddressSelect = (e) => {
@@ -128,15 +151,21 @@ const Checkout = () => {
       return;
     }
 
-    if (couponCode.trim().toUpperCase() === 'DIGI10') {
-      const nextDiscount = totalPrice * 0.1;
+    const enteredCode = couponCode.trim().toUpperCase();
+    const activeCode = String(voucherSettings.couponCode || '').trim().toUpperCase();
+
+    if (voucherSettings.couponActive && activeCode && enteredCode === activeCode) {
+      const discountPercent = Number(voucherSettings.couponDiscountPercent) || 0;
+      const nextDiscount = totalPrice * (discountPercent / 100);
       setDiscount(nextDiscount);
-      toast.success('Coupon applied: 10% off');
+      setAppliedCoupon(activeCode);
+      toast.success(`Coupon applied: ${discountPercent}% off`);
       return;
     }
 
     setDiscount(0);
-    toast.error('Invalid coupon code');
+    setAppliedCoupon('');
+    toast.error('Invalid or inactive coupon code');
   };
 
   const handleSubmit = async (e) => {
@@ -349,6 +378,21 @@ const Checkout = () => {
                 Apply
               </button>
             </div>
+            <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+              {voucherSettings.couponActive && voucherSettings.couponCode ? (
+                <>
+                  Use <span className="font-semibold text-pink-600 dark:text-pink-400">{voucherSettings.couponCode}</span> for{' '}
+                  <span className="font-semibold text-pink-600 dark:text-pink-400">{voucherSettings.couponDiscountPercent}% off</span>.
+                </>
+              ) : (
+                <span>Coupon / voucher is currently inactive.</span>
+              )}
+            </p>
+            {appliedCoupon && (
+              <div className="mt-2 inline-flex items-center gap-2 rounded-full bg-green-50 px-3 py-1.5 text-xs font-semibold text-green-700 dark:bg-green-900/20 dark:text-green-300">
+                Applied: {appliedCoupon}
+              </div>
+            )}
           </div>
 
           <div className="mb-5">
