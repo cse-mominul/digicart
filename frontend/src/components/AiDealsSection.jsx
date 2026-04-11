@@ -102,8 +102,18 @@ const AiDealsSection = ({ products = [], loading = false }) => {
         className="flex flex-col gap-4 pb-2 sm:flex-row sm:gap-4 sm:overflow-x-auto sm:scroll-smooth sm:pr-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {dealItems.map((product) => {
-          const discountPercent = discountOptions[product.name.length % discountOptions.length];
-          const oldPrice = product.price / (1 - discountPercent / 100);
+          const price = Number(product.price) || 0;
+          const fallbackDiscount = discountOptions[(product.name || '').length % discountOptions.length];
+          const discountLabel = String(product.discountText || '').trim() || `${fallbackDiscount}% OFF`;
+          const discountMatch = discountLabel.match(/(\d+(?:\.\d+)?)\s*%/);
+          const discountPercent = discountMatch ? Number(discountMatch[1]) : fallbackDiscount;
+          const compareAtPrice = Number(product.compareAtPrice) || 0;
+          const oldPrice = compareAtPrice > price
+            ? compareAtPrice
+            : (price > 0 ? price / (1 - discountPercent / 100) : 0);
+          const displayRating = Math.min(5, Math.max(0, Number(product.displayRating) || 4));
+          const filledStars = Math.round(displayRating);
+          const reviewsText = String(product.displayReviewsText || '').trim() || '189';
           const inWishlist = isInWishlist(product._id);
 
           return (
@@ -115,7 +125,7 @@ const AiDealsSection = ({ products = [], loading = false }) => {
             >
               <div className="relative p-1.5 sm:p-2.5">
                 <span className="absolute left-1.5 sm:left-2.5 top-1.5 sm:top-2.5 z-10 rounded-full bg-[#ff3366] px-1.5 sm:px-2 py-0.5 text-[7px] sm:text-[9px] font-bold uppercase tracking-[0.16em] text-white shadow-sm">
-                  {discountPercent}% Off
+                  {discountLabel}
                 </span>
 
                 <button
@@ -155,17 +165,23 @@ const AiDealsSection = ({ products = [], loading = false }) => {
 
                 <div className="mt-0.5 sm:mt-1 flex items-center gap-0.5 sm:gap-1 text-[#0f8f84]">
                   {[...Array(5)].map((_, index) => (
-                    <svg key={index} xmlns="http://www.w3.org/2000/svg" className="h-2.5 sm:h-3.5 w-2.5 sm:w-3.5" viewBox="0 0 24 24" fill="currentColor">
+                    <svg
+                      key={index}
+                      xmlns="http://www.w3.org/2000/svg"
+                      className={`h-2.5 sm:h-3.5 w-2.5 sm:w-3.5 ${index < filledStars ? 'text-[#0f8f84]' : 'text-slate-300 dark:text-slate-600'}`}
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
                       <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
                     </svg>
                   ))}
-                  <span className="ml-0.5 sm:ml-1 text-[8px] sm:text-[11px] text-gray-500 dark:text-gray-400">(189)</span>
+                  <span className="ml-0.5 sm:ml-1 text-[8px] sm:text-[11px] text-gray-500 dark:text-gray-400">({reviewsText})</span>
                 </div>
 
                 <div className="mt-1 sm:mt-2 flex flex-wrap items-center gap-0.5 sm:gap-2 text-[9px] sm:text-sm">
-                  <span className="font-semibold text-gray-900 dark:text-white">{formatPrice(product.price)}</span>
+                  <span className="font-semibold text-gray-900 dark:text-white">{formatPrice(price)}</span>
                   <span className="text-[7px] sm:text-[11px] text-gray-400 line-through">{formatPrice(oldPrice)}</span>
-                  <span className="rounded-full bg-pink-50 px-1.5 sm:px-2 py-0.5 text-[7px] sm:text-[9px] font-bold text-[#ff3366] dark:bg-[#ff3366]/10">10% OFF</span>
+                  <span className="rounded-full bg-pink-50 px-1.5 sm:px-2 py-0.5 text-[7px] sm:text-[9px] font-bold text-[#ff3366] dark:bg-[#ff3366]/10">{discountLabel}</span>
                 </div>
 
                 <div className="mt-2 sm:mt-3 flex items-center gap-1 sm:gap-2">

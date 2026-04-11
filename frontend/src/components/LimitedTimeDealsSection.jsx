@@ -133,8 +133,17 @@ const LimitedTimeDealsSection = ({ products = [], loading = false }) => {
           >
             {dealProducts.map((product) => {
               const price = Number(product.price) || 0;
-              const discount = discountSteps[(product.name || '').length % discountSteps.length];
-              const oldPrice = price > 0 ? price / (1 - discount / 100) : 0;
+              const fallbackDiscount = discountSteps[(product.name || '').length % discountSteps.length];
+              const discountLabel = String(product.discountText || '').trim() || `${fallbackDiscount}% OFF`;
+              const discountMatch = discountLabel.match(/(\d+(?:\.\d+)?)\s*%/);
+              const discountPercent = discountMatch ? Number(discountMatch[1]) : fallbackDiscount;
+              const compareAtPrice = Number(product.compareAtPrice) || 0;
+              const oldPrice = compareAtPrice > price
+                ? compareAtPrice
+                : (price > 0 ? price / (1 - discountPercent / 100) : 0);
+              const displayRating = Math.min(5, Math.max(0, Number(product.displayRating) || 4));
+              const filledStars = Math.round(displayRating);
+              const reviewsText = String(product.displayReviewsText || '').trim() || '189';
               const imageSrc = product.image || product.imageURL || 'https://placehold.co/320x320?text=Product';
               const inWishlist = isInWishlist(product._id);
 
@@ -147,7 +156,7 @@ const LimitedTimeDealsSection = ({ products = [], loading = false }) => {
                 >
                   <div className="relative">
                     <span className="absolute left-1 sm:left-1.5 top-1 sm:top-1.5 z-10 rounded bg-[#ff3366] px-1 sm:px-1.5 py-0.5 text-[7px] sm:text-[9px] font-bold uppercase text-white">
-                      {discount}% OFF
+                      {discountLabel}
                     </span>
                     <div className="flex aspect-square sm:h-28 items-center justify-center rounded-lg sm:rounded-xl bg-slate-50 p-1.5 sm:p-2 dark:bg-slate-900">
                       <img
@@ -168,11 +177,17 @@ const LimitedTimeDealsSection = ({ products = [], loading = false }) => {
                     </h4>
                     <div className="mt-1 flex items-center gap-1 text-[#0f8f84]">
                       {[...Array(5)].map((_, index) => (
-                        <svg key={index} xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 24 24" fill="currentColor">
+                        <svg
+                          key={index}
+                          xmlns="http://www.w3.org/2000/svg"
+                          className={`h-3 w-3 ${index < filledStars ? 'text-[#0f8f84]' : 'text-slate-300 dark:text-slate-600'}`}
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                        >
                           <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
                         </svg>
                       ))}
-                      <span className="text-[10px] text-slate-400">(189)</span>
+                      <span className="text-[10px] text-slate-400">({reviewsText})</span>
                     </div>
 
                     <div className="mt-1.5 flex items-center gap-1.5">
