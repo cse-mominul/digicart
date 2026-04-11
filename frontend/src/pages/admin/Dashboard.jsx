@@ -173,7 +173,7 @@ const Dashboard = () => {
   const topCards = useMemo(() => {
     const shippingDelays = statusCounts.pending + statusCounts.processing;
     const refundRequests = statusCounts.cancelled;
-    const paymentFailures = statusCounts.pending + statusCounts.failed;
+    const paymentFailures = statusCounts.failed;
     const abandonedCarts = abandonedStats.abandonedUsers;
 
     return [
