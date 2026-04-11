@@ -47,16 +47,53 @@ const Products = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalProducts, setTotalProducts] = useState(0);
+  const [searchInput, setSearchInput] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const itemsPerPage = 8;
   const [form, setForm] = useState(emptyForm);
   const [editId, setEditId] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  const fetchProducts = async (page = currentPage) => {
+  const fetchProducts = async (page = currentPage, search = searchQuery) => {
     try {
-      const { data } = await API.get(`/products?page=${page}&limit=${itemsPerPage}`);
-      const list = Array.isArray(data) ? data : Array.isArray(data?.products) ? data.products : [];
+      const params = new URLSearchParams({
+        page: String(page),
+        limit: String(itemsPerPage),
+      });
+
+      const trimmedSearch = String(search || '').trim();
+      if (trimmedSearch) {
+        params.set('search', trimmedSearch);
+      }
+
+      const { data } = await API.get(`/products?${params.toString()}`);
+
+      // Fallback pagination for environments where backend returns plain array.
+      if (Array.isArray(data)) {
+        const normalizedSearch = trimmedSearch.toLowerCase();
+        const filtered = normalizedSearch
+          ? data.filter((item) => [item?.name, item?.brand, item?.category]
+            .some((field) => String(field || '').toLowerCase().includes(normalizedSearch)))
+          : data;
+
+        const total = filtered.length;
+        const pages = Math.max(1, Math.ceil(total / itemsPerPage));
+        const safePage = Math.min(Math.max(1, page), pages);
+        const start = (safePage - 1) * itemsPerPage;
+        const list = filtered.slice(start, start + itemsPerPage);
+
+        if (safePage !== page) {
+          setCurrentPage(safePage);
+        }
+
+        setProducts(list);
+        setTotalPages(pages);
+        setTotalProducts(total);
+        return;
+      }
+
+      const list = Array.isArray(data?.products) ? data.products : [];
       const pages = Number(data?.pages) || 1;
       const total = Number(data?.total) || list.length;
 
@@ -85,7 +122,17 @@ const Products = () => {
 
   useEffect(() => {
     fetchProducts(currentPage);
-  }, [currentPage]);
+  }, [currentPage, searchQuery]);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      const normalized = searchInput.trim();
+      setCurrentPage(1);
+      setSearchQuery(normalized);
+    }, 350);
+
+    return () => clearTimeout(timeout);
+  }, [searchInput]);
 
   const openCreate = () => {
     setForm(emptyForm);
@@ -185,7 +232,7 @@ const Products = () => {
       if (editId) {
         await API.put(`/products/${editId}`, payload);
         toast.success('Product updated!');
-        fetchProducts(currentPage);
+        fetchProducts(currentPage, searchQuery);
       } else {
         await API.post('/products', payload);
         toast.success('Product created!');
@@ -208,12 +255,28 @@ const Products = () => {
       if (products.length === 1 && currentPage > 1) {
         setCurrentPage((prev) => prev - 1);
       } else {
-        fetchProducts(currentPage);
+        fetchProducts(currentPage, searchQuery);
       }
     } catch {
       toast.error('Delete failed');
     }
   };
+
+  const paginationItems = (() => {
+    if (totalPages <= 7) {
+      return Array.from({ length: totalPages }, (_, index) => index + 1);
+    }
+
+    if (currentPage <= 4) {
+      return [1, 2, 3, 4, 5, '...', totalPages];
+    }
+
+    if (currentPage >= totalPages - 3) {
+      return [1, '...', totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+    }
+
+    return [1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages];
+  })();
 
   const handlePageChange = (page) => {
     if (page < 1 || page > totalPages || page === currentPage) return;
@@ -223,15 +286,38 @@ const Products = () => {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Product Management</h2>
-        <p className="text-sm text-gray-500 dark:text-gray-400">{totalProducts} items</p>
-        <button
-          onClick={openCreate}
-          className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium"
-        >
-          + Add Product
-        </button>
+      <div className="mb-6 space-y-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Product Management</h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400">{totalProducts} items</p>
+          </div>
+          <button
+            onClick={openCreate}
+            className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium"
+          >
+            + Add Product
+          </button>
+        </div>
+
+        <div className="relative">
+          <input
+            type="text"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            placeholder="Search by product name or brand..."
+            className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-800 shadow-sm outline-none transition-colors focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:focus:ring-indigo-900/40"
+          />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35m1.85-4.65a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
       </div>
 
       {loading ? (
@@ -294,7 +380,7 @@ const Products = () => {
                 {products.length === 0 && (
                   <tr>
                     <td colSpan={6} className="text-center py-10 text-gray-400">
-                      No products found. Add your first product!
+                      {searchQuery ? 'No products found for this search.' : 'No products found. Add your first product!'}
                     </td>
                   </tr>
                 )}
@@ -302,8 +388,12 @@ const Products = () => {
             </table>
           </div>
 
-          {totalPages > 1 && (
-            <div className="px-4 py-4 border-t border-gray-100 dark:border-gray-700 flex items-center justify-center gap-2">
+          <div className="px-4 py-4 border-t border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+              Page {currentPage} of {totalPages}
+            </p>
+
+            <div className="flex items-center justify-center gap-2">
               <button
                 type="button"
                 onClick={() => handlePageChange(currentPage - 1)}
@@ -313,19 +403,28 @@ const Products = () => {
                 Previous
               </button>
 
-              {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
-                <button
-                  key={page}
-                  type="button"
-                  onClick={() => handlePageChange(page)}
-                  className={`h-10 min-w-10 rounded-xl border px-3 text-sm font-medium transition-colors ${
-                    currentPage === page
-                      ? 'bg-pink-500 text-white border-pink-500'
-                      : 'bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800'
-                  }`}
-                >
-                  {page}
-                </button>
+              {paginationItems.map((item, index) => (
+                typeof item === 'number' ? (
+                  <button
+                    key={item}
+                    type="button"
+                    onClick={() => handlePageChange(item)}
+                    className={`h-10 min-w-10 rounded-xl border px-3 text-sm font-medium transition-colors ${
+                      currentPage === item
+                        ? 'bg-pink-500 text-white border-pink-500'
+                        : 'bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800'
+                    }`}
+                  >
+                    {item}
+                  </button>
+                ) : (
+                  <span
+                    key={`ellipsis-${index}`}
+                    className="inline-flex h-10 min-w-10 items-center justify-center text-sm text-gray-400"
+                  >
+                    {item}
+                  </span>
+                )
               ))}
 
               <button
@@ -337,7 +436,7 @@ const Products = () => {
                 Next
               </button>
             </div>
-          )}
+          </div>
         </div>
       )}
 
