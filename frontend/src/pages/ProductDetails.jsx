@@ -211,7 +211,14 @@ const ProductDetails = () => {
   }, [product]);
 
   const productPrice = Number(product?.price) || 0;
-  const oldPrice = productPrice > 0 ? productPrice * 1.18 : 0;
+  const configuredCompareAtPrice = Number(product?.compareAtPrice) || 0;
+  const oldPrice = configuredCompareAtPrice > productPrice
+    ? configuredCompareAtPrice
+    : (productPrice > 0 ? productPrice * 1.18 : 0);
+  const discountLabel = String(product?.discountText || '').trim() || '15% OFF';
+  const displayRatingValue = Math.min(5, Math.max(0, Number(product?.displayRating) || 4));
+  const displayReviewsLabel = String(product?.displayReviewsText || '').trim()
+    || (reviewsState.totalReviews > 0 ? `${reviewsState.totalReviews} reviews` : 'No reviews');
   const grandTotal = productPrice + deliveryCharge;
 
   const scrollToOrderForm = () => {
@@ -543,13 +550,13 @@ const ProductDetails = () => {
             <span className="text-2xl font-black text-pink-500 sm:text-[2.35rem]">{formatPrice(product.price)}</span>
             <span className="text-base text-slate-400 line-through sm:text-lg">{formatPrice(oldPrice)}</span>
             <span className="inline-flex rounded-full bg-yellow-400/20 px-3 py-1 text-xs font-bold text-yellow-700 dark:bg-yellow-400/15 dark:text-yellow-200">
-              15% OFF
+              {discountLabel}
             </span>
           </div>
 
-          <div className="mt-4 flex items-center gap-2 text-sm text-amber-500">
-            <span>★★★★☆</span>
-            <span className="text-slate-500 dark:text-slate-400">(11.78k reviews)</span>
+          <div className="mt-4 flex items-center gap-2 text-sm">
+            <span className="flex items-center gap-0.5 text-amber-500">{renderStars(Math.round(displayRatingValue), 'h-4 w-4')}</span>
+            <span className="text-slate-500 dark:text-slate-400">({displayReviewsLabel})</span>
           </div>
 
           <div className="mt-5 border-t border-dashed border-slate-200 pt-5 dark:border-white/10">

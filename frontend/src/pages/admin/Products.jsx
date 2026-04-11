@@ -7,6 +7,10 @@ const emptyForm = {
   name: '',
   description: '',
   price: '',
+  compareAtPrice: '',
+  discountText: '15% OFF',
+  displayRating: '4',
+  displayReviewsText: '11.78k reviews',
   image: '',
   imageUrls: ['', '', '', ''],
   category: '',
@@ -94,6 +98,10 @@ const Products = () => {
       name: product.name,
       description: product.description,
       price: product.price,
+      compareAtPrice: product.compareAtPrice ?? '',
+      discountText: product.discountText || '15% OFF',
+      displayRating: product.displayRating ?? '4',
+      displayReviewsText: product.displayReviewsText || '11.78k reviews',
       image: product.image,
       imageUrls: (() => {
         const base = Array(4).fill('');
@@ -438,6 +446,51 @@ const Products = () => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Compare Price (BDT)
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={form.compareAtPrice}
+                    onChange={(e) => setForm({ ...form, compareAtPrice: e.target.value })}
+                    className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Discount Label
+                  </label>
+                  <input
+                    type="text"
+                    value={form.discountText}
+                    onChange={(e) => setForm({ ...form, discountText: e.target.value })}
+                    placeholder="e.g. 15% OFF"
+                    className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Display Rating (0-5)
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="5"
+                    step="0.1"
+                    value={form.displayRating}
+                    onChange={(e) => setForm({ ...form, displayRating: e.target.value })}
+                    className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Stock
                   </label>
                   <input
@@ -446,6 +499,18 @@ const Products = () => {
                     min="0"
                     value={form.stock}
                     onChange={(e) => setForm({ ...form, stock: e.target.value })}
+                    className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Review Count Label
+                  </label>
+                  <input
+                    type="text"
+                    value={form.displayReviewsText}
+                    onChange={(e) => setForm({ ...form, displayReviewsText: e.target.value })}
+                    placeholder="e.g. 11.78k reviews"
                     className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   />
                 </div>
