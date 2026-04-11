@@ -2,15 +2,19 @@ import { useEffect, useMemo, useState } from 'react';
 import API from '../../api/axios';
 import toast from 'react-hot-toast';
 import { formatPrice } from '../../utils/formatPrice';
+import Swal from 'sweetalert2';
 
 const ITEMS_PER_PAGE = 8;
 const DAY_MS = 24 * 60 * 60 * 1000;
+const STATUS_OPTIONS = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
 
 const ShippingDelays = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [updatingId, setUpdatingId] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -82,6 +86,60 @@ const ShippingDelays = () => {
     }
   }, [currentPage, totalPages]);
 
+  const handleStatusChange = async (orderId, status) => {
+    const confirm = await Swal.fire({
+      title: 'Update order status?',
+      text: `Change status to ${status}?`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, update',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#2563eb',
+      cancelButtonColor: '#64748b',
+      reverseButtons: true,
+    });
+
+    if (!confirm.isConfirmed) return;
+
+    setUpdatingId(orderId);
+    try {
+      const { data } = await API.put(`/orders/${orderId}/status`, { status });
+      setOrders((prev) => prev.map((order) => (order._id === orderId ? { ...order, status: data.status } : order)));
+      toast.success('Order status updated');
+    } catch {
+      toast.error('Failed to update order status');
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
+  const handleDeleteOrder = async (orderId) => {
+    const confirm = await Swal.fire({
+      title: 'Delete this order?',
+      text: 'This action cannot be undone.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#dc2626',
+      cancelButtonColor: '#64748b',
+      reverseButtons: true,
+    });
+
+    if (!confirm.isConfirmed) return;
+
+    setDeletingId(orderId);
+    try {
+      const { data } = await API.delete(`/orders/${orderId}`);
+      setOrders((prev) => prev.filter((order) => order._id !== orderId));
+      toast.success(data?.message || 'Order deleted successfully');
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to delete order');
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
   return (
     <div>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
@@ -111,41 +169,66 @@ const ShippingDelays = () => {
       ) : (
         <div className="overflow-hidden rounded-2xl bg-white shadow-sm dark:bg-gray-800">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-gray-50 text-left text-xs uppercase tracking-wide text-gray-600 dark:bg-gray-700 dark:text-gray-300">
+            <table className="w-full text-xs">
+              <thead className="bg-gray-50 text-left text-[11px] uppercase tracking-wide text-gray-600 dark:bg-gray-700 dark:text-gray-300">
                 <tr>
-                  <th className="px-4 py-3">Order ID</th>
-                  <th className="px-4 py-3">Customer</th>
-                  <th className="px-4 py-3">Status</th>
-                  <th className="px-4 py-3">Delay</th>
-                  <th className="px-4 py-3">Order Date</th>
-                  <th className="px-4 py-3">City</th>
-                  <th className="px-4 py-3">Amount</th>
+                  <th className="px-3 py-2">Order ID</th>
+                  <th className="px-3 py-2">Customer</th>
+                  <th className="px-3 py-2">Status</th>
+                  <th className="px-3 py-2">Delay</th>
+                  <th className="px-3 py-2">Order Date</th>
+                  <th className="px-3 py-2">City</th>
+                  <th className="px-3 py-2">Amount</th>
+                  <th className="px-3 py-2">Action</th>
                 </tr>
               </thead>
               <tbody>
                 {paginatedOrders.map((order) => (
                   <tr key={order._id} className="border-t border-gray-100 dark:border-gray-700">
-                    <td className="px-4 py-3 font-medium text-gray-700 dark:text-gray-200">#{String(order._id || '').slice(-6).toUpperCase()}</td>
-                    <td className="px-4 py-3 text-gray-700 dark:text-gray-200">
+                    <td className="px-3 py-2 font-medium text-gray-700 dark:text-gray-200">#{String(order._id || '').slice(-6).toUpperCase()}</td>
+                    <td className="px-3 py-2 text-gray-700 dark:text-gray-200">
                       <p className="font-medium">{order?.user?.name || 'N/A'}</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">{order?.user?.email || 'N/A'}</p>
+                      <p className="text-[10px] text-gray-500 dark:text-gray-400">{order?.user?.email || 'N/A'}</p>
                     </td>
-                    <td className="px-4 py-3 text-gray-700 dark:text-gray-200">{order?.status || 'N/A'}</td>
-                    <td className="px-4 py-3">
-                      <span className="inline-flex rounded-full bg-red-100 px-2.5 py-1 text-xs font-semibold text-red-700 dark:bg-red-900/30 dark:text-red-300">
+                    <td className="px-3 py-2 text-gray-700 dark:text-gray-200">{order?.status || 'N/A'}</td>
+                    <td className="px-3 py-2">
+                      <span className="inline-flex rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-semibold text-red-700 dark:bg-red-900/30 dark:text-red-300">
                         {order.delayDays} days
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-gray-600 dark:text-gray-300">{new Date(order.createdAt).toLocaleString()}</td>
-                    <td className="px-4 py-3 text-gray-600 dark:text-gray-300">{order?.shippingAddress?.city || 'N/A'}</td>
-                    <td className="px-4 py-3 font-semibold text-indigo-600 dark:text-indigo-300">{formatPrice(order?.totalAmount || 0)}</td>
+                    <td className="px-3 py-2 text-gray-600 dark:text-gray-300">{new Date(order.createdAt).toLocaleString()}</td>
+                    <td className="px-3 py-2 text-gray-600 dark:text-gray-300">{order?.shippingAddress?.city || 'N/A'}</td>
+                    <td className="px-3 py-2 font-semibold text-indigo-600 dark:text-indigo-300">{formatPrice(order?.totalAmount || 0)}</td>
+                    <td className="px-3 py-2">
+                      <div className="flex items-center gap-2">
+                        <select
+                          value={order.status || 'Pending'}
+                          onChange={(event) => handleStatusChange(order._id, event.target.value)}
+                          disabled={updatingId === order._id || deletingId === order._id}
+                          className="rounded-md border border-gray-300 bg-white px-2 py-1 text-[11px] text-gray-700 outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-60 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                        >
+                          {STATUS_OPTIONS.map((status) => (
+                            <option key={status} value={status}>
+                              {status}
+                            </option>
+                          ))}
+                        </select>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteOrder(order._id)}
+                          disabled={updatingId === order._id || deletingId === order._id}
+                          className="rounded-md bg-red-600 px-2 py-1 text-[11px] font-semibold text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                          {deletingId === order._id ? 'Deleting...' : 'Delete'}
+                        </button>
+                      </div>
+                    </td>
                   </tr>
                 ))}
 
                 {delayedOrders.length === 0 && (
                   <tr>
-                    <td colSpan={7} className="px-4 py-10 text-center text-sm text-gray-500 dark:text-gray-400">
+                    <td colSpan={8} className="px-4 py-8 text-center text-xs text-gray-500 dark:text-gray-400">
                       No shipping delays found.
                     </td>
                   </tr>
