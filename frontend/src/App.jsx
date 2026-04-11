@@ -28,7 +28,6 @@ import AdminRoute from './components/AdminRoute';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import API from './api/axios';
-import { initializeAppleAlertStyles } from './utils/showOrderSuccess';
 
 const UserLayout = ({ children }) => (
   <div className="flex flex-col gap-0">
@@ -39,10 +38,6 @@ const UserLayout = ({ children }) => (
 );
 
 function App() {
-  useEffect(() => {
-    initializeAppleAlertStyles();
-  }, []);
-
   useEffect(() => {
     const applySiteBranding = async () => {
       try {
