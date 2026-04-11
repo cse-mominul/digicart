@@ -102,6 +102,20 @@ const Orders = () => {
   }, []);
 
   const handleStatusChange = async (orderId, status) => {
+    const result = await Swal.fire({
+      title: 'Update order status?',
+      text: `Change status to ${status}?`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, update',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#2563eb',
+      cancelButtonColor: '#64748b',
+      reverseButtons: true,
+    });
+
+    if (!result.isConfirmed) return;
+
     setUpdatingId(orderId);
     try {
       const { data } = await API.put(`/orders/${orderId}/status`, { status });
