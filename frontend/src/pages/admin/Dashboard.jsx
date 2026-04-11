@@ -269,12 +269,18 @@ const Dashboard = () => {
                 trendText={card.trendText}
                 trendUp={card.trendUp}
                 bgClass={card.bgClass}
-                clickable={card.title === 'Abandoned Carts' || card.title === 'Stock Products'}
+                clickable={card.title === 'Abandoned Carts' || card.title === 'Stock Products' || card.title === 'Total Customers' || card.title === 'Total Orders' || card.title === 'Shipping Delays'}
                 onClick={
                   card.title === 'Abandoned Carts'
                     ? () => navigate('/admin/abandoned-carts')
                     : card.title === 'Stock Products'
                       ? () => navigate('/admin/products')
+                      : card.title === 'Shipping Delays'
+                        ? () => navigate('/admin/shipping-delays')
+                      : card.title === 'Total Orders'
+                        ? () => navigate('/admin/orders')
+                      : card.title === 'Total Customers'
+                        ? () => navigate('/admin/customers')
                       : undefined
                 }
               />
