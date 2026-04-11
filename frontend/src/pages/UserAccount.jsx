@@ -114,6 +114,7 @@ const UserAccount = () => {
   const [activeOrderFilter, setActiveOrderFilter] = useState('All');
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
   const [addresses, setAddresses] = useState(getStoredAddresses);
   const [addressForm, setAddressForm] = useState(emptyAddressForm);
@@ -214,6 +215,12 @@ const UserAccount = () => {
     return orders.filter((order) => normalizeOrderStatus(order.status) === activeOrderFilter);
   }, [activeOrderFilter, orders]);
 
+  const getOrderLineItems = (order) => {
+    if (Array.isArray(order?.items)) return order.items;
+    if (Array.isArray(order?.orderItems)) return order.orderItems;
+    return [];
+  };
+
   const handleProfileSave = async (e) => {
     e.preventDefault();
 
@@ -312,8 +319,8 @@ const UserAccount = () => {
     toast.success('Items added to cart');
   };
 
-  const handleViewOrderDetails = () => {
-    toast('Order details view coming soon');
+  const handleViewOrderDetails = (order) => {
+    setSelectedOrder(order);
   };
 
   const handleNavClick = (item) => {
@@ -572,7 +579,7 @@ const UserAccount = () => {
                         <div className="mt-5 flex flex-col gap-3 border-t border-gray-100 pt-4 sm:flex-row dark:border-gray-700">
                           <button
                             type="button"
-                            onClick={handleViewOrderDetails}
+                            onClick={() => handleViewOrderDetails(order)}
                             className="rounded-xl border border-gray-300 bg-transparent px-4 py-2.5 text-sm font-semibold text-gray-700 transition-colors hover:border-gray-400 hover:text-gray-900 dark:border-gray-600 dark:text-gray-200 dark:hover:border-gray-500 dark:hover:text-white"
                           >
                             View Details
@@ -896,6 +903,119 @@ const UserAccount = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {selectedOrder && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4 py-8 backdrop-blur-sm">
+          <div className="w-full max-w-4xl rounded-[28px] border border-gray-200 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.2)] dark:border-gray-700 dark:bg-gray-900">
+            <div className="flex items-center justify-between border-b border-gray-100 px-5 py-5 dark:border-gray-800 sm:px-6">
+              <div>
+                <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">Order Details</h2>
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Order ID: #{selectedOrder._id}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedOrder(null)}
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                aria-label="Close order details"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-5 w-5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="space-y-6 px-5 py-5 sm:px-6 sm:py-6">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+                <div className="rounded-2xl bg-gray-50 p-4 dark:bg-gray-800">
+                  <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Status</p>
+                  <span className={`mt-2 inline-flex rounded-full px-3 py-1 text-xs font-semibold ${getOrderBadgeClasses(normalizeOrderStatus(selectedOrder.status))}`}>
+                    {normalizeOrderStatus(selectedOrder.status)}
+                  </span>
+                </div>
+                <div className="rounded-2xl bg-gray-50 p-4 dark:bg-gray-800">
+                  <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Ordered On</p>
+                  <p className="mt-2 text-sm font-semibold text-gray-900 dark:text-white">
+                    {selectedOrder.createdAt ? new Date(selectedOrder.createdAt).toLocaleString() : 'N/A'}
+                  </p>
+                </div>
+                <div className="rounded-2xl bg-gray-50 p-4 dark:bg-gray-800">
+                  <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Total Amount</p>
+                  <p className="mt-2 text-sm font-semibold text-gray-900 dark:text-white">
+                    {formatPrice(selectedOrder.totalAmount || 0)}
+                  </p>
+                </div>
+                <div className="rounded-2xl bg-gray-50 p-4 dark:bg-gray-800">
+                  <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Payment</p>
+                  <p className="mt-2 text-sm font-semibold text-gray-900 dark:text-white">
+                    {String(selectedOrder?.paymentStatus || '').toLowerCase() === 'paid' || selectedOrder?.isPaid ? 'Paid' : 'Unpaid'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-900">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Customer & Shipping</h3>
+                  <div className="mt-4 space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                    <p><span className="font-semibold text-gray-900 dark:text-white">Customer:</span> {selectedOrder?.user?.name || 'N/A'}</p>
+                    <p><span className="font-semibold text-gray-900 dark:text-white">Email:</span> {selectedOrder?.user?.email || 'N/A'}</p>
+                    <p><span className="font-semibold text-gray-900 dark:text-white">Phone:</span> {selectedOrder?.shippingAddress?.phone || selectedOrder?.customer?.phone || user?.phone || 'N/A'}</p>
+                    <p><span className="font-semibold text-gray-900 dark:text-white">Address:</span> {selectedOrder?.shippingAddress?.address || 'N/A'}</p>
+                    <p><span className="font-semibold text-gray-900 dark:text-white">Area/City:</span> {selectedOrder?.shippingAddress?.city || 'N/A'}</p>
+                    <p><span className="font-semibold text-gray-900 dark:text-white">Postal Code:</span> {selectedOrder?.shippingAddress?.postalCode || 'N/A'}</p>
+                    <p><span className="font-semibold text-gray-900 dark:text-white">Country:</span> {selectedOrder?.shippingAddress?.country || 'N/A'}</p>
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-900">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Items</h3>
+                  <div className="mt-4 space-y-3">
+                    {getOrderLineItems(selectedOrder).length > 0 ? (
+                      getOrderLineItems(selectedOrder).map((item, index) => {
+                        const itemName = item?.name || item?.product?.name || 'Product';
+                        const itemImage = item?.image || item?.product?.image || 'https://placehold.co/64x64?text=?';
+                        const itemPrice = Number(item?.price || item?.product?.price || 0);
+                        const itemQty = Number(item?.quantity || item?.qty || 1);
+
+                        return (
+                          <div key={`${itemName}-${index}`} className="flex items-center gap-3 rounded-2xl border border-gray-100 p-3 dark:border-gray-800">
+                            <img
+                              src={itemImage}
+                              alt={itemName}
+                              className="h-14 w-14 rounded-xl object-cover"
+                              onError={(event) => {
+                                event.currentTarget.src = 'https://placehold.co/64x64?text=?';
+                              }}
+                            />
+                            <div className="min-w-0 flex-1">
+                              <p className="truncate font-semibold text-gray-900 dark:text-white">{itemName}</p>
+                              <p className="text-xs text-gray-500 dark:text-gray-400">Qty: {itemQty}</p>
+                            </div>
+                            <p className="text-sm font-semibold text-teal-600 dark:text-teal-300">
+                              {formatPrice(itemPrice * itemQty)}
+                            </p>
+                          </div>
+                        );
+                      })
+                    ) : (
+                      <p className="text-sm text-gray-500 dark:text-gray-400">No item details available.</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => setSelectedOrder(null)}
+                  className="rounded-full bg-[#ff3366] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-pink-500/20 transition-colors hover:bg-[#ff1f58]"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
