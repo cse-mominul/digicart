@@ -6,6 +6,8 @@ import Swal from 'sweetalert2';
 const CouponVoucher = () => {
   const [loading, setLoading] = useState(true);
   const [coupons, setCoupons] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const couponsPerPage = 8;
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
   const [editingId, setEditingId] = useState(null);
@@ -48,6 +50,14 @@ const CouponVoucher = () => {
     setShowForm(true);
   };
 
+  const totalPages = Math.max(1, Math.ceil(coupons.length / couponsPerPage));
+  const startIndex = (currentPage - 1) * couponsPerPage;
+  const paginatedCoupons = coupons.slice(startIndex, startIndex + couponsPerPage);
+
+  const goToPage = (page) => {
+    setCurrentPage(Math.min(Math.max(page, 1), totalPages));
+  };
+
   const handleEdit = (coupon) => {
     setFormData({
       code: coupon.code,
@@ -75,7 +85,12 @@ const CouponVoucher = () => {
 
     try {
       await API.delete(`/coupons/${id}`);
-      setCoupons(coupons.filter((c) => c._id !== id));
+      const updatedCoupons = coupons.filter((c) => c._id !== id);
+      setCoupons(updatedCoupons);
+      const updatedTotalPages = Math.max(1, Math.ceil(updatedCoupons.length / couponsPerPage));
+      if (currentPage > updatedTotalPages) {
+        setCurrentPage(updatedTotalPages);
+      }
       toast.success('Coupon deleted successfully');
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to delete coupon');
@@ -262,7 +277,7 @@ const CouponVoucher = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                {coupons.map((coupon) => (
+                {paginatedCoupons.map((coupon) => (
                   <tr key={coupon._id} className="hover:bg-gray-50 dark:hover:bg-gray-700/30">
                     <td className="py-3 px-4 font-medium text-gray-900 dark:text-white">{coupon.code}</td>
                     <td className="py-3 px-4 text-gray-700 dark:text-gray-300">{coupon.discountPercent}%</td>
@@ -310,6 +325,46 @@ const CouponVoucher = () => {
                 ))}
               </tbody>
             </table>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-gray-200 px-4 py-3 dark:border-gray-700">
+            <p className="text-xs text-gray-600 dark:text-gray-400">
+              Showing {startIndex + 1}-{Math.min(startIndex + couponsPerPage, coupons.length)} of {coupons.length} coupons
+            </p>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => goToPage(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
+              >
+                Prev
+              </button>
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <button
+                  key={page}
+                  type="button"
+                  onClick={() => goToPage(page)}
+                  className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
+                    currentPage === page
+                      ? 'bg-pink-500 text-white'
+                      : 'border border-gray-300 text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700'
+                  }`}
+                >
+                  {page}
+                </button>
+              ))}
+
+              <button
+                type="button"
+                onClick={() => goToPage(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
+              >
+                Next
+              </button>
+            </div>
           </div>
         </div>
       )}
