@@ -18,6 +18,11 @@ const navItems = [
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
     </svg>
   )},
+  { to: '/admin/abandoned-carts', label: 'Abandoned Carts', end: false, icon: (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.5 7h13M9 17a2 2 0 104 0m2 0a2 2 0 104 0M12 9v4m0 0l-2-2m2 2l2-2" />
+    </svg>
+  )},
   { to: '/admin/reviews', label: 'Reviews', end: false, icon: (
     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h8M8 14h6m6 2a2 2 0 01-2 2H6l-4 4V6a2 2 0 012-2h14a2 2 0 012 2v12z" />

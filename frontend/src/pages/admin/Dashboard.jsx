@@ -138,6 +138,7 @@ const TopMetricCard = ({ title, value, trendText, trendUp, bgClass }) => (
 
 const Dashboard = () => {
   const [stats, setStats] = useState({ products: 0, orders: 0, users: 0, revenue: 0 });
+  const [abandonedStats, setAbandonedStats] = useState({ abandonedUsers: 0, abandonedItems: 0 });
   const [orders, setOrders] = useState([]);
   const [recentOrders, setRecentOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -158,7 +159,7 @@ const Dashboard = () => {
     const shippingDelays = statusCounts.pending + statusCounts.processing;
     const refundRequests = statusCounts.cancelled;
     const paymentFailures = Math.max(statusCounts.cancelled, Math.round(stats.orders * 0.03));
-    const abandonedCarts = Math.max(stats.orders * 2, shippingDelays * 3);
+    const abandonedCarts = abandonedStats.abandonedUsers;
 
     return [
       { title: 'Total Sales', value: formatPrice(stats.revenue), trendText: '+0.1%', trendUp: true, bgClass: 'bg-[#b6dcde]' },
@@ -170,7 +171,7 @@ const Dashboard = () => {
       { title: 'Abandoned Carts', value: formatCompactNumber(abandonedCarts), trendText: '+0.1%', trendUp: true, bgClass: 'bg-[#b7de9f]' },
       { title: 'Payment Failures', value: formatCompactNumber(paymentFailures), trendText: '-0.1%', trendUp: false, bgClass: 'bg-[#a8d0ea]' },
     ];
-  }, [stats, statusCounts]);
+  }, [stats, statusCounts, abandonedStats.abandonedUsers]);
 
   const chartSeries = useMemo(() => {
     if (chartRange === 'weekly') {
@@ -202,10 +203,11 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [productsRes, ordersRes, usersRes] = await Promise.all([
+        const [productsRes, ordersRes, usersRes, abandonedRes] = await Promise.all([
           API.get('/products'),
           API.get('/orders'),
           API.get('/admin/users'),
+          API.get('/admin/abandoned-carts'),
         ]);
 
         const allOrders = Array.isArray(ordersRes.data) ? ordersRes.data : [];
@@ -217,6 +219,10 @@ const Dashboard = () => {
           orders: allOrders.length,
           users: usersRes.data.length,
           revenue,
+        });
+        setAbandonedStats({
+          abandonedUsers: Number(abandonedRes?.data?.abandonedUsers) || 0,
+          abandonedItems: Number(abandonedRes?.data?.abandonedItems) || 0,
         });
         setRecentOrders(allOrders.slice(0, 5));
       } catch (error) {

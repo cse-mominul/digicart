@@ -1,4 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import API from '../api/axios';
+import { useAuth } from './AuthContext';
 
 const WishlistContext = createContext();
 const WISHLIST_STORAGE_KEY = 'digicart_wishlist_items';
@@ -14,10 +16,23 @@ const parseStoredWishlist = () => {
 
 export const WishlistProvider = ({ children }) => {
   const [wishlistItems, setWishlistItems] = useState(parseStoredWishlist);
+  const { user } = useAuth();
 
   useEffect(() => {
     localStorage.setItem(WISHLIST_STORAGE_KEY, JSON.stringify(wishlistItems));
   }, [wishlistItems]);
+
+  useEffect(() => {
+    if (!user?.token) return;
+
+    const wishlistProductIds = Array.from(
+      new Set((wishlistItems || []).map((item) => item?._id).filter(Boolean))
+    );
+
+    API.post('/engagement/sync', { wishlistProductIds }).catch(() => {
+      // Silent fail: tracking should never block wishlist UX.
+    });
+  }, [wishlistItems, user?.token]);
 
   const addToWishlist = (product) => {
     setWishlistItems((prev) => {

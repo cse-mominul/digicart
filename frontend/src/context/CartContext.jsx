@@ -1,4 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import API from '../api/axios';
+import { useAuth } from './AuthContext';
 
 const CartContext = createContext();
 const CART_STORAGE_KEY = 'digicart_cart_items';
@@ -14,10 +16,23 @@ const parseStoredCart = () => {
 
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState(parseStoredCart);
+  const { user } = useAuth();
 
   useEffect(() => {
     localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
   }, [cartItems]);
+
+  useEffect(() => {
+    if (!user?.token) return;
+
+    const cartProductIds = Array.from(
+      new Set((cartItems || []).map((item) => item?._id).filter(Boolean))
+    );
+
+    API.post('/engagement/sync', { cartProductIds }).catch(() => {
+      // Silent fail: tracking should never block shopping flow.
+    });
+  }, [cartItems, user?.token]);
 
   const addToCart = (product) => {
     setCartItems((prev) => {

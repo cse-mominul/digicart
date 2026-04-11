@@ -12,6 +12,7 @@ import AdminLayout from './pages/admin/AdminLayout';
 import Dashboard from './pages/admin/Dashboard';
 import Products from './pages/admin/Products';
 import Orders from './pages/admin/Orders';
+import AbandonedCarts from './pages/admin/AbandonedCarts';
 import Reviews from './pages/admin/Reviews';
 import Users from './pages/admin/Users';
 import CategoryManager from './pages/admin/CategoryManager';
@@ -149,6 +150,7 @@ function App() {
           <Route path="campaigns" element={<Campaigns />} />
           <Route path="settings" element={<Settings />} />
           <Route path="orders" element={<Orders />} />
+          <Route path="abandoned-carts" element={<AbandonedCarts />} />
           <Route path="reviews" element={<Reviews />} />
           <Route path="users" element={<Users />} />
         </Route>
