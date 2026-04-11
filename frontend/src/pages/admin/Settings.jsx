@@ -1,9 +1,20 @@
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import API from '../../api/axios';
 import toast from 'react-hot-toast';
+import { useAuth } from '../../context/AuthContext';
+
+const validTabs = new Set(['delivery', 'company', 'site', 'users']);
+
+const resolveTab = (rawTab) => {
+  const value = String(rawTab || '').toLowerCase();
+  return validTabs.has(value) ? value : 'delivery';
+};
 
 const Settings = () => {
-  const [activeTab, setActiveTab] = useState('delivery');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [activeTab, setActiveTab] = useState(resolveTab(searchParams.get('tab')));
+  const { user: currentUser } = useAuth();
   const [settingsForm, setSettingsForm] = useState({
     insideDhakaCharge: 80,
     outsideDhakaCharge: 120,
@@ -21,6 +32,19 @@ const Settings = () => {
   });
   const [loading, setLoading] = useState(true);
   const [savingSettings, setSavingSettings] = useState(false);
+  const [customers, setCustomers] = useState([]);
+  const [loadingCustomers, setLoadingCustomers] = useState(false);
+  const [deletingCustomerId, setDeletingCustomerId] = useState(null);
+  const [editingCustomer, setEditingCustomer] = useState(null);
+  const [customerEditForm, setCustomerEditForm] = useState({ name: '', email: '', phone: '' });
+  const [savingCustomer, setSavingCustomer] = useState(false);
+
+  useEffect(() => {
+    const tabFromUrl = resolveTab(searchParams.get('tab'));
+    if (tabFromUrl !== activeTab) {
+      setActiveTab(tabFromUrl);
+    }
+  }, [searchParams, activeTab]);
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -50,6 +74,94 @@ const Settings = () => {
 
     fetchSettings();
   }, []);
+
+  const updateActiveTab = (tab) => {
+    setActiveTab(tab);
+    setSearchParams({ tab });
+  };
+
+  const fetchCustomers = async () => {
+    setLoadingCustomers(true);
+    try {
+      const { data } = await API.get('/admin/users');
+      const allUsers = Array.isArray(data) ? data : [];
+      setCustomers(allUsers.filter((item) => item?.role === 'admin'));
+    } catch {
+      toast.error('Failed to load admin users');
+    } finally {
+      setLoadingCustomers(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === 'users') {
+      fetchCustomers();
+    }
+  }, [activeTab]);
+
+  const handleDeleteCustomer = async (id) => {
+    if (id === currentUser?._id) {
+      toast.error("You can't delete your own account");
+      return;
+    }
+
+    if (!window.confirm('Are you sure you want to delete this admin user?')) return;
+
+    setDeletingCustomerId(id);
+    try {
+      await API.delete(`/admin/users/${id}`);
+      setCustomers((prev) => prev.filter((item) => item._id !== id));
+      toast.success('Admin user deleted successfully');
+    } catch {
+      toast.error('Failed to delete admin user');
+    } finally {
+      setDeletingCustomerId(null);
+    }
+  };
+
+  const openEditCustomer = (customer) => {
+    setEditingCustomer(customer);
+    setCustomerEditForm({
+      name: customer?.name || '',
+      email: customer?.email || '',
+      phone: customer?.phone || '',
+    });
+  };
+
+  const closeEditCustomer = () => {
+    setEditingCustomer(null);
+    setCustomerEditForm({ name: '', email: '', phone: '' });
+  };
+
+  const handleSaveCustomer = async (event) => {
+    event.preventDefault();
+
+    const name = customerEditForm.name.trim();
+    const email = customerEditForm.email.trim().toLowerCase();
+    const phone = customerEditForm.phone.trim();
+
+    if (!name) {
+      toast.error('User name is required');
+      return;
+    }
+
+    if (!email) {
+      toast.error('User email is required');
+      return;
+    }
+
+    setSavingCustomer(true);
+    try {
+      const { data } = await API.put(`/admin/users/${editingCustomer._id}`, { name, email, phone });
+      setCustomers((prev) => prev.map((item) => (item._id === data._id ? data : item)));
+      toast.success('Admin user updated successfully');
+      closeEditCustomer();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to update admin user');
+    } finally {
+      setSavingCustomer(false);
+    }
+  };
 
   const saveSettings = async (successMessage) => {
     const insideDhakaCharge = Number(settingsForm.insideDhakaCharge);
@@ -178,7 +290,7 @@ const Settings = () => {
           <div className="mb-5 inline-flex rounded-xl border border-gray-700 bg-gray-800 p-1">
             <button
               type="button"
-              onClick={() => setActiveTab('delivery')}
+              onClick={() => updateActiveTab('delivery')}
               className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
                 activeTab === 'delivery'
                   ? 'bg-pink-500 text-white'
@@ -189,7 +301,7 @@ const Settings = () => {
             </button>
             <button
               type="button"
-              onClick={() => setActiveTab('company')}
+              onClick={() => updateActiveTab('company')}
               className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
                 activeTab === 'company'
                   ? 'bg-pink-500 text-white'
@@ -200,7 +312,7 @@ const Settings = () => {
             </button>
             <button
               type="button"
-              onClick={() => setActiveTab('site')}
+              onClick={() => updateActiveTab('site')}
               className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
                 activeTab === 'site'
                   ? 'bg-pink-500 text-white'
@@ -208,6 +320,17 @@ const Settings = () => {
               }`}
             >
               Site Settings
+            </button>
+            <button
+              type="button"
+              onClick={() => updateActiveTab('users')}
+              className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                activeTab === 'users'
+                  ? 'bg-pink-500 text-white'
+                  : 'text-gray-300 hover:text-white'
+              }`}
+            >
+              Users
             </button>
           </div>
 
@@ -313,7 +436,7 @@ const Settings = () => {
                 {savingSettings ? 'Saving...' : 'Save Company Settings'}
               </button>
             </form>
-          ) : (
+          ) : activeTab === 'site' ? (
             <form onSubmit={handleSaveSiteSettings} className="space-y-5">
               <p className="text-sm text-gray-400">Configure site title, header logo, and browser favicon.</p>
 
@@ -417,7 +540,138 @@ const Settings = () => {
                 {savingSettings ? 'Saving...' : 'Save Site Settings'}
               </button>
             </form>
+          ) : (
+            <div className="space-y-4">
+              <p className="text-sm text-gray-400">Only admin user accounts are listed here.</p>
+
+              {loadingCustomers ? (
+                <div className="rounded-xl border border-gray-700 bg-gray-800 h-48 animate-pulse" />
+              ) : (
+                <div className="rounded-xl border border-gray-700 overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead className="bg-gray-800 text-gray-300 text-left">
+                        <tr>
+                          <th className="px-5 py-3">Customer</th>
+                          <th className="px-5 py-3">Role</th>
+                          <th className="px-5 py-3">Email</th>
+                          <th className="px-5 py-3">Phone</th>
+                          <th className="px-5 py-3">Joined</th>
+                          <th className="px-5 py-3">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {customers.map((customer) => (
+                          <tr key={customer._id} className="border-t border-gray-700 hover:bg-gray-800/70">
+                            <td className="px-5 py-3 text-gray-100 font-medium">{customer.name}</td>
+                            <td className="px-5 py-3 text-gray-300">{customer.role}</td>
+                            <td className="px-5 py-3 text-gray-300">{customer.email}</td>
+                            <td className="px-5 py-3 text-gray-300">{customer.phone || 'N/A'}</td>
+                            <td className="px-5 py-3 text-gray-400 text-xs">
+                              {customer.createdAt ? new Date(customer.createdAt).toLocaleDateString() : 'N/A'}
+                            </td>
+                            <td className="px-5 py-3">
+                              <div className="flex items-center gap-2">
+                                <button
+                                  type="button"
+                                  onClick={() => openEditCustomer(customer)}
+                                  className="rounded-md bg-indigo-500/20 px-3 py-1 text-xs font-medium text-indigo-200 hover:bg-indigo-500/30"
+                                >
+                                  Edit
+                                </button>
+                                <button
+                                  type="button"
+                                  disabled={deletingCustomerId === customer._id || customer._id === currentUser?._id}
+                                  onClick={() => handleDeleteCustomer(customer._id)}
+                                  className="rounded-md bg-red-500/15 px-3 py-1 text-xs font-medium text-red-300 hover:bg-red-500/25 disabled:opacity-50"
+                                >
+                                  {deletingCustomerId === customer._id ? 'Deleting...' : 'Delete'}
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+
+                        {customers.length === 0 && (
+                          <tr>
+                            <td colSpan={6} className="text-center py-10 text-gray-400">
+                              No admin users found
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </div>
           )}
+        </div>
+      )}
+
+      {editingCustomer && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+          <div className="w-full max-w-md rounded-2xl border border-gray-700 bg-gray-900 p-5 shadow-lg">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="text-lg font-bold text-white">Edit Admin User</h3>
+              <button
+                type="button"
+                onClick={closeEditCustomer}
+                className="text-gray-400 hover:text-white"
+              >
+                &times;
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveCustomer} className="space-y-3">
+              <div>
+                <label className="mb-1 block text-sm text-gray-300">Name</label>
+                <input
+                  type="text"
+                  value={customerEditForm.name}
+                  onChange={(event) => setCustomerEditForm((prev) => ({ ...prev, name: event.target.value }))}
+                  className="w-full rounded-xl border border-gray-700 bg-gray-800 px-3 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
+                />
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm text-gray-300">Email</label>
+                <input
+                  type="email"
+                  value={customerEditForm.email}
+                  onChange={(event) => setCustomerEditForm((prev) => ({ ...prev, email: event.target.value }))}
+                  className="w-full rounded-xl border border-gray-700 bg-gray-800 px-3 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
+                />
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm text-gray-300">Phone</label>
+                <input
+                  type="text"
+                  value={customerEditForm.phone}
+                  onChange={(event) => setCustomerEditForm((prev) => ({ ...prev, phone: event.target.value }))}
+                  className="w-full rounded-xl border border-gray-700 bg-gray-800 px-3 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
+                />
+              </div>
+
+              <div className="pt-2 flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={closeEditCustomer}
+                  className="rounded-lg border border-gray-600 px-4 py-2 text-sm text-gray-300 hover:bg-gray-800"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={savingCustomer}
+                  className="rounded-lg bg-pink-500 px-4 py-2 text-sm font-semibold text-white hover:bg-pink-600 disabled:opacity-60"
+                >
+                  {savingCustomer ? 'Saving...' : 'Save Changes'}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>

@@ -152,7 +152,8 @@ function App() {
           <Route path="orders" element={<Orders />} />
           <Route path="abandoned-carts" element={<AbandonedCarts />} />
           <Route path="reviews" element={<Reviews />} />
-          <Route path="users" element={<Users />} />
+          <Route path="customers" element={<Users />} />
+          <Route path="users" element={<Navigate to="/admin/settings?tab=users" replace />} />
         </Route>
 
         <Route path="*" element={<NotFound />} />

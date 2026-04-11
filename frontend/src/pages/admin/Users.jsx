@@ -12,7 +12,8 @@ const Users = () => {
     const fetchUsers = async () => {
       try {
         const { data } = await API.get('/admin/users');
-        setUsers(data);
+        const allUsers = Array.isArray(data) ? data : [];
+        setUsers(allUsers.filter((item) => item?.role !== 'admin'));
       } catch {
         toast.error('Failed to load users');
       } finally {
@@ -39,7 +40,7 @@ const Users = () => {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">User Management</h2>
+      <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">Customer Management</h2>
 
       {loading ? (
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md h-64 animate-pulse" />
@@ -51,7 +52,6 @@ const Users = () => {
                 <tr>
                   <th className="px-6 py-3">User</th>
                   <th className="px-6 py-3">Email</th>
-                  <th className="px-6 py-3">Role</th>
                   <th className="px-6 py-3">Joined</th>
                   <th className="px-6 py-3">Actions</th>
                 </tr>
@@ -73,17 +73,6 @@ const Users = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4 text-gray-500 dark:text-gray-400">{u.email}</td>
-                    <td className="px-6 py-4">
-                      <span
-                        className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          u.role === 'admin'
-                            ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300'
-                            : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
-                        }`}
-                      >
-                        {u.role}
-                      </span>
-                    </td>
                     <td className="px-6 py-4 text-gray-500 dark:text-gray-400 text-xs">
                       {new Date(u.createdAt).toLocaleDateString()}
                     </td>
@@ -103,8 +92,8 @@ const Users = () => {
                 ))}
                 {users.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="text-center py-10 text-gray-400">
-                      No users found
+                    <td colSpan={4} className="text-center py-10 text-gray-400">
+                      No customers found
                     </td>
                   </tr>
                 )}
