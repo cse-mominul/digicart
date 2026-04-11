@@ -15,6 +15,7 @@ import Orders from './pages/admin/Orders';
 import AbandonedCarts from './pages/admin/AbandonedCarts';
 import ShippingDelays from './pages/admin/ShippingDelays';
 import PaymentFailures from './pages/admin/PaymentFailures';
+import RefundRequests from './pages/admin/RefundRequests';
 import Reviews from './pages/admin/Reviews';
 import Users from './pages/admin/Users';
 import CategoryManager from './pages/admin/CategoryManager';
@@ -154,6 +155,7 @@ function App() {
           <Route path="orders" element={<Orders />} />
           <Route path="shipping-delays" element={<ShippingDelays />} />
           <Route path="payment-failures" element={<PaymentFailures />} />
+          <Route path="refund-requests" element={<RefundRequests />} />
           <Route path="abandoned-carts" element={<AbandonedCarts />} />
           <Route path="reviews" element={<Reviews />} />
           <Route path="customers" element={<Users />} />

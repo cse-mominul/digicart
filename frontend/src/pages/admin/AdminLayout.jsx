@@ -61,7 +61,8 @@ const AdminLayout = () => {
   const isOrderSectionOpen =
     location.pathname.startsWith('/admin/orders') ||
     location.pathname.startsWith('/admin/shipping-delays') ||
-    location.pathname.startsWith('/admin/payment-failures');
+    location.pathname.startsWith('/admin/payment-failures') ||
+    location.pathname.startsWith('/admin/refund-requests');
   const [ordersDropdownOpen, setOrdersDropdownOpen] = useState(isOrderSectionOpen);
 
   useEffect(() => {
@@ -166,6 +167,18 @@ const AdminLayout = () => {
                           }
                         >
                           Payment Failures
+                        </NavLink>
+                        <NavLink
+                          to="/admin/refund-requests"
+                          className={({ isActive }) =>
+                            `ml-10 mr-2 flex items-center rounded-lg px-3 py-2 text-xs transition-colors ${
+                              isActive
+                                ? 'bg-indigo-500 text-white'
+                                : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                            }`
+                          }
+                        >
+                          Refund Requests
                         </NavLink>
                       </div>
                     )}

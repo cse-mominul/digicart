@@ -166,13 +166,14 @@ const Dashboard = () => {
       if (status === 'processing') acc.processing += 1;
       if (status === 'cancelled') acc.cancelled += 1;
       if (status === 'failed') acc.failed += 1;
+      if (status === 'refund requested') acc.refundRequested += 1;
       return acc;
-    }, { pending: 0, processing: 0, cancelled: 0, failed: 0 });
+    }, { pending: 0, processing: 0, cancelled: 0, failed: 0, refundRequested: 0 });
   }, [orders]);
 
   const topCards = useMemo(() => {
     const shippingDelays = statusCounts.pending + statusCounts.processing;
-    const refundRequests = statusCounts.cancelled;
+    const refundRequests = statusCounts.refundRequested;
     const paymentFailures = statusCounts.failed;
     const abandonedCarts = abandonedStats.abandonedUsers;
 
@@ -270,12 +271,14 @@ const Dashboard = () => {
                 trendText={card.trendText}
                 trendUp={card.trendUp}
                 bgClass={card.bgClass}
-                clickable={card.title === 'Abandoned Carts' || card.title === 'Stock Products' || card.title === 'Total Customers' || card.title === 'Total Orders' || card.title === 'Shipping Delays' || card.title === 'Payment Failures'}
+                clickable={card.title === 'Abandoned Carts' || card.title === 'Stock Products' || card.title === 'Total Customers' || card.title === 'Total Orders' || card.title === 'Shipping Delays' || card.title === 'Payment Failures' || card.title === 'Refund Requests'}
                 onClick={
                   card.title === 'Abandoned Carts'
                     ? () => navigate('/admin/abandoned-carts')
                     : card.title === 'Stock Products'
                       ? () => navigate('/admin/products')
+                      : card.title === 'Refund Requests'
+                        ? () => navigate('/admin/refund-requests')
                       : card.title === 'Payment Failures'
                         ? () => navigate('/admin/payment-failures')
                       : card.title === 'Shipping Delays'

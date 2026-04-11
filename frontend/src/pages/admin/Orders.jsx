@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 import { formatPrice } from '../../utils/formatPrice';
 import Swal from 'sweetalert2';
 
-const STATUS_OPTIONS = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'Failed'];
+const STATUS_OPTIONS = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'Failed', 'Refund Requested'];
 const FILTER_OPTIONS = ['All', ...STATUS_OPTIONS];
 const ITEMS_PER_PAGE = 7;
 
@@ -15,6 +15,7 @@ const statusColors = {
   Delivered: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300',
   Cancelled: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
   Failed: 'bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-300',
+  'Refund Requested': 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300',
 };
 
 const csvEscape = (value) => {
