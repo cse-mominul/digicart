@@ -35,6 +35,7 @@ const updateUserByAdmin = async (req, res) => {
     const incomingName = String(req.body?.name || '').trim();
     const incomingEmail = String(req.body?.email || '').trim().toLowerCase();
     const incomingPhone = String(req.body?.phone || '').trim();
+    const incomingPassword = String(req.body?.password || '').trim();
 
     if (!incomingName) {
       return res.status(400).json({ message: 'Name is required' });
@@ -52,6 +53,13 @@ const updateUserByAdmin = async (req, res) => {
     user.name = incomingName;
     user.email = incomingEmail;
     user.phone = incomingPhone;
+
+    if (incomingPassword) {
+      if (incomingPassword.length < 6) {
+        return res.status(400).json({ message: 'Password must be at least 6 characters' });
+      }
+      user.password = incomingPassword;
+    }
 
     await user.save();
 
