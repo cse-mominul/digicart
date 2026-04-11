@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Outlet, NavLink, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 const navItems = [
@@ -16,13 +16,6 @@ const navItems = [
   { to: '/admin/orders', label: 'Orders', end: false, icon: (
     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-    </svg>
-  )},
-  { to: '/admin/shipping-delays', label: 'Shipping Delays', end: false, icon: (
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7h11v7H3z" />
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h3l3 3v1h-6zM5 17a2 2 0 104 0 2 2 0 00-4 0zm10 0a2 2 0 104 0 2 2 0 00-4 0z" />
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v3m0 0l-1.5-1.5M12 11l1.5-1.5" />
     </svg>
   )},
   { to: '/admin/abandoned-carts', label: 'Abandoned Carts', end: false, icon: (
@@ -60,9 +53,19 @@ const navItems = [
 
 const AdminLayout = () => {
   const { user, logout } = useAuth();
+  const location = useLocation();
   const navigate = useNavigate();
   const [dark, setDark] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  const isOrderSectionOpen = location.pathname.startsWith('/admin/orders') || location.pathname.startsWith('/admin/shipping-delays');
+  const [ordersDropdownOpen, setOrdersDropdownOpen] = useState(isOrderSectionOpen);
+
+  useEffect(() => {
+    if (isOrderSectionOpen) {
+      setOrdersDropdownOpen(true);
+    }
+  }, [isOrderSectionOpen]);
 
   const handleLogout = () => {
     logout();
@@ -97,23 +100,80 @@ const AdminLayout = () => {
           {/* Navigation */}
           <nav className="flex-1 py-4">
             {navItems.map((item) => (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                end={item.end}
-                className={({ isActive }) =>
-                  `flex items-center gap-3 px-4 py-3 text-sm transition-colors ${
-                    sidebarOpen ? '' : 'justify-center'
-                  } ${
-                    isActive
-                      ? 'bg-indigo-600 text-white'
-                      : 'text-gray-400 hover:bg-gray-800 hover:text-white'
-                  }`
-                }
-              >
-                <span className="flex-shrink-0">{item.icon}</span>
-                {sidebarOpen && <span>{item.label}</span>}
-              </NavLink>
+              <div key={item.to}>
+                {item.to === '/admin/orders' ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => setOrdersDropdownOpen((prev) => !prev)}
+                      className={`w-full flex items-center gap-3 px-4 py-3 text-sm transition-colors ${
+                        sidebarOpen ? '' : 'justify-center'
+                      } ${
+                        isOrderSectionOpen
+                          ? 'bg-indigo-600 text-white'
+                          : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                      }`}
+                    >
+                      <span className="flex-shrink-0">{item.icon}</span>
+                      {sidebarOpen && (
+                        <>
+                          <span className="flex-1 text-left">{item.label}</span>
+                          <svg xmlns="http://www.w3.org/2000/svg" className={`h-4 w-4 transition-transform ${ordersDropdownOpen ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </>
+                      )}
+                    </button>
+
+                    {sidebarOpen && ordersDropdownOpen && (
+                      <div className="mt-1 space-y-1">
+                        <NavLink
+                          to="/admin/orders"
+                          end
+                          className={({ isActive }) =>
+                            `ml-10 mr-2 flex items-center rounded-lg px-3 py-2 text-xs transition-colors ${
+                              isActive
+                                ? 'bg-indigo-500 text-white'
+                                : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                            }`
+                          }
+                        >
+                          All Orders
+                        </NavLink>
+                        <NavLink
+                          to="/admin/shipping-delays"
+                          className={({ isActive }) =>
+                            `ml-10 mr-2 flex items-center rounded-lg px-3 py-2 text-xs transition-colors ${
+                              isActive
+                                ? 'bg-indigo-500 text-white'
+                                : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                            }`
+                          }
+                        >
+                          Shipping Delays
+                        </NavLink>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <NavLink
+                    to={item.to}
+                    end={item.end}
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 px-4 py-3 text-sm transition-colors ${
+                        sidebarOpen ? '' : 'justify-center'
+                      } ${
+                        isActive
+                          ? 'bg-indigo-600 text-white'
+                          : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                      }`
+                    }
+                  >
+                    <span className="flex-shrink-0">{item.icon}</span>
+                    {sidebarOpen && <span>{item.label}</span>}
+                  </NavLink>
+                )}
+              </div>
             ))}
           </nav>
 
