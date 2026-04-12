@@ -54,6 +54,12 @@ const ProductDetails = () => {
   const [nogodTrxId, setNogodTrxId] = useState('');
   const [nogodSenderNumber, setNogodSenderNumber] = useState('');
   const [submittingNogodTrx, setSubmittingNogodTrx] = useState(false);
+  const [customMobileModalOpen, setCustomMobileModalOpen] = useState(false);
+  const [customMobileOrder, setCustomMobileOrder] = useState(null);
+  const [customMobileMethodId, setCustomMobileMethodId] = useState('');
+  const [customMobileTrxId, setCustomMobileTrxId] = useState('');
+  const [customMobileSenderNumber, setCustomMobileSenderNumber] = useState('');
+  const [submittingCustomMobileTrx, setSubmittingCustomMobileTrx] = useState(false);
   const [paymentSettings, setPaymentSettings] = useState({
     bkash: { enabled: true, number: '' },
     nogod: { enabled: true, number: '' },
@@ -79,7 +85,12 @@ const ProductDetails = () => {
         label: defaultPaymentMethodLabels[id] || String(id).replace(/[_-]+/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase()),
         type: method?.type || 'other',
         note: method?.note || '',
-      }));
+      }))
+      .sort((left, right) => {
+        if (left.id === 'cod') return 1;
+        if (right.id === 'cod') return -1;
+        return left.label.localeCompare(right.label);
+      });
   }, [paymentSettings]);
 
   useEffect(() => {
@@ -514,6 +525,24 @@ const ProductDetails = () => {
         return;
       }
 
+      const selectedPaymentConfig = paymentSettings?.[paymentMethod] || {};
+      const isCustomMobileMethod =
+        paymentMethod !== 'bkash' &&
+        paymentMethod !== 'nogod' &&
+        String(selectedPaymentConfig?.type || '').toLowerCase() === 'mobile_banking';
+
+      if (isCustomMobileMethod && data?._id) {
+        setCustomMobileOrder({
+          orderId: data._id,
+          totalAmount: Number(data?.totalAmount) || grandTotal,
+        });
+        setCustomMobileMethodId(paymentMethod);
+        setCustomMobileTrxId('');
+        setCustomMobileSenderNumber('');
+        setCustomMobileModalOpen(true);
+        return;
+      }
+
       await showOrderSuccess(navigate);
     } catch (error) {
       if (error.response?.status === 401) {
@@ -623,6 +652,56 @@ const ProductDetails = () => {
       toast.error(error.response?.data?.message || 'Failed to submit transaction');
     } finally {
       setSubmittingNogodTrx(false);
+    }
+  };
+
+  const handleCopyCustomMobileNumber = async () => {
+    const mobileNumber = String(paymentSettings?.[customMobileMethodId]?.number || '').trim();
+    if (!mobileNumber) {
+      toast.error('Mobile number not configured');
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(mobileNumber);
+      toast.success('Number copied');
+    } catch {
+      toast.error('Failed to copy number');
+    }
+  };
+
+  const handleSubmitCustomMobileTrx = async (event) => {
+    event.preventDefault();
+
+    if (!customMobileOrder?.orderId) {
+      toast.error('Order not found for transaction submission');
+      return;
+    }
+
+    if (!customMobileTrxId.trim()) {
+      toast.error('Please enter transaction ID');
+      return;
+    }
+
+    if (!customMobileSenderNumber.trim()) {
+      toast.error('Please enter sender number');
+      return;
+    }
+
+    setSubmittingCustomMobileTrx(true);
+    try {
+      const { data } = await API.put(`/orders/${customMobileOrder.orderId}/transaction`, {
+        trxId: customMobileTrxId.trim(),
+        senderNumber: customMobileSenderNumber.trim(),
+      });
+
+      toast.success(data?.message || 'Transaction submitted');
+      setCustomMobileModalOpen(false);
+      await showOrderSuccess(navigate);
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to submit transaction');
+    } finally {
+      setSubmittingCustomMobileTrx(false);
     }
   };
 
@@ -1349,6 +1428,93 @@ const ProductDetails = () => {
                 className="w-full rounded-lg bg-emerald-600 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-60"
               >
                 {submittingNogodTrx ? 'Submitting...' : 'Submit TrxID'}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {customMobileModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+          <div className="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-5 shadow-xl dark:border-gray-700 dark:bg-gray-900">
+            <div className="mb-4 flex items-start justify-between gap-3">
+              <div>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                  {(defaultPaymentMethodLabels[customMobileMethodId] || String(customMobileMethodId || '').replace(/[_-]+/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase()))} Payment
+                </h3>
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Copy the number and submit TrxID to complete order.</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setCustomMobileModalOpen(false)}
+                className="rounded-md bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200"
+              >
+                Close
+              </button>
+            </div>
+
+            <div className="rounded-xl border border-cyan-200 bg-cyan-50 p-3 dark:border-cyan-900/30 dark:bg-cyan-900/10">
+              <p className="text-[11px] uppercase tracking-wide text-cyan-700 dark:text-cyan-300">Mobile Number</p>
+              <div className="mt-2 flex items-center justify-between gap-2">
+                <p className="text-base font-black text-cyan-700 dark:text-cyan-300">{paymentSettings?.[customMobileMethodId]?.number || 'N/A'}</p>
+                <button
+                  type="button"
+                  onClick={handleCopyCustomMobileNumber}
+                  className="rounded-md bg-cyan-600 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-cyan-700 disabled:opacity-60"
+                  disabled={!String(paymentSettings?.[customMobileMethodId]?.number || '').trim()}
+                >
+                  Copy
+                </button>
+              </div>
+            </div>
+
+            {paymentSettings?.[customMobileMethodId]?.note && (
+              <div className="mt-3 rounded-lg border border-blue-200 bg-blue-50 p-3 dark:border-blue-900/30 dark:bg-blue-900/10">
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-blue-700 dark:text-blue-300">Important Note</p>
+                <p className="mt-1 text-sm text-blue-800 dark:text-blue-200">{paymentSettings?.[customMobileMethodId]?.note}</p>
+              </div>
+            )}
+
+            <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
+              <div className="rounded-lg border border-gray-200 bg-gray-50 p-2.5 dark:border-gray-700 dark:bg-gray-800">
+                <p className="text-gray-500 dark:text-gray-400">Order ID</p>
+                <p className="mt-1 font-mono font-semibold text-gray-800 dark:text-gray-100 break-all">{customMobileOrder?.orderId || 'N/A'}</p>
+              </div>
+              <div className="rounded-lg border border-gray-200 bg-gray-50 p-2.5 dark:border-gray-700 dark:bg-gray-800">
+                <p className="text-gray-500 dark:text-gray-400">Amount</p>
+                <p className="mt-1 font-bold text-indigo-600 dark:text-indigo-300">{formatPrice(Number(customMobileOrder?.totalAmount) || 0)}</p>
+              </div>
+            </div>
+
+            <form onSubmit={handleSubmitCustomMobileTrx} className="mt-4 space-y-3">
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Sender Number</label>
+                <input
+                  type="text"
+                  value={customMobileSenderNumber}
+                  onChange={(event) => setCustomMobileSenderNumber(event.target.value)}
+                  placeholder="Enter number used to send money"
+                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-cyan-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+                />
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Transaction ID (TrxID)</label>
+                <input
+                  type="text"
+                  value={customMobileTrxId}
+                  onChange={(event) => setCustomMobileTrxId(event.target.value)}
+                  placeholder="Enter your transaction ID"
+                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-cyan-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={submittingCustomMobileTrx}
+                className="w-full rounded-lg bg-emerald-600 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-60"
+              >
+                {submittingCustomMobileTrx ? 'Submitting...' : 'Submit TrxID'}
               </button>
             </form>
           </div>

@@ -60,7 +60,12 @@ const Checkout = () => {
         label: defaultPaymentMethodLabels[id] || String(id).replace(/[_-]+/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase()),
         type: method?.type || 'other',
         note: method?.note || '',
-      }));
+      }))
+      .sort((left, right) => {
+        if (left.id === 'cod') return 1;
+        if (right.id === 'cod') return -1;
+        return left.label.localeCompare(right.label);
+      });
   }, [paymentSettings]);
 
   // Load saved addresses when user is logged in

@@ -1,4 +1,5 @@
 const Order = require('../models/Order');
+const Setting = require('../models/Setting');
 const { createNotification } = require('../utils/notificationService');
 
 // @desc  Create new order
@@ -24,12 +25,27 @@ const createOrder = async (req, res) => {
   }
 
   const normalizedPaymentMethod = String(paymentMethod || 'cod').trim().toLowerCase();
-  const allowedPaymentMethods = ['cod', 'bkash', 'nogod', 'card'];
-  if (!allowedPaymentMethods.includes(normalizedPaymentMethod)) {
-    return res.status(400).json({ message: 'Invalid payment method' });
-  }
 
   try {
+    const settings = await Setting.findOne({}).select('paymentMethods');
+    const configuredPaymentMethods = settings?.paymentMethods && typeof settings.paymentMethods === 'object'
+      ? settings.paymentMethods
+      : {
+          cod: { enabled: true },
+          bkash: { enabled: true },
+          nogod: { enabled: true },
+          card: { enabled: false },
+        };
+
+    const enabledPaymentMethodIds = Object.entries(configuredPaymentMethods)
+      .filter(([, config]) => Boolean(config?.enabled))
+      .map(([methodId]) => String(methodId || '').trim().toLowerCase())
+      .filter(Boolean);
+
+    if (!enabledPaymentMethodIds.includes(normalizedPaymentMethod)) {
+      return res.status(400).json({ message: 'Invalid payment method' });
+    }
+
     const order = await Order.create({
       user: req.user?._id || null,
       items,
@@ -243,7 +259,14 @@ const submitOrderTransaction = async (req, res) => {
       return res.status(404).json({ message: 'Order not found' });
     }
 
-    if (!['bkash', 'nogod'].includes(String(order.paymentMethod || '').toLowerCase())) {
+    const orderPaymentMethod = String(order.paymentMethod || '').toLowerCase();
+    const settings = await Setting.findOne({}).select('paymentMethods');
+    const methodConfig = settings?.paymentMethods?.[orderPaymentMethod] || null;
+    const isMobilePaymentOrder =
+      ['bkash', 'nogod'].includes(orderPaymentMethod) ||
+      String(methodConfig?.type || '').toLowerCase() === 'mobile_banking';
+
+    if (!isMobilePaymentOrder) {
       return res.status(400).json({ message: 'Transaction submission is only available for mobile payment orders' });
     }
 
