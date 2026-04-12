@@ -691,10 +691,10 @@ const UserAccount = () => {
   );
 
   return (
-    <div className="bg-gray-50 min-h-[calc(100vh-140px)] py-6 sm:py-8 dark:bg-gray-950">
-      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-6 px-4 lg:grid-cols-12">
+    <div className="bg-gray-50 min-h-[calc(100vh-140px)] py-4 sm:py-6 dark:bg-gray-950">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-5 px-4 lg:grid-cols-12">
         <aside className="lg:col-span-3">
-          <div className="rounded-3xl border border-gray-100 bg-white p-3 shadow-sm dark:border-gray-800 dark:bg-gray-900 lg:min-h-[620px]">
+          <div className="rounded-2xl border border-gray-100 bg-white p-2.5 shadow-sm dark:border-gray-800 dark:bg-gray-900 lg:min-h-[560px]">
             <nav className="flex gap-2 overflow-x-auto pb-1 lg:flex-col lg:overflow-visible lg:pb-0 lg:pt-2">
               {navItems.map((item) => {
                 const activeSectionId =
@@ -715,7 +715,7 @@ const UserAccount = () => {
                   <button
                     key={item.id}
                     onClick={() => handleNavClick(item)}
-                    className={`flex min-w-max items-center gap-4 rounded-2xl px-4 py-4 text-left text-base font-medium transition-colors lg:min-w-0 lg:w-full ${
+                    className={`flex min-w-max items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium transition-colors lg:min-w-0 lg:w-full ${
                       isActive
                         ? 'bg-white text-gray-900 dark:bg-gray-800 dark:text-white'
                         : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white'
@@ -734,9 +734,9 @@ const UserAccount = () => {
 
         <section className="lg:col-span-9">
           {section === 'profile' && (
-            <div className="rounded-3xl border border-gray-100 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900 sm:p-6 min-h-[460px]">
-              <h1 className="mb-6 text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">Profile Information</h1>
-              <form onSubmit={handleProfileSave} className="max-w-xl space-y-4">
+            <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900 sm:p-5 min-h-[420px]">
+              <h1 className="mb-5 text-lg font-semibold text-gray-900 dark:text-white sm:text-xl">Profile Information</h1>
+              <form onSubmit={handleProfileSave} className="max-w-xl space-y-3.5">
                 <div>
                   <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
                   <input
@@ -808,7 +808,7 @@ const UserAccount = () => {
                 <button
                   type="submit"
                   disabled={profileSaving}
-                  className="rounded-xl bg-[#2563eb] px-5 py-2.5 font-semibold text-white transition-colors hover:bg-[#1d4ed8]"
+                  className="rounded-[12px] bg-[#2563eb] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#1d4ed8]"
                 >
                   {profileSaving ? 'Saving...' : 'Save Changes'}
                 </button>
@@ -817,9 +817,9 @@ const UserAccount = () => {
           )}
 
           {section === 'orders' && (
-            <div className="rounded-3xl border border-gray-100 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900 sm:p-6 min-h-[460px]">
-              <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <h1 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">My Orders</h1>
+            <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900 sm:p-5 min-h-[420px]">
+              <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <h1 className="text-lg font-semibold text-gray-900 dark:text-white sm:text-xl">My Orders</h1>
                 <p className="text-sm text-gray-500 dark:text-gray-400">Track, review, and reorder from your latest purchases.</p>
               </div>
 
@@ -857,7 +857,7 @@ const UserAccount = () => {
                   </p>
                 </div>
               ) : (
-                <div className="space-y-6">
+                <div className="space-y-4">
                   {paginatedOrders.map((order) => {
                     const normalizedStatus = normalizeOrderStatus(order.status);
                     const orderItems = Array.isArray(order.orderItems) ? order.orderItems.length : 0;
@@ -868,7 +868,7 @@ const UserAccount = () => {
                     return (
                       <article
                         key={order._id}
-                        className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-[#1a1a1a]"
+                        className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-[#1a1a1a]"
                       >
                         <div className="mb-4 flex items-center justify-between gap-3 border-b border-gray-100 pb-4 dark:border-gray-700">
                           <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">Order ID: #{order._id}</p>
@@ -920,18 +920,18 @@ const UserAccount = () => {
                           </div>
                         </div>
 
-                        <div className="mt-5 flex flex-col gap-3 border-t border-gray-100 pt-4 sm:flex-row dark:border-gray-700">
+                        <div className="mt-4 flex flex-col gap-2.5 border-t border-gray-100 pt-3.5 sm:flex-row dark:border-gray-700">
                           <button
                             type="button"
                             onClick={() => handleViewOrderDetails(order)}
-                            className="rounded-xl border border-gray-300 bg-transparent px-4 py-2.5 text-sm font-semibold text-gray-700 transition-colors hover:border-gray-400 hover:text-gray-900 dark:border-gray-600 dark:text-gray-200 dark:hover:border-gray-500 dark:hover:text-white"
+                            className="rounded-[12px] border border-gray-300 bg-transparent px-3.5 py-2 text-sm font-semibold text-gray-700 transition-colors hover:border-gray-400 hover:text-gray-900 dark:border-gray-600 dark:text-gray-200 dark:hover:border-gray-500 dark:hover:text-white"
                           >
                             View Details
                           </button>
                           <button
                             type="button"
                             onClick={() => handleOrderAgain(order)}
-                            className="rounded-xl bg-teal-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-teal-500"
+                            className="rounded-[12px] bg-teal-600 px-3.5 py-2 text-sm font-semibold text-white transition-colors hover:bg-teal-500"
                           >
                             Order Again
                           </button>
@@ -992,11 +992,11 @@ const UserAccount = () => {
           )}
 
           {section === 'wishlist' && (
-            <div className="rounded-3xl border border-gray-100 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900 sm:p-6 min-h-[620px]">
-              <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900 sm:p-5 min-h-[540px]">
+              <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <h1 className="text-2xl font-semibold text-gray-900 dark:text-white sm:text-3xl">Wishlist</h1>
-                  <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">Your saved products are displayed here in the same card layout as Addresses.</p>
+                  <h1 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">Wishlist</h1>
+                  <p className="mt-1.5 text-sm text-gray-500 dark:text-gray-400">Your saved products are displayed here in the same card layout as Addresses.</p>
                 </div>
                 <div className="flex items-center gap-3">
                   <span className="rounded-full bg-blue-50 px-4 py-2 text-sm font-semibold text-[#2563eb] dark:bg-gray-800 dark:text-blue-300">
@@ -1004,7 +1004,7 @@ const UserAccount = () => {
                   </span>
                   <Link
                     to="/products"
-                    className="inline-flex items-center justify-center rounded-full bg-[#2563eb] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-500/20 transition-colors hover:bg-[#1d4ed8]"
+                    className="inline-flex items-center justify-center rounded-[12px] bg-[#2563eb] px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/20 transition-colors hover:bg-[#1d4ed8]"
                   >
                     Continue Shopping
                   </Link>
@@ -1021,7 +1021,7 @@ const UserAccount = () => {
               ) : (
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
                   {paginatedWishlistItems.map((item) => (
-                    <article key={item._id} className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+                    <article key={item._id} className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-900">
                       <div className="flex items-start justify-between gap-3 border-b border-gray-100 pb-4 dark:border-gray-800">
                         <div className="flex items-center gap-3">
                           <span className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-blue-50 dark:bg-gray-800">
@@ -1126,11 +1126,11 @@ const UserAccount = () => {
           )}
 
           {section === 'payments' && (
-            <div className="rounded-3xl border border-gray-100 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900 sm:p-6 min-h-[460px]">
-              <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900 sm:p-5 min-h-[420px]">
+              <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <h1 className="text-2xl font-semibold text-gray-900 dark:text-white sm:text-3xl">My Payments</h1>
-                  <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">All your payment transactions are listed here.</p>
+                  <h1 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">My Payments</h1>
+                  <p className="mt-1.5 text-sm text-gray-500 dark:text-gray-400">All your payment transactions are listed here.</p>
                 </div>
                 <span className="rounded-full bg-blue-50 px-4 py-2 text-sm font-semibold text-[#2563eb] dark:bg-gray-800 dark:text-blue-300">
                   {payments.length} transaction(s)
@@ -1246,11 +1246,11 @@ const UserAccount = () => {
           )}
 
           {section === 'reviews' && (
-            <div className="rounded-3xl border border-gray-100 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900 sm:p-6 min-h-[460px]">
-              <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900 sm:p-5 min-h-[420px]">
+              <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <h1 className="text-2xl font-semibold text-gray-900 dark:text-white sm:text-3xl">My Reviews</h1>
-                  <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">All reviews you have submitted are listed here.</p>
+                  <h1 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">My Reviews</h1>
+                  <p className="mt-1.5 text-sm text-gray-500 dark:text-gray-400">All reviews you have submitted are listed here.</p>
                 </div>
                 <span className="rounded-full bg-blue-50 px-4 py-2 text-sm font-semibold text-[#2563eb] dark:bg-gray-800 dark:text-blue-300">
                   {myReviews.length} review(s)
@@ -1424,16 +1424,16 @@ const UserAccount = () => {
           )}
 
           {section === 'addresses' && (
-            <div className="rounded-3xl border border-gray-100 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900 sm:p-6 min-h-[620px]">
-              <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900 sm:p-5 min-h-[540px]">
+              <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <h1 className="text-2xl font-semibold text-gray-900 dark:text-white sm:text-3xl">Addresses</h1>
-                  <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">Manage your saved delivery locations in one place.</p>
+                  <h1 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">Addresses</h1>
+                  <p className="mt-1.5 text-sm text-gray-500 dark:text-gray-400">Manage your saved delivery locations in one place.</p>
                 </div>
                 <button
                   type="button"
                   onClick={openAddAddress}
-                  className="inline-flex items-center justify-center rounded-full bg-[#2563eb] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-500/20 transition-colors hover:bg-[#1d4ed8]"
+                  className="inline-flex items-center justify-center rounded-[12px] bg-[#2563eb] px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/20 transition-colors hover:bg-[#1d4ed8]"
                 >
                   Add New Address
                 </button>
@@ -1449,7 +1449,7 @@ const UserAccount = () => {
               ) : (
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
                   {addresses.map((item) => (
-                    <article key={item.id} className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+                    <article key={item.id} className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-900">
                       <div className="flex items-start justify-between gap-3 border-b border-gray-100 pb-4 dark:border-gray-800">
                         <div className="flex items-center gap-3">
                           <span className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50 text-[#2563eb] dark:bg-gray-800">
@@ -1506,16 +1506,16 @@ const UserAccount = () => {
 
       {addressModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4 py-8 backdrop-blur-sm">
-          <div className="w-full max-w-3xl rounded-[28px] border border-gray-200 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.2)] dark:border-gray-700 dark:bg-gray-900">
-            <div className="flex items-center justify-between border-b border-gray-100 px-5 py-5 dark:border-gray-800 sm:px-6">
+          <div className="w-full max-w-3xl rounded-[20px] border border-gray-200 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.2)] dark:border-gray-700 dark:bg-gray-900">
+            <div className="flex items-center justify-between border-b border-gray-100 px-4 py-4 dark:border-gray-800 sm:px-5">
               <div>
-                <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">{editingAddressId ? 'Edit Address' : 'Add New Address'}</h2>
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">{editingAddressId ? 'Edit Address' : 'Add New Address'}</h2>
                 <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Make changes and save them immediately.</p>
               </div>
               <button
                 type="button"
                 onClick={() => setAddressModalOpen(false)}
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
                 aria-label="Close modal"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-5 w-5">
@@ -1524,7 +1524,7 @@ const UserAccount = () => {
               </button>
             </div>
 
-            <form onSubmit={handleAddressSave} className="space-y-6 px-5 py-5 sm:px-6 sm:py-6">
+            <form onSubmit={handleAddressSave} className="space-y-5 px-4 py-4 sm:px-5 sm:py-5">
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <select
                   value={addressForm.label}
@@ -1569,24 +1569,24 @@ const UserAccount = () => {
               </div>
 
               <textarea
-                rows={5}
+                rows={4}
                 placeholder="Full Address"
                 value={addressForm.address}
                 onChange={(e) => setAddressForm({ ...addressForm, address: e.target.value })}
-                className="min-h-[170px] w-full rounded-[24px] border border-gray-200 bg-white px-4 py-3 text-sm leading-7 text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]/15 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                className="min-h-[140px] w-full rounded-[18px] border border-gray-200 bg-white px-4 py-3 text-sm leading-6 text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]/15 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
               />
 
               <div className="flex flex-col gap-3 border-t border-gray-100 pt-5 sm:flex-row sm:justify-end dark:border-gray-800">
                 <button
                   type="button"
                   onClick={() => setAddressModalOpen(false)}
-                  className="rounded-full border border-gray-200 bg-white px-6 py-3 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+                  className="rounded-[12px] border border-gray-200 bg-white px-5 py-2.5 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="rounded-full bg-[#2563eb] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-500/20 transition-colors hover:bg-[#1d4ed8]"
+                  className="rounded-[12px] bg-[#2563eb] px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/20 transition-colors hover:bg-[#1d4ed8]"
                 >
                   {editingAddressId ? 'Save Changes' : 'Save Address'}
                 </button>
