@@ -6,14 +6,45 @@ import Swal from 'sweetalert2';
 
 const ITEMS_PER_PAGE = 10;
 const STATUS_OPTIONS = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'Failed', 'Refund Requested'];
+const FILTER_STATUS_OPTIONS = ['Failed', 'Pending', 'Failed or Pending', 'All'];
+
+const getStatusBadgeClasses = (status) => {
+  const normalized = String(status || '').toLowerCase();
+  if (normalized === 'failed') {
+    return 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300';
+  }
+  if (normalized === 'pending') {
+    return 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300';
+  }
+  if (normalized === 'processing' || normalized === 'shipped') {
+    return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300';
+  }
+  return 'bg-slate-100 text-slate-700 dark:bg-slate-900/30 dark:text-slate-300';
+};
 
 const PaymentFailures = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState('Failed');
+  const [cityFilter, setCityFilter] = useState('All');
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [updatingId, setUpdatingId] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
+
+  const cityOptions = useMemo(() => {
+    const unique = Array.from(
+      new Set(
+        orders
+          .map((order) => String(order?.shippingAddress?.city || '').trim())
+          .filter(Boolean)
+      )
+    ).sort((a, b) => a.localeCompare(b));
+
+    return ['All', ...unique];
+  }, [orders]);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -32,10 +63,23 @@ const PaymentFailures = () => {
 
   const filteredOrders = useMemo(() => {
     const q = search.trim().toLowerCase();
+    const fromMs = fromDate ? new Date(fromDate).setHours(0, 0, 0, 0) : null;
+    const toMs = toDate ? new Date(toDate).setHours(23, 59, 59, 999) : null;
 
     return orders.filter((order) => {
-      const status = String(order?.status || '').toLowerCase();
-      if (status !== 'failed') return false;
+      const rawStatus = String(order?.status || '').trim();
+      const status = rawStatus.toLowerCase();
+
+      // Default behavior remains focused on failed payment orders.
+      if (statusFilter === 'Failed' && status !== 'failed') return false;
+      if (statusFilter === 'Pending' && status !== 'pending') return false;
+      if (statusFilter === 'Failed or Pending' && status !== 'failed' && status !== 'pending') return false;
+
+      if (cityFilter !== 'All' && String(order?.shippingAddress?.city || '').trim() !== cityFilter) return false;
+
+      const createdAtMs = new Date(order?.createdAt || 0).getTime();
+      if (Number.isFinite(fromMs) && Number.isFinite(createdAtMs) && createdAtMs < fromMs) return false;
+      if (Number.isFinite(toMs) && Number.isFinite(createdAtMs) && createdAtMs > toMs) return false;
 
       if (!q) return true;
 
@@ -45,7 +89,7 @@ const PaymentFailures = () => {
 
       return orderIdText.includes(q) || userText.includes(q) || cityText.includes(q);
     });
-  }, [orders, search]);
+  }, [orders, search, statusFilter, cityFilter, fromDate, toDate]);
 
   const totalPages = Math.max(1, Math.ceil(filteredOrders.length / ITEMS_PER_PAGE));
 
@@ -56,7 +100,7 @@ const PaymentFailures = () => {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [search]);
+  }, [search, statusFilter, cityFilter, fromDate, toDate]);
 
   useEffect(() => {
     if (currentPage > totalPages) {
@@ -133,13 +177,67 @@ const PaymentFailures = () => {
       </div>
 
       <div className="mb-4">
-        <input
-          type="text"
-          value={search}
-          onChange={(event) => setSearch(event.target.value)}
-          placeholder="Search by order ID, customer or city"
-          className="w-full max-w-sm rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
-        />
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-5">
+          <input
+            type="text"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder="Search by order ID, customer or city"
+            className="w-full max-w-sm rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+          />
+
+          <select
+            value={statusFilter}
+            onChange={(event) => setStatusFilter(event.target.value)}
+            className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+          >
+            {FILTER_STATUS_OPTIONS.map((status) => (
+              <option key={status} value={status}>{status}</option>
+            ))}
+          </select>
+
+          <select
+            value={cityFilter}
+            onChange={(event) => setCityFilter(event.target.value)}
+            className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+          >
+            {cityOptions.map((city) => (
+              <option key={city} value={city}>{city}</option>
+            ))}
+          </select>
+
+          <div className="flex items-center gap-2">
+            <input
+              type="date"
+              value={fromDate}
+              onChange={(event) => setFromDate(event.target.value)}
+              className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+            />
+            <input
+              type="date"
+              value={toDate}
+              onChange={(event) => setToDate(event.target.value)}
+              className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+            />
+          </div>
+        </div>
+
+        <div className="mt-3 flex items-center justify-between gap-2 text-xs text-gray-500 dark:text-gray-400">
+          <p>Showing {filteredOrders.length} matching orders</p>
+          <button
+            type="button"
+            onClick={() => {
+              setSearch('');
+              setStatusFilter('Failed');
+              setCityFilter('All');
+              setFromDate('');
+              setToDate('');
+            }}
+            className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 transition-colors hover:border-indigo-500 hover:text-indigo-600 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
+          >
+            Clear Filters
+          </button>
+        </div>
       </div>
 
       {loading ? (
@@ -168,7 +266,7 @@ const PaymentFailures = () => {
                       <p className="text-xs text-gray-500 dark:text-gray-400">{order?.user?.email || 'N/A'}</p>
                     </td>
                     <td className="px-4 py-3">
-                      <span className="inline-flex rounded-full bg-rose-100 px-2.5 py-1 text-xs font-semibold text-rose-700 dark:bg-rose-900/30 dark:text-rose-300">
+                      <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${getStatusBadgeClasses(order?.status)}`}>
                         {order?.status || 'N/A'}
                       </span>
                     </td>
