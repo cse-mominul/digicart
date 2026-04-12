@@ -10,6 +10,7 @@ import { formatPrice } from '../utils/formatPrice';
 const ADDRESS_STORAGE_KEY = 'digicart_saved_addresses';
 const WISHLIST_ITEMS_PER_PAGE = 6;
 const ORDERS_ITEMS_PER_PAGE = 5;
+const MY_REVIEWS_ITEMS_PER_PAGE = 4;
 const ORDER_FILTERS = ['All', 'Processing', 'Delivering', 'Completed', 'Cancelled'];
 
 const navItems = [
@@ -134,6 +135,7 @@ const UserAccount = () => {
   const [editingAddressId, setEditingAddressId] = useState(null);
   const [wishlistPage, setWishlistPage] = useState(1);
   const [ordersPage, setOrdersPage] = useState(1);
+  const [myReviewsPage, setMyReviewsPage] = useState(1);
 
   const section = useMemo(() => {
     if (location.pathname === '/account/orders') return 'orders';
@@ -232,6 +234,41 @@ const UserAccount = () => {
       fetchMyReviews();
     }
   }, [section]);
+
+  const totalMyReviewsPages = Math.max(1, Math.ceil(myReviews.length / MY_REVIEWS_ITEMS_PER_PAGE));
+
+  const paginatedMyReviews = useMemo(() => {
+    const startIndex = (myReviewsPage - 1) * MY_REVIEWS_ITEMS_PER_PAGE;
+    return myReviews.slice(startIndex, startIndex + MY_REVIEWS_ITEMS_PER_PAGE);
+  }, [myReviews, myReviewsPage]);
+
+  useEffect(() => {
+    if (section === 'reviews') {
+      setMyReviewsPage(1);
+    }
+  }, [section]);
+
+  useEffect(() => {
+    if (myReviewsPage > totalMyReviewsPages) {
+      setMyReviewsPage(totalMyReviewsPages);
+    }
+  }, [myReviewsPage, totalMyReviewsPages]);
+
+  const getMyReviewsPageNumbers = () => {
+    if (totalMyReviewsPages <= 7) {
+      return Array.from({ length: totalMyReviewsPages }, (_, index) => index + 1);
+    }
+
+    if (myReviewsPage <= 4) {
+      return [1, 2, 3, 4, 5, '...', totalMyReviewsPages];
+    }
+
+    if (myReviewsPage >= totalMyReviewsPages - 3) {
+      return [1, '...', totalMyReviewsPages - 4, totalMyReviewsPages - 3, totalMyReviewsPages - 2, totalMyReviewsPages - 1, totalMyReviewsPages];
+    }
+
+    return [1, '...', myReviewsPage - 1, myReviewsPage, myReviewsPage + 1, '...', totalMyReviewsPages];
+  };
 
   const totalWishlistPages = Math.max(1, Math.ceil(wishlistItems.length / WISHLIST_ITEMS_PER_PAGE));
 
@@ -931,7 +968,7 @@ const UserAccount = () => {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {myReviews.map((review) => (
+                  {paginatedMyReviews.map((review) => (
                     <article key={review._id} className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-900">
                       <div className="flex flex-wrap items-start justify-between gap-3 border-b border-gray-100 pb-4 dark:border-gray-800">
                         <div className="flex items-center gap-3">
@@ -972,6 +1009,53 @@ const UserAccount = () => {
                       ) : null}
                     </article>
                   ))}
+
+                  <div className="mt-2 flex flex-col gap-3 border-t border-gray-100 pt-4 dark:border-gray-700 sm:flex-row sm:items-center sm:justify-between">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Page {myReviewsPage} of {totalMyReviewsPages}
+                    </p>
+
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setMyReviewsPage((prev) => Math.max(1, prev - 1))}
+                        disabled={myReviewsPage === 1}
+                        className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:border-[#ff3366] hover:text-[#ff3366] disabled:cursor-not-allowed disabled:opacity-40 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
+                      >
+                        Prev
+                      </button>
+
+                      {getMyReviewsPageNumbers().map((page, index) => (
+                        page === '...'
+                          ? (
+                            <span key={`reviews-ellipsis-${index}`} className="px-1 text-sm text-gray-400">...</span>
+                          )
+                          : (
+                            <button
+                              key={page}
+                              type="button"
+                              onClick={() => setMyReviewsPage(page)}
+                              className={`h-10 min-w-[40px] rounded-xl px-3 text-sm font-semibold transition-colors ${
+                                myReviewsPage === page
+                                  ? 'bg-[#ff3366] text-white shadow-md shadow-pink-500/20'
+                                  : 'border border-gray-200 bg-white text-gray-700 hover:border-[#ff3366] hover:text-[#ff3366] dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200'
+                              }`}
+                            >
+                              {page}
+                            </button>
+                          )
+                      ))}
+
+                      <button
+                        type="button"
+                        onClick={() => setMyReviewsPage((prev) => Math.min(totalMyReviewsPages, prev + 1))}
+                        disabled={myReviewsPage === totalMyReviewsPages}
+                        className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:border-[#ff3366] hover:text-[#ff3366] disabled:cursor-not-allowed disabled:opacity-40 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
+                      >
+                        Next
+                      </button>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
