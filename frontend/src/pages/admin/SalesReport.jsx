@@ -1,6 +1,16 @@
 import { useEffect, useMemo, useState } from 'react';
 import API from '../../api/axios';
 import { formatPrice } from '../../utils/formatPrice';
+import {
+  ResponsiveContainer,
+  ComposedChart,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Area,
+  Line,
+} from 'recharts';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -144,51 +154,14 @@ const SalesReport = () => {
     return buckets;
   }, [orders]);
 
-  const chart = useMemo(() => {
-    const chartWidth = 980;
-    const chartHeight = 220;
-    const topPadding = 16;
-    const bottomPadding = 28;
-    const leftPadding = 36;
-    const rightPadding = 18;
-
-    const values = monthlyData.flatMap((item) => [item.earning, item.refund]);
-    const maxValue = Math.max(1, ...values);
-    const usableHeight = chartHeight - topPadding - bottomPadding;
-    const usableWidth = chartWidth - leftPadding - rightPadding;
-
-    const toPoint = (value, index, total) => {
-      const x = leftPadding + (index * (usableWidth / Math.max(1, total - 1)));
-      const y = topPadding + ((maxValue - value) / maxValue) * usableHeight;
-      return { x, y };
-    };
-
-    const earningPoints = monthlyData.map((item, index) => toPoint(item.earning, index, monthlyData.length));
-    const refundPoints = monthlyData.map((item, index) => toPoint(item.refund, index, monthlyData.length));
-
-    const pointsToPath = (points) => points.map((point, index) => `${index === 0 ? 'M' : 'L'} ${point.x} ${point.y}`).join(' ');
-    const earningPath = pointsToPath(earningPoints);
-    const refundPath = pointsToPath(refundPoints);
-    const earningAreaPath = earningPoints.length
-      ? `${earningPath} L ${earningPoints[earningPoints.length - 1].x} ${chartHeight - bottomPadding} L ${earningPoints[0].x} ${chartHeight - bottomPadding} Z`
-      : '';
-
-    const axisSteps = [0, 0.25, 0.5, 0.75, 1];
-
-    return {
-      chartWidth,
-      chartHeight,
-      topPadding,
-      bottomPadding,
-      leftPadding,
-      rightPadding,
-      earningPath,
-      refundPath,
-      earningAreaPath,
-      axisSteps,
-      maxValue,
-    };
-  }, [monthlyData]);
+  const chartData = useMemo(
+    () => monthlyData.map((item) => ({
+      label: item.label,
+      earning: Number(item.earning) || 0,
+      refund: Number(item.refund) || 0,
+    })),
+    [monthlyData]
+  );
 
   const summaryCards = [
     {
@@ -361,47 +334,22 @@ const SalesReport = () => {
 
           <div className="overflow-x-auto">
             <div className="min-w-[760px]">
-              <svg viewBox={`0 0 ${chart.chartWidth} ${chart.chartHeight}`} className="h-[220px] w-full">
-                {chart.axisSteps.map((step) => {
-                  const value = chart.maxValue * step;
-                  const y = chart.topPadding + ((1 - step) * (chart.chartHeight - chart.topPadding - chart.bottomPadding));
-
-                  return (
-                    <g key={`grid-${step}`}>
-                      <line
-                        x1={chart.leftPadding}
-                        y1={y}
-                        x2={chart.chartWidth - chart.rightPadding}
-                        y2={y}
-                        className="stroke-gray-200 dark:stroke-gray-700"
-                        strokeDasharray="3 5"
-                      />
-                      <text x={0} y={y + 4} className="fill-gray-400 text-[10px]">{compactNumber(value)}</text>
-                    </g>
-                  );
-                })}
-
-                {chart.earningAreaPath ? (
-                  <path d={chart.earningAreaPath} className="fill-emerald-200/35 dark:fill-emerald-400/15" />
-                ) : null}
-                <path d={chart.earningPath} className="stroke-emerald-500" strokeWidth="2.5" fill="none" />
-                <path d={chart.refundPath} className="stroke-blue-500" strokeWidth="2.5" fill="none" />
-
-                {monthlyData.map((month, index) => {
-                  const x = chart.leftPadding + (index * ((chart.chartWidth - chart.leftPadding - chart.rightPadding) / Math.max(1, monthlyData.length - 1)));
-                  return (
-                    <text
-                      key={month.key}
-                      x={x}
-                      y={chart.chartHeight - 8}
-                      textAnchor="middle"
-                      className="fill-gray-500 text-[11px] dark:fill-gray-400"
-                    >
-                      {month.label}
-                    </text>
-                  );
-                })}
-              </svg>
+              <div className="h-[220px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <ComposedChart data={chartData} margin={{ top: 8, right: 8, left: 8, bottom: 4 }}>
+                    <CartesianGrid strokeDasharray="3 5" stroke="#d1d5db" />
+                    <XAxis dataKey="label" tick={{ fill: '#6b7280', fontSize: 11 }} />
+                    <YAxis tickFormatter={compactNumber} tick={{ fill: '#9ca3af', fontSize: 10 }} width={46} />
+                    <Tooltip
+                      formatter={(value) => formatPrice(Number(value) || 0)}
+                      contentStyle={{ borderRadius: 10, border: '1px solid #e5e7eb' }}
+                    />
+                    <Area type="monotone" dataKey="earning" stroke="#10b981" fill="#86efac" fillOpacity={0.25} strokeWidth={2.5} />
+                    <Line type="monotone" dataKey="earning" stroke="#10b981" strokeWidth={2.5} dot={false} />
+                    <Line type="monotone" dataKey="refund" stroke="#3b82f6" strokeWidth={2.5} dot={false} />
+                  </ComposedChart>
+                </ResponsiveContainer>
+              </div>
             </div>
           </div>
         </div>
