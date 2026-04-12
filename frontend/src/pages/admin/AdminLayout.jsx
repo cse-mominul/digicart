@@ -33,11 +33,6 @@ const navItems = [
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-1a4 4 0 00-5-3.87M9 20H4v-1a4 4 0 015-3.87m8-6.13a4 4 0 11-8 0 4 4 0 018 0zM7 8a4 4 0 10-8 0 4 4 0 008 0z" />
     </svg>
   )},
-  { to: '/admin/categories', label: 'Categories', end: false, icon: (
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h10v10H7V7zm-3 0h1m14 0h1M4 12h1m14 0h1M4 17h1m14 0h1M12 4v1m0 14v1" />
-    </svg>
-  )},
   { to: '/admin/campaigns', label: 'Campaigns', end: false, icon: (
     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -225,6 +220,18 @@ const AdminLayout = () => {
                           }
                         >
                           Coupon / Voucher
+                        </NavLink>
+                        <NavLink
+                          to="/admin/categories"
+                          className={({ isActive }) =>
+                            `ml-10 mr-2 flex items-center rounded-lg px-3 py-2 text-xs transition-colors ${
+                              isActive
+                                ? 'bg-indigo-500 text-white'
+                                : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                            }`
+                          }
+                        >
+                          Category
                         </NavLink>
                       </div>
                     )}
