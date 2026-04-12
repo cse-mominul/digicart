@@ -135,6 +135,7 @@ const LimitedTimeDealsSection = ({ products = [], loading = false }) => {
           >
             {dealProducts.map((product) => {
               const price = Number(product.price) || 0;
+              const showDiscount = product.showDiscount !== false;
               const fallbackDiscount = discountSteps[(product.name || '').length % discountSteps.length];
               const discountLabel = String(product.discountText || '').trim() || `${fallbackDiscount}% OFF`;
               const discountMatch = discountLabel.match(/(\d+(?:\.\d+)?)\s*%/);
@@ -157,9 +158,11 @@ const LimitedTimeDealsSection = ({ products = [], loading = false }) => {
                   onClick={() => navigate(`/product/${product._id}`)}
                 >
                   <div className="relative">
-                    <span className="absolute left-1 sm:left-1.5 top-1 sm:top-1.5 z-10 rounded bg-yellow-400 px-1 sm:px-1.5 py-0.5 text-[7px] sm:text-[9px] font-bold uppercase text-slate-900">
-                      {discountLabel}
-                    </span>
+                    {showDiscount && (
+                      <span className="absolute left-1 sm:left-1.5 top-1 sm:top-1.5 z-10 rounded bg-yellow-400 px-1 sm:px-1.5 py-0.5 text-[7px] sm:text-[9px] font-bold uppercase text-slate-900">
+                        {discountLabel}
+                      </span>
+                    )}
                     <div className="flex aspect-square sm:h-28 items-center justify-center rounded-lg sm:rounded-xl bg-slate-50 p-1.5 sm:p-2 dark:bg-slate-900">
                       <img
                         src={imageSrc}
@@ -194,7 +197,9 @@ const LimitedTimeDealsSection = ({ products = [], loading = false }) => {
 
                     <div className="mt-1.5 flex items-center gap-1.5">
                       <span className="text-sm font-semibold text-slate-900 dark:text-white">{formatPrice(price)}</span>
-                      <span className="text-[10px] text-slate-400 line-through">{formatPrice(oldPrice)}</span>
+                      {showDiscount && (
+                        <span className="text-[10px] text-slate-400 line-through">{formatPrice(oldPrice)}</span>
+                      )}
                     </div>
 
                     <div className="mt-2 flex items-center gap-2">

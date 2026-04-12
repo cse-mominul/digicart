@@ -13,6 +13,7 @@ const productSchema = new mongoose.Schema(
     stock: { type: Number, default: 0, min: 0 },
     compareAtPrice: { type: Number, default: 0, min: 0 },
     discountText: { type: String, trim: true, default: '15% OFF' },
+    showDiscount: { type: Boolean, default: true },
     displayRating: { type: Number, default: 4, min: 0, max: 5 },
     displayReviewsText: { type: String, trim: true, default: '11.78k reviews' },
     additionalInfo: [

@@ -12,6 +12,7 @@ const ProductCard = ({ product }) => {
   const stockCount = product.countInStock ?? product.stock ?? 0;
   const discountOptions = [15, 25, 30, 40];
   const price = Number(product.price) || 0;
+  const showDiscount = product.showDiscount !== false;
   const fallbackDiscount = discountOptions[(product.name || '').length % discountOptions.length];
   const discountLabel = String(product.discountText || '').trim() || `${fallbackDiscount}% OFF`;
   const discountMatch = discountLabel.match(/(\d+(?:\.\d+)?)\s*%/);
@@ -43,9 +44,11 @@ const ProductCard = ({ product }) => {
       onClick={() => navigate(`/product/${product._id}`)}
     >
       <div className="relative overflow-hidden">
-        <span className="absolute top-3 left-3 z-10 bg-yellow-400 text-slate-900 text-xs font-semibold px-2.5 py-1 rounded-full">
-          {discountLabel}
-        </span>
+        {showDiscount && (
+          <span className="absolute top-3 left-3 z-10 bg-yellow-400 text-slate-900 text-xs font-semibold px-2.5 py-1 rounded-full">
+            {discountLabel}
+          </span>
+        )}
         <img
           src={product.image}
           alt={product.name}
@@ -99,7 +102,9 @@ const ProductCard = ({ product }) => {
         </p>
         <div className="mt-3 flex items-center gap-2">
           <span className="text-blue-600 dark:text-blue-400 font-bold text-lg">{formatPrice(price)}</span>
-          <span className="text-gray-400 line-through text-sm">{formatPrice(oldPrice)}</span>
+          {showDiscount && (
+            <span className="text-gray-400 line-through text-sm">{formatPrice(oldPrice)}</span>
+          )}
         </div>
         <div className="mt-2 flex items-center gap-1 text-amber-500">
           {[...Array(5)].map((_, index) => (

@@ -306,6 +306,7 @@ const ProductDetails = () => {
   }, [product]);
 
   const productPrice = Number(product?.price) || 0;
+  const showDiscount = product?.showDiscount !== false;
   const configuredCompareAtPrice = Number(product?.compareAtPrice) || 0;
   const oldPrice = configuredCompareAtPrice > productPrice
     ? configuredCompareAtPrice
@@ -851,10 +852,14 @@ const ProductDetails = () => {
 
           <div className="mt-3 flex flex-wrap items-center gap-2">
             <span className="text-xl font-black text-blue-500 sm:text-2xl">{formatPrice(product.price)}</span>
-            <span className="text-sm text-slate-400 line-through sm:text-base">{formatPrice(oldPrice)}</span>
-            <span className="inline-flex rounded-full bg-yellow-400/20 px-2.5 py-0.5 text-[11px] font-bold text-yellow-700 dark:bg-yellow-400/15 dark:text-yellow-200">
-              {discountLabel}
-            </span>
+            {showDiscount && (
+              <span className="text-sm text-slate-400 line-through sm:text-base">{formatPrice(oldPrice)}</span>
+            )}
+            {showDiscount && (
+              <span className="inline-flex rounded-full bg-yellow-400/20 px-2.5 py-0.5 text-[11px] font-bold text-yellow-700 dark:bg-yellow-400/15 dark:text-yellow-200">
+                {discountLabel}
+              </span>
+            )}
           </div>
 
           <div className="mt-3 flex items-center gap-2 text-sm">

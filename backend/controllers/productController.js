@@ -103,6 +103,7 @@ const getTopSellingProducts = async (req, res) => {
           stock: '$product.stock',
           compareAtPrice: '$product.compareAtPrice',
           discountText: '$product.discountText',
+          showDiscount: '$product.showDiscount',
           displayRating: '$product.displayRating',
           displayReviewsText: '$product.displayReviewsText',
           additionalInfo: '$product.additionalInfo',
@@ -121,7 +122,23 @@ const getTopSellingProducts = async (req, res) => {
 // @desc  Create a product (admin only)
 // @route POST /api/products
 const createProduct = async (req, res) => {
-  const { name, brand, description, price, image, images, category, stock, countInStock, additionalInfo } = req.body;
+  const {
+    name,
+    brand,
+    description,
+    price,
+    image,
+    images,
+    category,
+    stock,
+    countInStock,
+    compareAtPrice,
+    discountText,
+    showDiscount,
+    displayRating,
+    displayReviewsText,
+    additionalInfo,
+  } = req.body;
 
   const cleanedImages = Array.isArray(images)
     ? images
@@ -146,6 +163,11 @@ const createProduct = async (req, res) => {
       category,
       stock,
       countInStock,
+      compareAtPrice,
+      discountText,
+      showDiscount: typeof showDiscount === 'boolean' ? showDiscount : true,
+      displayRating,
+      displayReviewsText,
       additionalInfo,
     });
     res.status(201).json(product);

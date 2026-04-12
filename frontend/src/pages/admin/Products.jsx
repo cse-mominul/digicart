@@ -10,6 +10,7 @@ const emptyForm = {
   price: '',
   compareAtPrice: '',
   discountText: '15% OFF',
+  showDiscount: true,
   displayRating: '4',
   displayReviewsText: '11.78k reviews',
   image: '',
@@ -203,6 +204,7 @@ const Products = () => {
       price: product.price,
       compareAtPrice: product.compareAtPrice ?? '',
       discountText: product.discountText || '15% OFF',
+      showDiscount: typeof product.showDiscount === 'boolean' ? product.showDiscount : true,
       displayRating: product.displayRating ?? '4',
       displayReviewsText: product.displayReviewsText || '11.78k reviews',
       image: product.image,
@@ -274,6 +276,7 @@ const Products = () => {
 
     const payload = {
       ...form,
+      showDiscount: Boolean(form.showDiscount),
       image: primaryImage,
       images: cleanedImages,
       additionalInfo: (form.additionalInfo || [])
@@ -760,6 +763,16 @@ const Products = () => {
                   />
                 </div>
               </div>
+
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm font-medium text-gray-700 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
+                <input
+                  type="checkbox"
+                  checked={Boolean(form.showDiscount)}
+                  onChange={(e) => setForm({ ...form, showDiscount: e.target.checked })}
+                  className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                />
+                Show discount badge and old price on storefront
+              </label>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>

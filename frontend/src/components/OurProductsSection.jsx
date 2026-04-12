@@ -75,6 +75,7 @@ const OurProductsSection = ({ products = [], loading = false }) => {
           <div className="grid grid-cols-1 gap-2 sm:gap-3 sm:grid-cols-2 lg:grid-cols-5">
             {visibleProducts.map((product) => {
               const price = Number(product.price) || 0;
+              const showDiscount = product.showDiscount !== false;
               const fallbackDiscount = discountSteps[(product.name || '').length % discountSteps.length];
               const discountLabel = String(product.discountText || '').trim() || `${fallbackDiscount}% OFF`;
               const discountMatch = discountLabel.match(/(\d+(?:\.\d+)?)\s*%/);
@@ -96,9 +97,11 @@ const OurProductsSection = ({ products = [], loading = false }) => {
                   onClick={() => navigate(`/product/${product._id}`)}
                 >
                   <div className="relative">
-                    <span className="absolute left-1 sm:left-1.5 top-1 sm:top-1.5 z-10 rounded bg-yellow-400 px-1 sm:px-1.5 py-0.5 text-[7px] sm:text-[9px] font-bold uppercase text-slate-900">
-                      {discountLabel}
-                    </span>
+                    {showDiscount && (
+                      <span className="absolute left-1 sm:left-1.5 top-1 sm:top-1.5 z-10 rounded bg-yellow-400 px-1 sm:px-1.5 py-0.5 text-[7px] sm:text-[9px] font-bold uppercase text-slate-900">
+                        {discountLabel}
+                      </span>
+                    )}
                     <div className="flex aspect-square sm:h-28 items-center justify-center rounded-lg sm:rounded-xl bg-slate-50 p-1.5 sm:p-2 dark:bg-slate-900">
                       <img
                         src={imageSrc}
@@ -133,8 +136,12 @@ const OurProductsSection = ({ products = [], loading = false }) => {
 
                     <div className="mt-1 sm:mt-1.5 flex flex-wrap items-center gap-0.5 sm:gap-1.5 text-[10px] sm:text-sm">
                       <span className="font-semibold text-slate-900 dark:text-white">{formatPrice(price)}</span>
-                      <span className="text-slate-400 line-through text-[8px] sm:text-[10px]">{formatPrice(oldPrice)}</span>
-                      <span className="font-semibold text-amber-600 text-[8px] sm:text-[10px]">{discountLabel}</span>
+                      {showDiscount && (
+                        <>
+                          <span className="text-slate-400 line-through text-[8px] sm:text-[10px]">{formatPrice(oldPrice)}</span>
+                          <span className="font-semibold text-amber-600 text-[8px] sm:text-[10px]">{discountLabel}</span>
+                        </>
+                      )}
                     </div>
 
                     <div className="mt-1.5 sm:mt-2 flex items-center gap-1 sm:gap-2">

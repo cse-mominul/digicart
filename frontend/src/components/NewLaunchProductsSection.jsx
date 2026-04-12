@@ -58,6 +58,7 @@ const NewLaunchProductsSection = ({ products = [], loading = false }) => {
       >
         {launchProducts.map((product, index) => {
           const price = Number(product.price) || 0;
+          const showDiscount = product.showDiscount !== false;
           const fallbackDiscount = discountOptions[(product.name || '').length % discountOptions.length];
           const discountLabel = String(product.discountText || '').trim() || `${fallbackDiscount}% OFF`;
           const discountMatch = discountLabel.match(/(\d+(?:\.\d+)?)\s*%/);
@@ -111,8 +112,12 @@ const NewLaunchProductsSection = ({ products = [], loading = false }) => {
 
                 <div className="mt-1 sm:mt-2 flex flex-wrap items-center gap-0.5 sm:gap-2 text-[9px] sm:text-sm">
                   <span className="font-semibold text-gray-900 dark:text-white">{formatPrice(price)}</span>
-                  <span className="text-[7px] sm:text-[11px] text-gray-400 line-through">{formatPrice(originalPrice)}</span>
-                  <span className="rounded-full bg-yellow-100 px-1.5 sm:px-2 py-0.5 text-[7px] sm:text-[9px] font-bold text-amber-700 dark:bg-yellow-900/30 dark:text-yellow-300">{discountLabel}</span>
+                  {showDiscount && (
+                    <>
+                      <span className="text-[7px] sm:text-[11px] text-gray-400 line-through">{formatPrice(originalPrice)}</span>
+                      <span className="rounded-full bg-yellow-100 px-1.5 sm:px-2 py-0.5 text-[7px] sm:text-[9px] font-bold text-amber-700 dark:bg-yellow-900/30 dark:text-yellow-300">{discountLabel}</span>
+                    </>
+                  )}
                 </div>
 
                 <div className="mt-2 sm:mt-3 flex items-center gap-1 sm:gap-2">
