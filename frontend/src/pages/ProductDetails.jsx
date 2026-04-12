@@ -257,26 +257,52 @@ const ProductDetails = () => {
 
   const additionalInfoRows = useMemo(() => {
     const info = product?.additionalInfo;
+    const normalizeLabel = (label) => {
+      const raw = String(label || '').trim();
+      const compact = raw.toLowerCase().replace(/\s+/g, ' ');
+
+      if (compact === 'brand' || compact === 'brand name') return 'Brand';
+      if (compact === 'availability' || compact === 'in stock' || compact === 'stock') return 'Availability';
+
+      return raw;
+    };
+
+    const rowsFromSource = (sourceRows) => sourceRows
+      .map((item) => ({
+        label: normalizeLabel(item?.label),
+        value: String(item?.value || '').trim(),
+      }))
+      .filter((item) => item.label && item.value);
+
+    let rows = [];
 
     if (Array.isArray(info)) {
-      return info
-        .map((item) => ({
-          label: String(item?.label || '').trim(),
-          value: String(item?.value || '').trim(),
-        }))
-        .filter((item) => item.label && item.value);
+      rows = rowsFromSource(info);
     }
 
-    if (info && typeof info === 'object') {
-      return Object.entries(info)
+    if (!rows.length && info && typeof info === 'object') {
+      rows = Object.entries(info)
         .map(([label, value]) => ({
-          label: String(label || '').trim(),
+          label: normalizeLabel(label),
           value: String(value || '').trim(),
         }))
         .filter((item) => item.label && item.value);
     }
 
-    return [];
+    const hasBrand = rows.some((row) => row.label === 'Brand');
+    const brandValue = String(product?.brand || '').trim();
+    if (!hasBrand && brandValue) {
+      rows.unshift({ label: 'Brand', value: brandValue });
+    }
+
+    const hasAvailability = rows.some((row) => row.label === 'Availability');
+    const stockCount = Number(product?.countInStock ?? product?.stock ?? 0);
+    const fallbackAvailability = Number.isFinite(stockCount) && stockCount > 0 ? 'In Stock' : 'Out of Stock';
+    if (!hasAvailability) {
+      rows.push({ label: 'Availability', value: fallbackAvailability });
+    }
+
+    return rows;
   }, [product]);
 
   const productPrice = Number(product?.price) || 0;
@@ -906,7 +932,15 @@ const ProductDetails = () => {
                       className="grid gap-1.5 rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-xs sm:grid-cols-[160px_1fr] dark:border-white/10 dark:bg-white/5"
                     >
                       <p className="font-semibold text-slate-800 dark:text-slate-100">{item.label}</p>
-                      <p className="text-slate-600 dark:text-slate-300 break-words [overflow-wrap:anywhere]">{item.value}</p>
+                      <div className="min-w-0">
+                        {item.label === 'Brand' || item.label === 'Availability' ? (
+                          <span className="inline-flex max-w-full rounded-full bg-blue-500/10 px-2.5 py-1 text-xs font-semibold text-blue-700 dark:bg-blue-500/15 dark:text-blue-300">
+                            {item.value}
+                          </span>
+                        ) : (
+                          <p className="text-slate-600 dark:text-slate-300 break-words [overflow-wrap:anywhere]">{item.value}</p>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>

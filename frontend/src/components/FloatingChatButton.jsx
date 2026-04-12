@@ -59,7 +59,7 @@ const FloatingChatButton = () => {
   }
 
   return (
-    <div className="fixed bottom-5 right-5 z-50 sm:bottom-6 sm:right-6">
+    <div className="fixed bottom-24 right-4 z-50 sm:bottom-6 sm:right-6">
       {open && (
         <div className="mb-3 w-[260px] rounded-2xl border border-gray-200 bg-white p-4 shadow-2xl dark:border-gray-700 dark:bg-gray-900">
           <p className="text-sm font-semibold text-gray-900 dark:text-white">Need help?</p>

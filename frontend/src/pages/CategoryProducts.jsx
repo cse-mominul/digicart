@@ -240,16 +240,24 @@ const CategoryProducts = () => {
                   </div>
                 </div>
 
-                <div className="mb-6 border-b border-gray-200 pb-5 dark:border-gray-700">
-                  <p className="mb-3 text-2xl font-semibold text-gray-900 dark:text-white">Availability</p>
-                  <label className="inline-flex items-center gap-2 text-base text-gray-800 dark:text-gray-200 cursor-pointer">
+                <div className="mb-6 rounded-3xl border border-[#2563eb]/10 bg-gray-50 p-4">
+                  <div className="mb-2 flex items-start justify-between gap-3">
+                    <p className="text-2xl font-semibold text-gray-900 dark:text-white">Availability</p>
+                    <span className="text-xs font-semibold text-gray-400">Reset</span>
+                  </div>
+                  <label className="flex cursor-pointer items-center justify-between rounded-xl px-2 py-1.5 text-base text-gray-700 transition-colors hover:bg-white/80 dark:text-gray-200">
+                    <div className="flex items-center gap-2.5">
+                      <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-sky-100 text-[11px] font-bold text-sky-600">
+                        A
+                      </span>
+                      <span>In Stock Only</span>
+                    </div>
                     <input
                       type="checkbox"
                       checked={onlyInStock}
                       onChange={(event) => setOnlyInStock(event.target.checked)}
-                      className="h-5 w-5 rounded border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white focus:ring-gray-400"
+                      className="brand-checkbox h-6 w-6"
                     />
-                    In Stock
                   </label>
                 </div>
 
@@ -336,16 +344,24 @@ const CategoryProducts = () => {
               </div>
             </div>
 
-            <div className="mb-6">
-              <p className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Availability</p>
-              <label className="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300 cursor-pointer">
+            <div className="mb-6 rounded-3xl border border-[#2563eb]/10 bg-gray-50 p-4">
+              <div className="mb-2 flex items-start justify-between gap-3">
+                <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">Availability</p>
+                <span className="text-xs font-semibold text-gray-400">Reset</span>
+              </div>
+              <label className="flex cursor-pointer items-center justify-between rounded-xl px-2 py-1.5 text-sm text-gray-700 transition-colors hover:bg-white dark:text-gray-200">
+                <div className="flex items-center gap-2.5">
+                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-sky-100 text-[11px] font-bold text-sky-600">
+                    A
+                  </span>
+                  <span>In Stock Only</span>
+                </div>
                 <input
                   type="checkbox"
                   checked={onlyInStock}
                   onChange={(event) => setOnlyInStock(event.target.checked)}
-                  className="rounded border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white focus:ring-gray-400"
+                  className="brand-checkbox h-6 w-6"
                 />
-                In Stock Only
               </label>
             </div>
 
