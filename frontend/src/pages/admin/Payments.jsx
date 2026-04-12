@@ -274,34 +274,34 @@ const Payments = () => {
 
       {/* Table */}
       <div className="overflow-x-auto bg-white dark:bg-gray-800 rounded-lg shadow">
-        <table className="w-full">
+        <table className="w-full text-xs">
           <thead>
             <tr className="bg-gray-100 dark:bg-gray-700 border-b border-gray-300 dark:border-gray-600">
-              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">
+              <th className="px-2.5 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-gray-900 dark:text-gray-100">
                 Order ID
               </th>
-              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">
+              <th className="px-2.5 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-gray-900 dark:text-gray-100">
                 Customer
               </th>
-              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">
+              <th className="px-2.5 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-gray-900 dark:text-gray-100">
                 Amount
               </th>
-              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">
+              <th className="px-2.5 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-gray-900 dark:text-gray-100">
                 Payment Method
               </th>
-              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">
+              <th className="px-2.5 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-gray-900 dark:text-gray-100">
                 Transaction ID
               </th>
-              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">
+              <th className="px-2.5 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-gray-900 dark:text-gray-100">
                 Sender Number
               </th>
-              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">
+              <th className="px-2.5 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-gray-900 dark:text-gray-100">
                 Date
               </th>
-              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">
+              <th className="px-2.5 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-gray-900 dark:text-gray-100">
                 Status
               </th>
-              <th className="px-4 py-3 text-center text-sm font-semibold text-gray-900 dark:text-gray-100">
+              <th className="px-2.5 py-2 text-center text-[11px] font-semibold uppercase tracking-wide text-gray-900 dark:text-gray-100">
                 Actions
               </th>
             </tr>
@@ -319,19 +319,19 @@ const Payments = () => {
                     key={order._id}
                     className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition"
                   >
-                    <td className="px-4 py-3 text-sm text-gray-900 dark:text-gray-100 font-mono">
+                    <td className="px-2.5 py-2 text-[11px] text-gray-900 dark:text-gray-100 font-mono">
                       {String(order._id).slice(-8).toUpperCase()}
                     </td>
-                    <td className="px-4 py-3 text-sm">
-                      <div className="text-gray-900 dark:text-gray-100 font-medium">{customerName}</div>
-                      <div className="text-gray-600 dark:text-gray-400 text-xs">{customerEmail}</div>
+                    <td className="px-2.5 py-2 text-xs">
+                      <div className="text-gray-900 dark:text-gray-100 font-medium leading-tight">{customerName}</div>
+                      <div className="text-gray-600 dark:text-gray-400 text-[11px] leading-tight">{customerEmail}</div>
                     </td>
-                    <td className="px-4 py-3 text-sm font-semibold text-orange-600 dark:text-orange-400">
+                    <td className="px-2.5 py-2 text-xs font-semibold text-orange-600 dark:text-orange-400 whitespace-nowrap">
                       {formatPrice(order.totalAmount || 0)}
                     </td>
-                    <td className="px-4 py-3 text-sm">
+                    <td className="px-2.5 py-2 text-xs">
                       <span
-                        className={`px-3 py-1 rounded-full text-xs font-medium ${
+                        className={`px-2 py-0.5 rounded-full text-[11px] font-medium ${
                           paymentMethodColors[order.paymentMethod] ||
                           'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
                         }`}
@@ -345,21 +345,21 @@ const Payments = () => {
                           : 'Card'}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-sm">
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="font-mono text-gray-900 dark:text-gray-100">
+                    <td className="px-2.5 py-2 text-xs">
+                      <div className="flex items-center justify-between gap-1.5">
+                        <span className="font-mono text-[11px] text-gray-900 dark:text-gray-100">
                           {String(order.paymentTrxId).slice(0, 12)}...
                         </span>
                         <button
                           onClick={() =>
                             handleCopyToClipboard(order.paymentTrxId, 'Transaction ID')
                           }
-                          className="text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 p-1"
+                          className="text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 p-0.5"
                           title="Copy Transaction ID"
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            className="h-4 w-4"
+                            className="h-3.5 w-3.5"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
@@ -374,21 +374,21 @@ const Payments = () => {
                         </button>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-sm">
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="font-mono text-gray-900 dark:text-gray-100">
+                    <td className="px-2.5 py-2 text-xs">
+                      <div className="flex items-center justify-between gap-1.5">
+                        <span className="font-mono text-[11px] text-gray-900 dark:text-gray-100">
                           {String(order.paymentSenderNumber).slice(0, 8)}...
                         </span>
                         <button
                           onClick={() =>
                             handleCopyToClipboard(order.paymentSenderNumber, 'Sender Number')
                           }
-                          className="text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 p-1"
+                          className="text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 p-0.5"
                           title="Copy Sender Number"
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            className="h-4 w-4"
+                            className="h-3.5 w-3.5"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
@@ -403,13 +403,13 @@ const Payments = () => {
                         </button>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
+                    <td className="px-2.5 py-2 text-[11px] text-gray-600 dark:text-gray-400 whitespace-nowrap">
                       {createdDate}
                     </td>
-                    <td className="px-4 py-3 text-sm">
-                      <div className="flex items-center gap-2">
+                    <td className="px-2.5 py-2 text-xs">
+                      <div className="flex items-center gap-1.5">
                         <span
-                          className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
+                          className={`px-2 py-0.5 rounded-full text-[11px] font-semibold ${
                             transactionStatusColors[transactionStatus] ||
                             'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
                           }`}
@@ -420,24 +420,24 @@ const Payments = () => {
                           value={transactionStatus}
                           onChange={(e) => handleUpdateTransactionStatus(order._id, e.target.value)}
                           disabled={updatingStatusId === order._id}
-                          className="px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500 disabled:opacity-60"
+                          className="px-1.5 py-0.5 text-[11px] border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500 disabled:opacity-60"
                         >
                           <option value="Pending">Pending</option>
                           <option value="Success">Success</option>
                         </select>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-sm text-center">
+                    <td className="px-2.5 py-2 text-xs text-center">
                       <button
                         onClick={() => handleCopyToClipboard(
                           `Order: ${order._id}\nCustomer: ${customerName}\nAmount: ${formatPrice(order.totalAmount || 0)}\nPayment: ${order.paymentMethod}\nTrxID: ${order.paymentTrxId}\nSender: ${order.paymentSenderNumber}`,
                           'Payment Details'
                         )}
-                        className="inline-flex items-center gap-1 text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 font-medium text-xs"
+                        className="inline-flex items-center gap-1 text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 font-medium text-[11px]"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
-                          className="h-4 w-4"
+                          className="h-3.5 w-3.5"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
@@ -457,7 +457,7 @@ const Payments = () => {
               })
             ) : (
               <tr>
-                <td colSpan="9" className="px-4 py-8 text-center text-gray-600 dark:text-gray-400">
+                <td colSpan="9" className="px-2.5 py-6 text-center text-xs text-gray-600 dark:text-gray-400">
                   {searchTerm || filterMethod !== 'All' || filterTransactionStatus !== 'All' ? 'No payments found' : 'No payment transactions yet'}
                 </td>
               </tr>
