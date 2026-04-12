@@ -12,6 +12,10 @@ const ShippingDelays = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState('All');
+  const [delayFilter, setDelayFilter] = useState('All');
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [updatingId, setUpdatingId] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
@@ -35,17 +39,29 @@ const ShippingDelays = () => {
     const blockedStatuses = ['delivered', 'cancelled', 'canceled', 'returned', 'failed'];
     const now = Date.now();
     const q = search.trim().toLowerCase();
+    const fromMs = fromDate ? new Date(fromDate).setHours(0, 0, 0, 0) : null;
+    const toMs = toDate ? new Date(toDate).setHours(23, 59, 59, 999) : null;
 
     return orders
       .filter((order) => {
-        const status = String(order?.status || '').toLowerCase();
+        const rawStatus = String(order?.status || '').trim();
+        const status = rawStatus.toLowerCase();
         if (blockedStatuses.includes(status)) return false;
+
+        if (statusFilter !== 'All' && rawStatus !== statusFilter) return false;
 
         const createdMs = new Date(order?.createdAt || 0).getTime();
         if (!createdMs) return false;
 
+        if (Number.isFinite(fromMs) && createdMs < fromMs) return false;
+        if (Number.isFinite(toMs) && createdMs > toMs) return false;
+
         const ageDays = Math.floor((now - createdMs) / DAY_MS);
         if (ageDays <= 3) return false;
+
+        if (delayFilter === '4-7' && (ageDays < 4 || ageDays > 7)) return false;
+        if (delayFilter === '8-14' && (ageDays < 8 || ageDays > 14)) return false;
+        if (delayFilter === '15+' && ageDays < 15) return false;
 
         if (!q) return true;
 
@@ -67,7 +83,7 @@ const ShippingDelays = () => {
         return { ...order, delayDays };
       })
       .sort((a, b) => b.delayDays - a.delayDays);
-  }, [orders, search]);
+  }, [orders, search, statusFilter, delayFilter, fromDate, toDate]);
 
   const totalPages = Math.max(1, Math.ceil(delayedOrders.length / ITEMS_PER_PAGE));
 
@@ -78,7 +94,7 @@ const ShippingDelays = () => {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [search]);
+  }, [search, statusFilter, delayFilter, fromDate, toDate]);
 
   useEffect(() => {
     if (currentPage > totalPages) {
@@ -155,13 +171,69 @@ const ShippingDelays = () => {
       </div>
 
       <div className="mb-4">
-        <input
-          type="text"
-          value={search}
-          onChange={(event) => setSearch(event.target.value)}
-          placeholder="Search by order ID, customer, city, phone"
-          className="w-full max-w-sm rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
-        />
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-5">
+          <input
+            type="text"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder="Search by order ID, customer, city, phone"
+            className="w-full max-w-sm rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+          />
+
+          <select
+            value={statusFilter}
+            onChange={(event) => setStatusFilter(event.target.value)}
+            className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+          >
+            <option value="All">All Status</option>
+            {STATUS_OPTIONS.map((status) => (
+              <option key={status} value={status}>{status}</option>
+            ))}
+          </select>
+
+          <select
+            value={delayFilter}
+            onChange={(event) => setDelayFilter(event.target.value)}
+            className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+          >
+            <option value="All">All Delay Ranges</option>
+            <option value="4-7">4-7 days</option>
+            <option value="8-14">8-14 days</option>
+            <option value="15+">15+ days</option>
+          </select>
+
+          <div className="flex items-center gap-2">
+            <input
+              type="date"
+              value={fromDate}
+              onChange={(event) => setFromDate(event.target.value)}
+              className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+            />
+            <input
+              type="date"
+              value={toDate}
+              onChange={(event) => setToDate(event.target.value)}
+              className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+            />
+          </div>
+        </div>
+
+        <div className="mt-3 flex items-center justify-between gap-2 text-xs text-gray-500 dark:text-gray-400">
+          <p>Showing {delayedOrders.length} matching delayed orders</p>
+          <button
+            type="button"
+            onClick={() => {
+              setSearch('');
+              setStatusFilter('All');
+              setDelayFilter('All');
+              setFromDate('');
+              setToDate('');
+            }}
+            className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 transition-colors hover:border-indigo-500 hover:text-indigo-600 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
+          >
+            Clear Filters
+          </button>
+        </div>
       </div>
 
       {loading ? (
