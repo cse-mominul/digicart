@@ -220,8 +220,8 @@ module.exports = {
       const settings = await ensureDefaultSettings();
       return res.json({
         paymentMethods: settings.paymentMethods || {
-          bkash: { enabled: true, number: '' },
-          nogod: { enabled: true, number: '' },
+          bkash: { enabled: true, number: '', note: '' },
+          nogod: { enabled: true, number: '', note: '' },
           cod: { enabled: true },
           card: { enabled: false },
         },

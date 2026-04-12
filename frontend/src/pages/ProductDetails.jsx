@@ -1204,6 +1204,13 @@ const ProductDetails = () => {
               </div>
             </div>
 
+            {paymentSettings?.bkash?.note && (
+              <div className="mt-3 rounded-lg border border-blue-200 bg-blue-50 p-3 dark:border-blue-900/30 dark:bg-blue-900/10">
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-blue-700 dark:text-blue-300">Important Note</p>
+                <p className="mt-1 text-sm text-blue-800 dark:text-blue-200">{paymentSettings.bkash.note}</p>
+              </div>
+            )}
+
             <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
               <div className="rounded-lg border border-gray-200 bg-gray-50 p-2.5 dark:border-gray-700 dark:bg-gray-800">
                 <p className="text-gray-500 dark:text-gray-400">Order ID</p>
@@ -1281,6 +1288,13 @@ const ProductDetails = () => {
                 </button>
               </div>
             </div>
+
+            {paymentSettings?.nogod?.note && (
+              <div className="mt-3 rounded-lg border border-blue-200 bg-blue-50 p-3 dark:border-blue-900/30 dark:bg-blue-900/10">
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-blue-700 dark:text-blue-300">Important Note</p>
+                <p className="mt-1 text-sm text-blue-800 dark:text-blue-200">{paymentSettings.nogod.note}</p>
+              </div>
+            )}
 
             <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
               <div className="rounded-lg border border-gray-200 bg-gray-50 p-2.5 dark:border-gray-700 dark:bg-gray-800">

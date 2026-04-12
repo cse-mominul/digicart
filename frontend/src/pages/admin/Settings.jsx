@@ -11,6 +11,13 @@ const resolveTab = (rawTab) => {
   return validTabs.has(value) ? value : 'delivery';
 };
 
+const defaultPaymentMethodState = {
+  bkash: { enabled: true, number: '', note: '' },
+  nogod: { enabled: true, number: '', note: '' },
+  cod: { enabled: true },
+  card: { enabled: false },
+};
+
 const Settings = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState(resolveTab(searchParams.get('tab')));
@@ -38,12 +45,7 @@ const Settings = () => {
   const [editingCustomer, setEditingCustomer] = useState(null);
   const [customerEditForm, setCustomerEditForm] = useState({ name: '', email: '', phone: '' });
   const [savingCustomer, setSavingCustomer] = useState(false);
-  const [paymentMethods, setPaymentMethods] = useState({
-    bkash: { enabled: true, number: '', note: '' },
-    nogod: { enabled: true, number: '', note: '' },
-    cod: { enabled: true },
-    card: { enabled: false },
-  });
+  const [paymentMethods, setPaymentMethods] = useState(defaultPaymentMethodState);
   const [newPaymentMethod, setNewPaymentMethod] = useState({ name: '', enabled: true });
   const [showAddPaymentMethod, setShowAddPaymentMethod] = useState(false);
 
@@ -360,6 +362,19 @@ const Settings = () => {
     }));
   };
 
+  const handleResetPaymentMethod = (methodKey) => {
+    const defaults = defaultPaymentMethodState[methodKey] || { enabled: false };
+
+    if (!window.confirm(`Reset ${methodKey} payment settings?`)) {
+      return;
+    }
+
+    setPaymentMethods((prev) => ({
+      ...prev,
+      [methodKey]: { ...defaults },
+    }));
+  };
+
   const handleAddPaymentMethod = async () => {
     const methodName = newPaymentMethod.name?.trim().toLowerCase();
     
@@ -672,6 +687,7 @@ const Settings = () => {
                       <th className="px-4 py-3 text-left font-semibold">Status</th>
                       <th className="px-4 py-3 text-left font-semibold">Number</th>
                       <th className="px-4 py-3 text-left font-semibold">Note</th>
+                      <th className="px-4 py-3 text-left font-semibold">Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -735,6 +751,15 @@ const Settings = () => {
                               <span className="text-gray-500">No note required</span>
                             )}
                           </td>
+                          <td className="px-4 py-4 align-top">
+                            <button
+                              type="button"
+                              onClick={() => handleResetPaymentMethod(method.key)}
+                              className="rounded-lg bg-gray-700 px-3 py-2 text-xs font-medium text-gray-100 hover:bg-gray-600 transition-colors"
+                            >
+                              Reset
+                            </button>
+                          </td>
                         </tr>
                       );
                     })}
@@ -770,6 +795,15 @@ const Settings = () => {
                           </td>
                           <td className="px-4 py-4 align-top text-gray-500">No number required</td>
                           <td className="px-4 py-4 align-top text-gray-500">No note required</td>
+                          <td className="px-4 py-4 align-top">
+                            <button
+                              type="button"
+                              onClick={() => handleResetPaymentMethod(key)}
+                              className="rounded-lg bg-gray-700 px-3 py-2 text-xs font-medium text-gray-100 hover:bg-gray-600 transition-colors"
+                            >
+                              Reset
+                            </button>
+                          </td>
                         </tr>
                       ))}
                   </tbody>
