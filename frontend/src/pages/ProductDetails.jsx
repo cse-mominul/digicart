@@ -172,6 +172,17 @@ const ProductDetails = () => {
   }, [deliveryArea, deliverySettings]);
 
   useEffect(() => {
+    // Validate selected payment method is still enabled
+    if (!paymentSettings[paymentMethod]?.enabled) {
+      // Find first enabled payment method
+      const enabledMethod = paymentMethodOptions.find(
+        method => paymentSettings[method.id]?.enabled === true
+      );
+      setPaymentMethod(enabledMethod?.id || 'cod');
+    }
+  }, [paymentSettings]);
+
+  useEffect(() => {
     if (!user) {
       setSavedAddresses([]);
       setSelectedAddressId('');
@@ -1104,7 +1115,9 @@ const ProductDetails = () => {
             <div className="rounded-2xl border border-slate-200 bg-white p-4 space-y-3 dark:border-white/10 dark:bg-white/5">
               <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">Payment Method</p>
 
-              {paymentMethodOptions.map((method) => (
+              {paymentMethodOptions
+                .filter(method => paymentSettings[method.id]?.enabled === true)
+                .map((method) => (
                 <label
                   key={method.id}
                   className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-3 py-2 cursor-pointer hover:border-pink-400/40 transition-colors dark:border-white/10 dark:bg-white/5"

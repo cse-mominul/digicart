@@ -39,8 +39,8 @@ const Settings = () => {
   const [customerEditForm, setCustomerEditForm] = useState({ name: '', email: '', phone: '' });
   const [savingCustomer, setSavingCustomer] = useState(false);
   const [paymentMethods, setPaymentMethods] = useState({
-    bkash: { enabled: true, number: '' },
-    nogod: { enabled: true, number: '' },
+    bkash: { enabled: true, number: '', note: '' },
+    nogod: { enabled: true, number: '', note: '' },
     cod: { enabled: true },
     card: { enabled: false },
   });
@@ -350,6 +350,16 @@ const Settings = () => {
     }));
   };
 
+  const handleUpdatePaymentNote = (methodKey, note) => {
+    setPaymentMethods((prev) => ({
+      ...prev,
+      [methodKey]: {
+        ...prev[methodKey],
+        note,
+      },
+    }));
+  };
+
   const handleAddPaymentMethod = async () => {
     const methodName = newPaymentMethod.name?.trim().toLowerCase();
     
@@ -653,142 +663,117 @@ const Settings = () => {
             <form onSubmit={handleSavePaymentSettings} className="space-y-6">
               <p className="text-sm text-gray-400">Configure payment methods and their credentials.</p>
 
-              <div className="space-y-4">
-                {/* bKash Payment Method */}
-                <div className="border border-gray-700 rounded-xl p-4 bg-gray-800/50">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-3">
-                      <h3 className="text-lg font-semibold text-gray-100">bKash</h3>
-                      <span className="px-2 py-1 text-xs rounded-full bg-pink-500/20 text-pink-300">Mobile Payment</span>
-                    </div>
-                    <label className="flex items-center cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={paymentMethods.bkash?.enabled || false}
-                        onChange={() => handleTogglePaymentMethod('bkash')}
-                        className="w-4 h-4 rounded border-gray-600 accent-pink-500"
-                      />
-                      <span className="ml-2 text-sm text-gray-300">
-                        {paymentMethods.bkash?.enabled ? 'Enabled' : 'Disabled'}
-                      </span>
-                    </label>
-                  </div>
-                  {paymentMethods.bkash?.enabled && (
-                    <div>
-                      <label className="block text-sm text-gray-300 mb-2">bKash Number</label>
-                      <input
-                        type="text"
-                        placeholder="01XXXXXXXXX"
-                        value={paymentMethods.bkash?.number || ''}
-                        onChange={(e) => handleUpdatePaymentNumber('bkash', e.target.value)}
-                        className="w-full rounded-lg border border-gray-700 bg-gray-700 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
-                      />
-                    </div>
-                  )}
-                </div>
+              <div className="overflow-x-auto rounded-2xl border border-gray-700 bg-gray-800/50">
+                <table className="w-full min-w-[920px] text-sm">
+                  <thead className="bg-gray-800 text-gray-300">
+                    <tr>
+                      <th className="px-4 py-3 text-left font-semibold">Method</th>
+                      <th className="px-4 py-3 text-left font-semibold">Type</th>
+                      <th className="px-4 py-3 text-left font-semibold">Status</th>
+                      <th className="px-4 py-3 text-left font-semibold">Number</th>
+                      <th className="px-4 py-3 text-left font-semibold">Note</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      { key: 'bkash', label: 'bKash', type: 'Mobile Payment', accent: 'pink' },
+                      { key: 'nogod', label: 'Nagad', type: 'Mobile Payment', accent: 'orange' },
+                      { key: 'cod', label: 'Cash on Delivery', type: 'Cash', accent: 'slate' },
+                      { key: 'card', label: 'Credit/Debit Card', type: 'Card', accent: 'purple' },
+                    ].map((method) => {
+                      const methodData = paymentMethods[method.key] || {};
+                      return (
+                        <tr key={method.key} className="border-t border-gray-700 hover:bg-gray-800/70 transition-colors">
+                          <td className="px-4 py-4 align-top">
+                            <div className="flex items-center gap-3">
+                              <div className={`h-10 w-10 rounded-xl bg-${method.accent}-500/15 flex items-center justify-center text-${method.accent}-300 font-bold`}>
+                                {method.label.slice(0, 1)}
+                              </div>
+                              <div>
+                                <p className="font-semibold text-gray-100">{method.label}</p>
+                                <p className="text-xs text-gray-400">{method.key}</p>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-4 py-4 align-top text-gray-300">{method.type}</td>
+                          <td className="px-4 py-4 align-top">
+                            <label className="inline-flex items-center gap-2 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={Boolean(methodData.enabled)}
+                                onChange={() => handleTogglePaymentMethod(method.key)}
+                                className="h-4 w-4 rounded border-gray-600 accent-pink-500"
+                              />
+                              <span className="text-sm text-gray-300">
+                                {methodData.enabled ? 'Enabled' : 'Disabled'}
+                              </span>
+                            </label>
+                          </td>
+                          <td className="px-4 py-4 align-top">
+                            {method.key === 'bkash' || method.key === 'nogod' ? (
+                              <input
+                                type="text"
+                                placeholder="01XXXXXXXXX"
+                                value={methodData.number || ''}
+                                onChange={(e) => handleUpdatePaymentNumber(method.key, e.target.value)}
+                                className="w-full rounded-lg border border-gray-700 bg-gray-700 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                              />
+                            ) : (
+                              <span className="text-gray-500">No number required</span>
+                            )}
+                          </td>
+                          <td className="px-4 py-4 align-top">
+                            {method.key === 'bkash' || method.key === 'nogod' ? (
+                              <textarea
+                                rows="2"
+                                placeholder="e.g., Send Money / Cash Out"
+                                value={methodData.note || ''}
+                                onChange={(e) => handleUpdatePaymentNote(method.key, e.target.value)}
+                                className="w-full rounded-lg border border-gray-700 bg-gray-700 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500 resize-none"
+                              />
+                            ) : (
+                              <span className="text-gray-500">No note required</span>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
 
-                {/* Nogod Payment Method */}
-                <div className="border border-gray-700 rounded-xl p-4 bg-gray-800/50">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-3">
-                      <h3 className="text-lg font-semibold text-gray-100">Nagad</h3>
-                      <span className="px-2 py-1 text-xs rounded-full bg-orange-500/20 text-orange-300">Mobile Payment</span>
-                    </div>
-                    <label className="flex items-center cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={paymentMethods.nogod?.enabled || false}
-                        onChange={() => handleTogglePaymentMethod('nogod')}
-                        className="w-4 h-4 rounded border-gray-600 accent-pink-500"
-                      />
-                      <span className="ml-2 text-sm text-gray-300">
-                        {paymentMethods.nogod?.enabled ? 'Enabled' : 'Disabled'}
-                      </span>
-                    </label>
-                  </div>
-                  {paymentMethods.nogod?.enabled && (
-                    <div>
-                      <label className="block text-sm text-gray-300 mb-2">Nagad Number</label>
-                      <input
-                        type="text"
-                        placeholder="01XXXXXXXXX"
-                        value={paymentMethods.nogod?.number || ''}
-                        onChange={(e) => handleUpdatePaymentNumber('nogod', e.target.value)}
-                        className="w-full rounded-lg border border-gray-700 bg-gray-700 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
-                      />
-                    </div>
-                  )}
-                </div>
-
-                {/* Cash on Delivery */}
-                <div className="border border-gray-700 rounded-xl p-4 bg-gray-800/50">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <h3 className="text-lg font-semibold text-gray-100">Cash on Delivery</h3>
-                      <span className="px-2 py-1 text-xs rounded-full bg-slate-500/20 text-slate-300">Cash</span>
-                    </div>
-                    <label className="flex items-center cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={paymentMethods.cod?.enabled || false}
-                        onChange={() => handleTogglePaymentMethod('cod')}
-                        className="w-4 h-4 rounded border-gray-600 accent-pink-500"
-                      />
-                      <span className="ml-2 text-sm text-gray-300">
-                        {paymentMethods.cod?.enabled ? 'Enabled' : 'Disabled'}
-                      </span>
-                    </label>
-                  </div>
-                </div>
-
-                {/* Card Payment */}
-                <div className="border border-gray-700 rounded-xl p-4 bg-gray-800/50">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <h3 className="text-lg font-semibold text-gray-100">Credit/Debit Card</h3>
-                      <span className="px-2 py-1 text-xs rounded-full bg-purple-500/20 text-purple-300">Card</span>
-                    </div>
-                    <label className="flex items-center cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={paymentMethods.card?.enabled || false}
-                        onChange={() => handleTogglePaymentMethod('card')}
-                        className="w-4 h-4 rounded border-gray-600 accent-pink-500"
-                      />
-                      <span className="ml-2 text-sm text-gray-300">
-                        {paymentMethods.card?.enabled ? 'Enabled' : 'Disabled'}
-                      </span>
-                    </label>
-                  </div>
-                </div>
-
-                {/* Additional Payment Methods */}
-                {Object.entries(paymentMethods).map(([key, method]) => {
-                  if (!['bkash', 'nogod', 'cod', 'card'].includes(key)) {
-                    return (
-                      <div key={key} className="border border-gray-700 rounded-xl p-4 bg-gray-800/50">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <h3 className="text-lg font-semibold text-gray-100 capitalize">{key}</h3>
-                            <span className="px-2 py-1 text-xs rounded-full bg-blue-500/20 text-blue-300">Custom</span>
-                          </div>
-                          <label className="flex items-center cursor-pointer">
-                            <input
-                              type="checkbox"
-                              checked={method?.enabled || false}
-                              onChange={() => handleTogglePaymentMethod(key)}
-                              className="w-4 h-4 rounded border-gray-600 accent-pink-500"
-                            />
-                            <span className="ml-2 text-sm text-gray-300">
-                              {method?.enabled ? 'Enabled' : 'Disabled'}
-                            </span>
-                          </label>
-                        </div>
-                      </div>
-                    );
-                  }
-                  return null;
-                })}
+                    {Object.entries(paymentMethods)
+                      .filter(([key]) => !['bkash', 'nogod', 'cod', 'card'].includes(key))
+                      .map(([key, method]) => (
+                        <tr key={key} className="border-t border-gray-700 hover:bg-gray-800/70 transition-colors">
+                          <td className="px-4 py-4 align-top">
+                            <div className="flex items-center gap-3">
+                              <div className="h-10 w-10 rounded-xl bg-blue-500/15 flex items-center justify-center text-blue-300 font-bold">
+                                {String(key).slice(0, 1).toUpperCase()}
+                              </div>
+                              <div>
+                                <p className="font-semibold text-gray-100 capitalize">{key}</p>
+                                <p className="text-xs text-gray-400">Custom</p>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-4 py-4 align-top text-gray-300">Custom</td>
+                          <td className="px-4 py-4 align-top">
+                            <label className="inline-flex items-center gap-2 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={Boolean(method?.enabled)}
+                                onChange={() => handleTogglePaymentMethod(key)}
+                                className="h-4 w-4 rounded border-gray-600 accent-pink-500"
+                              />
+                              <span className="text-sm text-gray-300">
+                                {method?.enabled ? 'Enabled' : 'Disabled'}
+                              </span>
+                            </label>
+                          </td>
+                          <td className="px-4 py-4 align-top text-gray-500">No number required</td>
+                          <td className="px-4 py-4 align-top text-gray-500">No note required</td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
               </div>
 
               {/* Add New Payment Method */}

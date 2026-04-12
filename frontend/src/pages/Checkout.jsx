@@ -14,7 +14,7 @@ const shippingMethods = [
   { id: 'outside-dhaka', label: 'Outside Dhaka ৳১২০', cost: 120 },
 ];
 
-const paymentMethods = [
+const paymentMethodOptions = [
   { id: 'cod', label: 'Cash on Delivery' },
   { id: 'bkash', label: 'Bkash' },
   { id: 'card', label: 'Card' },
@@ -44,6 +44,12 @@ const Checkout = () => {
   const [placingOrder, setPlacingOrder] = useState(false);
   const [savedAddresses, setSavedAddresses] = useState([]);
   const [selectedAddressId, setSelectedAddressId] = useState('');
+  const [paymentSettings, setPaymentSettings] = useState({
+    bkash: { enabled: true, number: '' },
+    nogod: { enabled: true, number: '' },
+    cod: { enabled: true },
+    card: { enabled: false },
+  });
 
   // Load saved addresses when user is logged in
   useEffect(() => {
@@ -66,6 +72,21 @@ const Checkout = () => {
   }, [user]);
 
   useEffect(() => {
+    const fetchPaymentSettings = async () => {
+      try {
+        const { data } = await API.get('/settings/payment');
+        if (data?.paymentMethods) {
+          setPaymentSettings(data.paymentMethods);
+        }
+      } catch (error) {
+        console.error('Failed to fetch payment settings:', error);
+      }
+    };
+
+    fetchPaymentSettings();
+  }, []);
+
+  useEffect(() => {
     const fetchActiveCoupons = async () => {
       try {
         const { data } = await API.get('/coupons/active');
@@ -77,6 +98,17 @@ const Checkout = () => {
 
     fetchActiveCoupons();
   }, []);
+
+  useEffect(() => {
+    // Validate selected payment method is still enabled
+    if (!paymentSettings[paymentMethod]?.enabled) {
+      // Find first enabled payment method
+      const enabledMethod = paymentMethodOptions.find(
+        method => paymentSettings[method.id]?.enabled === true
+      );
+      setPaymentMethod(enabledMethod?.id || 'cod');
+    }
+  }, [paymentSettings]);
 
   // Handle address selection
   const handleAddressSelect = (e) => {
@@ -395,7 +427,9 @@ const Checkout = () => {
           <div className="mb-5">
             <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Payment Method</p>
             <div className="space-y-2">
-              {paymentMethods.map((method) => (
+              {paymentMethodOptions
+                .filter(method => paymentSettings[method.id]?.enabled === true)
+                .map((method) => (
                 <label key={method.id} className="flex items-center gap-2 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 cursor-pointer">
                   <input
                     type="radio"
