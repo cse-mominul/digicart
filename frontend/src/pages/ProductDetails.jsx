@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import API from '../api/axios';
 import toast from 'react-hot-toast';
 import { formatPrice } from '../utils/formatPrice';
+import { showOrderSuccess } from '../utils/showOrderSuccess';
 import { useAuth } from '../context/AuthContext';
 
 const ADDRESS_STORAGE_KEY = 'digicart_saved_addresses';
@@ -16,7 +17,6 @@ const ProductDetails = () => {
   const [activeTab, setActiveTab] = useState('description');
   const [loading, setLoading] = useState(true);
   const [placingOrder, setPlacingOrder] = useState(false);
-  const [orderSuccess, setOrderSuccess] = useState(false);
   const [reviewsLoading, setReviewsLoading] = useState(true);
   const [reviewsState, setReviewsState] = useState({
     reviews: [],
@@ -431,11 +431,8 @@ const ProductDetails = () => {
           address: payload.fullAddress,
         },
       });
-
-      setOrderSuccess(true);
-      toast.success('Order confirmed successfully');
       setForm({ fullName: '', phone: '', fullAddress: '' });
-      orderFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      await showOrderSuccess(navigate);
     } catch (error) {
       if (error.response?.status === 401) {
         toast.error('Please login first to place an order');
@@ -831,12 +828,6 @@ const ProductDetails = () => {
         <aside ref={orderFormRef} className="lg:col-span-2 h-fit rounded-[22px] border border-white/70 bg-white/80 p-4 shadow-[0_24px_80px_rgba(15,23,42,0.08)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 lg:sticky lg:top-24">
           <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-1">Order Now</h2>
           <p className="text-sm text-slate-500 dark:text-slate-400 mb-5">Fill out the form and confirm your order instantly.</p>
-
-          {orderSuccess && (
-            <div className="mb-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-300">
-              Success! Your order has been placed.
-            </div>
-          )}
 
           <form onSubmit={handleConfirmOrder} className="space-y-4">
             {user && (
