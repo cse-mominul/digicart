@@ -18,7 +18,32 @@ const defaultPaymentMethodLabels = {
   cod: 'Cash on Delivery',
   bkash: 'Bkash',
   nogod: 'Nagad',
+  nagad: 'Nagad',
+  upay: 'Upay',
   card: 'Card',
+};
+
+const paymentMethodThemes = {
+  bkash: {
+    card: 'border-pink-200 bg-pink-50 dark:border-pink-900/30 dark:bg-pink-900/10',
+    text: 'text-pink-700 dark:text-pink-300',
+    button: 'bg-pink-600 hover:bg-pink-700',
+  },
+  nogod: {
+    card: 'border-orange-200 bg-orange-50 dark:border-orange-900/30 dark:bg-orange-900/10',
+    text: 'text-orange-700 dark:text-orange-300',
+    button: 'bg-orange-600 hover:bg-orange-700',
+  },
+  nagad: {
+    card: 'border-orange-200 bg-orange-50 dark:border-orange-900/30 dark:bg-orange-900/10',
+    text: 'text-orange-700 dark:text-orange-300',
+    button: 'bg-orange-600 hover:bg-orange-700',
+  },
+  upay: {
+    card: 'border-purple-200 bg-purple-50 dark:border-purple-900/30 dark:bg-purple-900/10',
+    text: 'text-purple-700 dark:text-purple-300',
+    button: 'bg-purple-600 hover:bg-purple-700',
+  },
 };
 
 const Checkout = () => {
@@ -43,6 +68,11 @@ const Checkout = () => {
   const [shippingMethod, setShippingMethod] = useState('inside-dhaka');
   const [paymentMethod, setPaymentMethod] = useState('cod');
   const [placingOrder, setPlacingOrder] = useState(false);
+  const [paymentModalOpen, setPaymentModalOpen] = useState(false);
+  const [pendingPaymentOrder, setPendingPaymentOrder] = useState(null);
+  const [mobileTrxId, setMobileTrxId] = useState('');
+  const [mobileSenderNumber, setMobileSenderNumber] = useState('');
+  const [submittingMobileTrx, setSubmittingMobileTrx] = useState(false);
   const [savedAddresses, setSavedAddresses] = useState([]);
   const [selectedAddressId, setSelectedAddressId] = useState('');
   const [paymentSettings, setPaymentSettings] = useState({
@@ -67,6 +97,26 @@ const Checkout = () => {
         return left.label.localeCompare(right.label);
       });
   }, [paymentSettings]);
+
+  const resolvePaymentMethodConfig = (methodId) => {
+    const normalized = String(methodId || '').trim().toLowerCase();
+    if (!normalized) return null;
+
+    if (paymentSettings?.[normalized]) {
+      return paymentSettings[normalized];
+    }
+
+    // Handle common alias mismatch between nagad/nogod keys from settings.
+    if (normalized === 'nagad' && paymentSettings?.nogod) {
+      return paymentSettings.nogod;
+    }
+
+    if (normalized === 'nogod' && paymentSettings?.nagad) {
+      return paymentSettings.nagad;
+    }
+
+    return null;
+  };
 
   // Load saved addresses when user is logged in
   useEffect(() => {
@@ -118,7 +168,7 @@ const Checkout = () => {
 
   useEffect(() => {
     // Validate selected payment method is still enabled
-    if (!paymentSettings[paymentMethod]?.enabled) {
+    if (!resolvePaymentMethodConfig(paymentMethod)?.enabled) {
       // Find first enabled payment method
       const enabledMethod = availablePaymentMethods[0];
       setPaymentMethod(enabledMethod?.id || 'cod');
@@ -207,7 +257,7 @@ const Checkout = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    if (e?.preventDefault) e.preventDefault();
 
     if (cartItems.length === 0) {
       toast.error('Your cart is empty');
@@ -226,7 +276,7 @@ const Checkout = () => {
         quantity,
       }));
 
-      await API.post('/orders', {
+      const { data } = await API.post('/orders', {
         items: orderItems,
         totalAmount: finalTotal,
         shippingAddress: {
@@ -245,12 +295,87 @@ const Checkout = () => {
         },
       });
 
+      const selectedPaymentConfig = resolvePaymentMethodConfig(paymentMethod) || {};
+      const normalizedMethod = String(paymentMethod || '').trim().toLowerCase();
+      const isMobileBankingMethod =
+        ['bkash', 'nogod', 'nagad', 'upay'].includes(normalizedMethod) ||
+        String(selectedPaymentConfig?.type || '').toLowerCase() === 'mobile_banking';
+
+      if (isMobileBankingMethod) {
+        if (data?._id) {
+          setPendingPaymentOrder({
+            orderId: data._id,
+            totalAmount: Number(data?.totalAmount) || finalTotal,
+            methodId: normalizedMethod,
+            methodLabel:
+              defaultPaymentMethodLabels[normalizedMethod] ||
+              String(normalizedMethod).replace(/[_-]+/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase()),
+          });
+          setMobileTrxId('');
+          setMobileSenderNumber('');
+          setPaymentModalOpen(true);
+          return;
+        }
+      }
+
       clearCart();
       await showOrderSuccess(navigate);
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to place order');
     } finally {
       setPlacingOrder(false);
+    }
+  };
+
+  const handleCopyMobileNumber = async () => {
+    const number = String(resolvePaymentMethodConfig(pendingPaymentOrder?.methodId)?.number || '').trim();
+    if (!number) {
+      toast.error('Payment number not configured');
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(number);
+      toast.success('Number copied');
+    } catch {
+      toast.error('Failed to copy number');
+    }
+  };
+
+  const handleSubmitMobileTrx = async (event) => {
+    event.preventDefault();
+
+    if (!pendingPaymentOrder?.orderId) {
+      toast.error('Order not found for transaction submission');
+      return;
+    }
+
+    if (!mobileTrxId.trim()) {
+      toast.error('Please enter transaction ID');
+      return;
+    }
+
+    if (!mobileSenderNumber.trim()) {
+      toast.error('Please enter sender number');
+      return;
+    }
+
+    setSubmittingMobileTrx(true);
+    try {
+      const { data } = await API.put(`/orders/${pendingPaymentOrder.orderId}/transaction`, {
+        trxId: mobileTrxId.trim(),
+        senderNumber: mobileSenderNumber.trim(),
+      });
+
+      toast.success(data?.message || 'Transaction submitted');
+      setPaymentModalOpen(false);
+      setPendingPaymentOrder(null);
+      clearCart();
+      await showOrderSuccess(navigate);
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to submit transaction');
+    } finally {
+      setSubmittingMobileTrx(false);
     }
   };
 
@@ -271,8 +396,14 @@ const Checkout = () => {
     );
   }
 
+  const currentTheme = paymentMethodThemes[pendingPaymentOrder?.methodId] || {
+    card: 'border-indigo-200 bg-indigo-50 dark:border-indigo-900/30 dark:bg-indigo-900/10',
+    text: 'text-indigo-700 dark:text-indigo-300',
+    button: 'bg-indigo-600 hover:bg-indigo-700',
+  };
+
   return (
-    <form onSubmit={handleSubmit} className="max-w-7xl mx-auto px-4 py-6 sm:py-8">
+    <div className="max-w-7xl mx-auto px-4 py-6 sm:py-8">
       <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">Checkout</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -482,7 +613,8 @@ const Checkout = () => {
           </div>
 
           <button
-            type="submit"
+            type="button"
+            onClick={handleSubmit}
             disabled={placingOrder}
             className="w-full bg-pink-500 text-white py-3.5 rounded-xl font-bold tracking-wide hover:bg-pink-600 transition-colors disabled:opacity-60"
           >
@@ -490,7 +622,95 @@ const Checkout = () => {
           </button>
         </aside>
       </div>
-    </form>
+
+      {paymentModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+          <div className="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-5 shadow-xl dark:border-gray-700 dark:bg-gray-900">
+            <div className="mb-4 flex items-start justify-between gap-3">
+              <div>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white">{pendingPaymentOrder?.methodLabel || 'Mobile Banking'} Payment</h3>
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Copy the number and submit TrxID to complete order.</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setPaymentModalOpen(false);
+                  setPendingPaymentOrder(null);
+                }}
+                className="rounded-md bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200"
+              >
+                Close
+              </button>
+            </div>
+
+            <div className={`rounded-xl border p-3 ${currentTheme.card}`}>
+              <p className={`text-[11px] uppercase tracking-wide ${currentTheme.text}`}>Payment Number</p>
+              <div className="mt-2 flex items-center justify-between gap-2">
+                <p className={`text-base font-black ${currentTheme.text}`}>{String(resolvePaymentMethodConfig(pendingPaymentOrder?.methodId)?.number || 'N/A')}</p>
+                <button
+                  type="button"
+                  onClick={handleCopyMobileNumber}
+                  className={`rounded-md px-2.5 py-1.5 text-xs font-semibold text-white disabled:opacity-60 ${currentTheme.button}`}
+                  disabled={!String(resolvePaymentMethodConfig(pendingPaymentOrder?.methodId)?.number || '').trim()}
+                >
+                  Copy
+                </button>
+              </div>
+            </div>
+
+            {resolvePaymentMethodConfig(pendingPaymentOrder?.methodId)?.note && (
+              <div className="mt-3 rounded-lg border border-blue-200 bg-blue-50 p-3 dark:border-blue-900/30 dark:bg-blue-900/10">
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-blue-700 dark:text-blue-300">Important Note</p>
+                <p className="mt-1 text-sm text-blue-800 dark:text-blue-200">{String(resolvePaymentMethodConfig(pendingPaymentOrder?.methodId)?.note || '')}</p>
+              </div>
+            )}
+
+            <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
+              <div className="rounded-lg border border-gray-200 bg-gray-50 p-2.5 dark:border-gray-700 dark:bg-gray-800">
+                <p className="text-gray-500 dark:text-gray-400">Order ID</p>
+                <p className="mt-1 font-mono font-semibold text-gray-800 dark:text-gray-100 break-all">{pendingPaymentOrder?.orderId || 'N/A'}</p>
+              </div>
+              <div className="rounded-lg border border-gray-200 bg-gray-50 p-2.5 dark:border-gray-700 dark:bg-gray-800">
+                <p className="text-gray-500 dark:text-gray-400">Amount</p>
+                <p className="mt-1 font-bold text-indigo-600 dark:text-indigo-300">{formatPrice(Number(pendingPaymentOrder?.totalAmount) || 0)}</p>
+              </div>
+            </div>
+
+            <form onSubmit={handleSubmitMobileTrx} className="mt-4 space-y-3">
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Sender Number</label>
+                <input
+                  type="text"
+                  value={mobileSenderNumber}
+                  onChange={(event) => setMobileSenderNumber(event.target.value)}
+                  placeholder="Enter number used to send money"
+                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+                />
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Transaction ID (TrxID)</label>
+                <input
+                  type="text"
+                  value={mobileTrxId}
+                  onChange={(event) => setMobileTrxId(event.target.value)}
+                  placeholder="Enter your transaction ID"
+                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={submittingMobileTrx}
+                className="w-full rounded-lg bg-emerald-600 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-60"
+              >
+                {submittingMobileTrx ? 'Submitting...' : 'Submit TrxID'}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 
