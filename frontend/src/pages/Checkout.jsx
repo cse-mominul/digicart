@@ -14,11 +14,12 @@ const shippingMethods = [
   { id: 'outside-dhaka', label: 'Outside Dhaka ৳১২০', cost: 120 },
 ];
 
-const paymentMethodOptions = [
-  { id: 'cod', label: 'Cash on Delivery' },
-  { id: 'bkash', label: 'Bkash' },
-  { id: 'card', label: 'Card' },
-];
+const defaultPaymentMethodLabels = {
+  cod: 'Cash on Delivery',
+  bkash: 'Bkash',
+  nogod: 'Nagad',
+  card: 'Card',
+};
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -45,11 +46,22 @@ const Checkout = () => {
   const [savedAddresses, setSavedAddresses] = useState([]);
   const [selectedAddressId, setSelectedAddressId] = useState('');
   const [paymentSettings, setPaymentSettings] = useState({
-    bkash: { enabled: true, number: '' },
-    nogod: { enabled: true, number: '' },
+    bkash: { enabled: true, number: '', note: '' },
+    nogod: { enabled: true, number: '', note: '' },
     cod: { enabled: true },
     card: { enabled: false },
   });
+
+  const availablePaymentMethods = useMemo(() => {
+    return Object.entries(paymentSettings)
+      .filter(([, method]) => Boolean(method?.enabled))
+      .map(([id, method]) => ({
+        id,
+        label: defaultPaymentMethodLabels[id] || String(id).replace(/[_-]+/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase()),
+        type: method?.type || 'other',
+        note: method?.note || '',
+      }));
+  }, [paymentSettings]);
 
   // Load saved addresses when user is logged in
   useEffect(() => {
@@ -103,12 +115,10 @@ const Checkout = () => {
     // Validate selected payment method is still enabled
     if (!paymentSettings[paymentMethod]?.enabled) {
       // Find first enabled payment method
-      const enabledMethod = paymentMethodOptions.find(
-        method => paymentSettings[method.id]?.enabled === true
-      );
+      const enabledMethod = availablePaymentMethods[0];
       setPaymentMethod(enabledMethod?.id || 'cod');
     }
-  }, [paymentSettings]);
+  }, [paymentSettings, availablePaymentMethods, paymentMethod]);
 
   // Handle address selection
   const handleAddressSelect = (e) => {
@@ -427,9 +437,7 @@ const Checkout = () => {
           <div className="mb-5">
             <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Payment Method</p>
             <div className="space-y-2">
-              {paymentMethodOptions
-                .filter(method => paymentSettings[method.id]?.enabled === true)
-                .map((method) => (
+              {availablePaymentMethods.map((method) => (
                 <label key={method.id} className="flex items-center gap-2 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 cursor-pointer">
                   <input
                     type="radio"
@@ -438,7 +446,12 @@ const Checkout = () => {
                     onChange={() => setPaymentMethod(method.id)}
                     className="accent-pink-500"
                   />
-                  <span className="text-sm text-gray-700 dark:text-gray-300">{method.label}</span>
+                  <div>
+                    <span className="block text-sm text-gray-700 dark:text-gray-300">{method.label}</span>
+                    {method.note && (
+                      <span className="block text-[11px] text-gray-500 dark:text-gray-400">{method.note}</span>
+                    )}
+                  </div>
                 </label>
               ))}
             </div>

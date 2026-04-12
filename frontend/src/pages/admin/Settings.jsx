@@ -47,7 +47,7 @@ const Settings = () => {
   const [customerEditForm, setCustomerEditForm] = useState({ name: '', email: '', phone: '' });
   const [savingCustomer, setSavingCustomer] = useState(false);
   const [paymentMethods, setPaymentMethods] = useState(defaultPaymentMethodState);
-  const [newPaymentMethod, setNewPaymentMethod] = useState({ name: '', enabled: true });
+  const [newPaymentMethod, setNewPaymentMethod] = useState({ name: '', type: 'mobile_banking', enabled: true, number: '', note: '' });
   const [showAddPaymentMethod, setShowAddPaymentMethod] = useState(false);
 
   useEffect(() => {
@@ -483,6 +483,8 @@ const Settings = () => {
 
   const handleAddPaymentMethod = async () => {
     const methodName = newPaymentMethod.name?.trim().toLowerCase();
+    const methodType = newPaymentMethod.type || 'other';
+    const requiresNumber = methodType === 'mobile_banking';
     
     if (!methodName) {
       toast.error('Payment method name is required');
@@ -494,17 +496,29 @@ const Settings = () => {
       return;
     }
 
+    if (requiresNumber && !String(newPaymentMethod.number || '').trim()) {
+      toast.error('Number is required for mobile banking methods');
+      return;
+    }
+
     setPaymentMethods((prev) => ({
       ...prev,
       [methodName]: {
         enabled: newPaymentMethod.enabled,
-        number: '',
+        type: methodType,
+        number: requiresNumber ? String(newPaymentMethod.number || '').trim() : '',
+        note: methodType === 'mobile_banking' ? String(newPaymentMethod.note || '').trim() : '',
       },
     }));
 
-    setNewPaymentMethod({ name: '', enabled: true });
+    setNewPaymentMethod({ name: '', type: 'mobile_banking', enabled: true, number: '', note: '' });
     setShowAddPaymentMethod(false);
     toast.success(`${newPaymentMethod.name} added successfully`);
+  };
+
+  const handleCloseAddPaymentMethodModal = () => {
+    setShowAddPaymentMethod(false);
+    setNewPaymentMethod({ name: '', type: 'mobile_banking', enabled: true, number: '', note: '' });
   };
 
   return (
@@ -785,53 +799,13 @@ const Settings = () => {
               <p className="text-sm text-gray-400">Configure payment methods and their credentials.</p>
 
               <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-gray-700 bg-gray-800/50 p-4">
-                {!showAddPaymentMethod ? (
-                  <button
-                    type="button"
-                    onClick={() => setShowAddPaymentMethod(true)}
-                    className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-100 rounded-lg font-medium text-sm transition"
-                  >
-                    + Add Payment Method
-                  </button>
-                ) : (
-                  <div className="flex gap-2 flex-col md:flex-row md:items-center">
-                    <div className="flex-1">
-                      <input
-                        type="text"
-                        placeholder="e.g., Stripe, PayPal"
-                        value={newPaymentMethod.name}
-                        onChange={(e) => setNewPaymentMethod((prev) => ({ ...prev, name: e.target.value }))}
-                        className="w-full rounded-lg border border-gray-700 bg-gray-700 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
-                      />
-                    </div>
-                    <label className="flex items-center gap-2 px-3">
-                      <input
-                        type="checkbox"
-                        checked={newPaymentMethod.enabled}
-                        onChange={(e) => setNewPaymentMethod((prev) => ({ ...prev, enabled: e.target.checked }))}
-                        className="w-4 h-4 rounded border-gray-600 accent-pink-500"
-                      />
-                      <span className="text-sm text-gray-300">Enable</span>
-                    </label>
-                    <button
-                      type="button"
-                      onClick={handleAddPaymentMethod}
-                      className="px-4 py-2 bg-pink-500 hover:bg-pink-600 text-white rounded-lg font-medium text-sm transition"
-                    >
-                      Add
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowAddPaymentMethod(false);
-                        setNewPaymentMethod({ name: '', enabled: true });
-                      }}
-                      className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-100 rounded-lg font-medium text-sm transition"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                )}
+                <button
+                  type="button"
+                  onClick={() => setShowAddPaymentMethod(true)}
+                  className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-100 rounded-lg font-medium text-sm transition"
+                >
+                  + Add Payment Method
+                </button>
 
                 <button
                   type="button"
@@ -943,7 +917,9 @@ const Settings = () => {
                               </div>
                             </div>
                           </td>
-                          <td className="px-4 py-4 align-top text-gray-300">Custom</td>
+                          <td className="px-4 py-4 align-top text-gray-300 capitalize">
+                            {method?.type || 'other'}
+                          </td>
                           <td className="px-4 py-4 align-top">
                             <label className="inline-flex items-center gap-2 cursor-pointer">
                               <input
@@ -957,8 +933,32 @@ const Settings = () => {
                               </span>
                             </label>
                           </td>
-                          <td className="px-4 py-4 align-top text-gray-500">No number required</td>
-                          <td className="px-4 py-4 align-top text-gray-500">No note required</td>
+                          <td className="px-4 py-4 align-top">
+                            {method?.type === 'mobile_banking' ? (
+                              <input
+                                type="text"
+                                placeholder="01XXXXXXXXX"
+                                value={method?.number || ''}
+                                onChange={(e) => handleUpdatePaymentNumber(key, e.target.value)}
+                                className="w-full rounded-lg border border-gray-700 bg-gray-700 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                              />
+                            ) : (
+                              <span className="text-gray-500">No number required</span>
+                            )}
+                          </td>
+                          <td className="px-4 py-4 align-top">
+                            {method?.type === 'mobile_banking' ? (
+                              <textarea
+                                rows="2"
+                                placeholder="e.g., Send Money / Cash Out"
+                                value={method?.note || ''}
+                                onChange={(e) => handleUpdatePaymentNote(key, e.target.value)}
+                                className="w-full rounded-lg border border-gray-700 bg-gray-700 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500 resize-none"
+                              />
+                            ) : (
+                              <span className="text-gray-500">No note required</span>
+                            )}
+                          </td>
                           <td className="px-4 py-4 align-top">
                             <button
                               type="button"
@@ -973,6 +973,106 @@ const Settings = () => {
                   </tbody>
                 </table>
               </div>
+
+              {showAddPaymentMethod && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
+                  <div className="w-full max-w-2xl rounded-2xl border border-gray-700 bg-gray-900 p-5 shadow-xl">
+                    <div className="mb-4 flex items-center justify-between gap-3">
+                      <div>
+                        <h3 className="text-lg font-bold text-white">Add Payment Method</h3>
+                        <p className="text-sm text-gray-400">Choose type first. Mobile Banking requires a number.</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleCloseAddPaymentMethodModal}
+                        className="rounded-md bg-gray-800 px-3 py-2 text-sm text-gray-200 hover:bg-gray-700"
+                      >
+                        Close
+                      </button>
+                    </div>
+
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <div>
+                        <label className="mb-2 block text-sm text-gray-300">Method Name</label>
+                        <input
+                          type="text"
+                          placeholder="e.g., Stripe, PayPal"
+                          value={newPaymentMethod.name}
+                          onChange={(e) => setNewPaymentMethod((prev) => ({ ...prev, name: e.target.value }))}
+                          className="w-full rounded-lg border border-gray-700 bg-gray-800 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="mb-2 block text-sm text-gray-300">Type</label>
+                        <select
+                          value={newPaymentMethod.type}
+                          onChange={(e) => setNewPaymentMethod((prev) => ({ ...prev, type: e.target.value }))}
+                          className="w-full rounded-lg border border-gray-700 bg-gray-800 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                        >
+                          <option value="mobile_banking">Mobile Banking</option>
+                          <option value="cash">Cash</option>
+                          <option value="card">Card</option>
+                          <option value="other">Other</option>
+                        </select>
+                      </div>
+
+                      {newPaymentMethod.type === 'mobile_banking' && (
+                        <div>
+                          <label className="mb-2 block text-sm text-gray-300">Number</label>
+                          <input
+                            type="text"
+                            placeholder="01XXXXXXXXX"
+                            value={newPaymentMethod.number}
+                            onChange={(e) => setNewPaymentMethod((prev) => ({ ...prev, number: e.target.value }))}
+                            className="w-full rounded-lg border border-gray-700 bg-gray-800 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                          />
+                        </div>
+                      )}
+
+                      {newPaymentMethod.type === 'mobile_banking' && (
+                        <div>
+                          <label className="mb-2 block text-sm text-gray-300">Note</label>
+                          <input
+                            type="text"
+                            placeholder="e.g., Send Money / Cash Out"
+                            value={newPaymentMethod.note}
+                            onChange={(e) => setNewPaymentMethod((prev) => ({ ...prev, note: e.target.value }))}
+                            className="w-full rounded-lg border border-gray-700 bg-gray-800 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                          />
+                        </div>
+                      )}
+
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          checked={newPaymentMethod.enabled}
+                          onChange={(e) => setNewPaymentMethod((prev) => ({ ...prev, enabled: e.target.checked }))}
+                          className="h-4 w-4 rounded border-gray-600 accent-pink-500"
+                        />
+                        <span className="text-sm text-gray-300">Enable</span>
+                      </div>
+                    </div>
+
+                    <div className="mt-5 flex flex-wrap justify-end gap-3">
+                      <button
+                        type="button"
+                        onClick={handleCloseAddPaymentMethodModal}
+                        className="rounded-lg bg-gray-800 px-4 py-2 text-sm font-medium text-gray-200 hover:bg-gray-700"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleAddPaymentMethod}
+                        className="rounded-lg bg-pink-500 px-4 py-2 text-sm font-medium text-white hover:bg-pink-600"
+                      >
+                        Add Method
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               <button
                 type="submit"

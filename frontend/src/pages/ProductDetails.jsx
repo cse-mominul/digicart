@@ -7,11 +7,12 @@ import { showOrderSuccess } from '../utils/showOrderSuccess';
 import { useAuth } from '../context/AuthContext';
 
 const ADDRESS_STORAGE_KEY = 'digicart_saved_addresses';
-const paymentMethodOptions = [
-  { id: 'cod', label: 'Cash on Delivery' },
-  { id: 'bkash', label: 'bKash' },
-  { id: 'nogod', label: 'Nagad' },
-];
+const defaultPaymentMethodLabels = {
+  cod: 'Cash on Delivery',
+  bkash: 'bKash',
+  nogod: 'Nagad',
+  card: 'Card',
+};
 
 const ProductDetails = () => {
   const navigate = useNavigate();
@@ -69,6 +70,17 @@ const ProductDetails = () => {
   const [addressTypeToSave, setAddressTypeToSave] = useState('Home');
   const orderFormRef = useRef(null);
   const productDetailsSectionRef = useRef(null);
+
+  const availablePaymentMethods = useMemo(() => {
+    return Object.entries(paymentSettings)
+      .filter(([, method]) => Boolean(method?.enabled))
+      .map(([id, method]) => ({
+        id,
+        label: defaultPaymentMethodLabels[id] || String(id).replace(/[_-]+/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase()),
+        type: method?.type || 'other',
+        note: method?.note || '',
+      }));
+  }, [paymentSettings]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -175,12 +187,10 @@ const ProductDetails = () => {
     // Validate selected payment method is still enabled
     if (!paymentSettings[paymentMethod]?.enabled) {
       // Find first enabled payment method
-      const enabledMethod = paymentMethodOptions.find(
-        method => paymentSettings[method.id]?.enabled === true
-      );
+      const enabledMethod = availablePaymentMethods.find((method) => method?.id);
       setPaymentMethod(enabledMethod?.id || 'cod');
     }
-  }, [paymentSettings]);
+  }, [paymentSettings, availablePaymentMethods, paymentMethod]);
 
   useEffect(() => {
     if (!user) {
@@ -1115,9 +1125,7 @@ const ProductDetails = () => {
             <div className="rounded-2xl border border-slate-200 bg-white p-4 space-y-3 dark:border-white/10 dark:bg-white/5">
               <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">Payment Method</p>
 
-              {paymentMethodOptions
-                .filter(method => paymentSettings[method.id]?.enabled === true)
-                .map((method) => (
+              {availablePaymentMethods.map((method) => (
                 <label
                   key={method.id}
                   className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-3 py-2 cursor-pointer hover:border-pink-400/40 transition-colors dark:border-white/10 dark:bg-white/5"
@@ -1130,7 +1138,12 @@ const ProductDetails = () => {
                       onChange={() => setPaymentMethod(method.id)}
                       className="accent-pink-500"
                     />
-                    <span className="text-sm text-slate-700 dark:text-slate-200">{method.label}</span>
+                    <div>
+                      <span className="block text-sm text-slate-700 dark:text-slate-200">{method.label}</span>
+                      {method.note && (
+                        <span className="block text-[11px] text-slate-500 dark:text-slate-400">{method.note}</span>
+                      )}
+                    </div>
                   </div>
                 </label>
               ))}
