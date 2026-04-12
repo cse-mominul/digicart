@@ -12,6 +12,8 @@ const defaultForm = {
   note: '',
 };
 
+const ITEMS_PER_PAGE = 8;
+
 const categoryOptions = [
   { value: 'facebook_ads', label: 'Facebook Ads' },
   { value: 'transport', label: 'Transport' },
@@ -34,6 +36,8 @@ const Expenses = () => {
   const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState('');
   const [form, setForm] = useState(defaultForm);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const fetchExpenses = async () => {
     setLoading(true);
@@ -73,6 +77,19 @@ const Expenses = () => {
     };
   }, [expenses]);
 
+  const totalPages = useMemo(() => Math.max(1, Math.ceil(expenses.length / ITEMS_PER_PAGE)), [expenses.length]);
+
+  const paginatedExpenses = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return expenses.slice(start, start + ITEMS_PER_PAGE);
+  }, [expenses, currentPage]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -100,7 +117,9 @@ const Expenses = () => {
       });
 
       setExpenses((prev) => [data, ...prev]);
+      setCurrentPage(1);
       setForm(defaultForm);
+      setShowAddModal(false);
       toast.success('Expense added successfully');
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to add expense');
@@ -141,13 +160,25 @@ const Expenses = () => {
     <section className="rounded-2xl border border-[#d5dfde] bg-[#eef2f1] p-4 shadow-sm dark:border-gray-700 dark:bg-gray-900">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-2xl font-black tracking-tight text-gray-900 dark:text-white">Expense Report</h2>
-        <button
-          type="button"
-          onClick={fetchExpenses}
-          className="rounded-full bg-[#0f8f84] px-4 py-1.5 text-xs font-bold text-white transition-colors hover:bg-[#117b72]"
-        >
-          Refresh
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              setForm(defaultForm);
+              setShowAddModal(true);
+            }}
+            className="rounded-full bg-indigo-600 px-4 py-1.5 text-xs font-bold text-white transition-colors hover:bg-indigo-500"
+          >
+            Add Expense
+          </button>
+          <button
+            type="button"
+            onClick={fetchExpenses}
+            className="rounded-full bg-[#0f8f84] px-4 py-1.5 text-xs font-bold text-white transition-colors hover:bg-[#117b72]"
+          >
+            Refresh
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-3 md:grid-cols-3 mb-4">
@@ -164,64 +195,6 @@ const Expenses = () => {
           <p className="mt-1 text-2xl font-black text-gray-900">{totals.count}</p>
         </div>
       </div>
-
-      <form onSubmit={handleSubmit} className="mb-4 rounded-xl border border-gray-300 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
-        <p className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-200">Add New Expense</p>
-
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">
-          <input
-            type="text"
-            value={form.title}
-            onChange={(event) => setForm((prev) => ({ ...prev, title: event.target.value }))}
-            placeholder="Expense title"
-            className="rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
-          />
-
-          <select
-            value={form.category}
-            onChange={(event) => setForm((prev) => ({ ...prev, category: event.target.value }))}
-            className="rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
-          >
-            {categoryOptions.map((option) => (
-              <option key={option.value} value={option.value}>{option.label}</option>
-            ))}
-          </select>
-
-          <input
-            type="number"
-            min="0"
-            step="0.01"
-            value={form.amount}
-            onChange={(event) => setForm((prev) => ({ ...prev, amount: event.target.value }))}
-            placeholder="Amount"
-            className="rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
-          />
-
-          <input
-            type="date"
-            value={form.expenseDate}
-            onChange={(event) => setForm((prev) => ({ ...prev, expenseDate: event.target.value }))}
-            className="rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
-          />
-        </div>
-
-        <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-[1fr_auto]">
-          <textarea
-            rows="2"
-            value={form.note}
-            onChange={(event) => setForm((prev) => ({ ...prev, note: event.target.value }))}
-            placeholder="Optional note (e.g., campaign details)"
-            className="rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
-          />
-          <button
-            type="submit"
-            disabled={saving}
-            className="rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {saving ? 'Saving...' : 'Add Expense'}
-          </button>
-        </div>
-      </form>
 
       <div className="overflow-x-auto rounded-xl border border-gray-300 bg-white dark:border-gray-700 dark:bg-gray-800">
         <table className="w-full text-sm">
@@ -245,7 +218,7 @@ const Expenses = () => {
                 <td colSpan={6} className="px-4 py-8 text-center text-sm text-gray-500 dark:text-gray-400">No expense entries yet.</td>
               </tr>
             ) : (
-              expenses.map((expense) => (
+              paginatedExpenses.map((expense) => (
                 <tr key={expense._id} className="border-t border-gray-200 dark:border-gray-700">
                   <td className="px-4 py-2.5 text-xs text-gray-700 dark:text-gray-300">
                     {expense.expenseDate ? new Date(expense.expenseDate).toLocaleDateString() : 'N/A'}
@@ -270,6 +243,115 @@ const Expenses = () => {
           </tbody>
         </table>
       </div>
+
+      {expenses.length > 0 && (
+        <div className="mt-4 flex flex-col items-start justify-between gap-3 border-t border-gray-300 pt-4 text-sm text-gray-600 dark:border-gray-700 dark:text-gray-300 sm:flex-row sm:items-center">
+          <p>
+            Page {currentPage} of {totalPages}
+          </p>
+
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+              disabled={currentPage === 1}
+              className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 transition-colors hover:border-indigo-500 hover:text-indigo-600 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
+            >
+              Prev
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+              disabled={currentPage === totalPages}
+              className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 transition-colors hover:border-indigo-500 hover:text-indigo-600 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      )}
+
+      {showAddModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+          <div className="w-full max-w-2xl rounded-2xl border border-gray-700 bg-gray-900 p-5 shadow-xl">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="text-lg font-bold text-white">Add New Expense</h3>
+              <button
+                type="button"
+                onClick={() => setShowAddModal(false)}
+                className="rounded-md bg-gray-800 px-3 py-1.5 text-sm text-gray-200 hover:bg-gray-700"
+              >
+                Close
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                <input
+                  type="text"
+                  value={form.title}
+                  onChange={(event) => setForm((prev) => ({ ...prev, title: event.target.value }))}
+                  placeholder="Expense title"
+                  className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2.5 text-sm text-white outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+
+                <select
+                  value={form.category}
+                  onChange={(event) => setForm((prev) => ({ ...prev, category: event.target.value }))}
+                  className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2.5 text-sm text-white outline-none focus:ring-2 focus:ring-indigo-500"
+                >
+                  {categoryOptions.map((option) => (
+                    <option key={option.value} value={option.value}>{option.label}</option>
+                  ))}
+                </select>
+
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={form.amount}
+                  onChange={(event) => setForm((prev) => ({ ...prev, amount: event.target.value }))}
+                  placeholder="Amount"
+                  className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2.5 text-sm text-white outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+
+                <input
+                  type="date"
+                  value={form.expenseDate}
+                  onChange={(event) => setForm((prev) => ({ ...prev, expenseDate: event.target.value }))}
+                  className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2.5 text-sm text-white outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+
+              <textarea
+                rows="3"
+                value={form.note}
+                onChange={(event) => setForm((prev) => ({ ...prev, note: event.target.value }))}
+                placeholder="Optional note (e.g., campaign details)"
+                className="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2.5 text-sm text-white outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+
+              <div className="flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowAddModal(false)}
+                  className="rounded-lg border border-gray-600 px-4 py-2 text-sm text-gray-300 hover:bg-gray-800"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {saving ? 'Saving...' : 'Add Expense'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </section>
   );
 };
