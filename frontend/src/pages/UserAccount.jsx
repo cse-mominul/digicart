@@ -521,6 +521,30 @@ const UserAccount = () => {
     setSelectedOrder(order);
   };
 
+  const handleViewPaymentOrderDetails = async (payment) => {
+    try {
+      const cachedOrder = orders.find((order) => String(order?._id) === String(payment?._id));
+      if (cachedOrder) {
+        setSelectedOrder(cachedOrder);
+        return;
+      }
+
+      const { data } = await API.get('/orders/myorders');
+      const matchedOrder = Array.isArray(data)
+        ? data.find((order) => String(order?._id) === String(payment?._id))
+        : null;
+
+      if (!matchedOrder) {
+        toast.error('Order details not found');
+        return;
+      }
+
+      setSelectedOrder(matchedOrder);
+    } catch {
+      toast.error('Failed to load order details');
+    }
+  };
+
   const startReviewEdit = (review) => {
     setEditingReviewId(review._id);
     setReviewDraft({
@@ -1149,9 +1173,23 @@ const UserAccount = () => {
                           const createdDate = new Date(payment.createdAt).toLocaleDateString();
 
                           return (
-                            <tr key={payment._id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                            <tr
+                              key={payment._id}
+                              role="button"
+                              tabIndex={0}
+                              onClick={() => handleViewPaymentOrderDetails(payment)}
+                              onKeyDown={(event) => {
+                                if (event.key === 'Enter' || event.key === ' ') {
+                                  event.preventDefault();
+                                  handleViewPaymentOrderDetails(payment);
+                                }
+                              }}
+                              className="cursor-pointer hover:bg-gray-50 focus:bg-gray-50 focus:outline-none dark:hover:bg-gray-800/50 dark:focus:bg-gray-800/50"
+                            >
                               <td className="px-4 py-3 font-mono text-xs text-gray-700 dark:text-gray-300">
-                                #{String(payment._id || '').slice(-8).toUpperCase()}
+                                <span className="font-semibold text-[#ff3366]">
+                                  #{String(payment._id || '').slice(-8).toUpperCase()}
+                                </span>
                               </td>
                               <td className="px-4 py-3 font-semibold text-gray-900 dark:text-gray-100">{formatPrice(payment.totalAmount)}</td>
                               <td className="px-4 py-3 text-gray-700 dark:text-gray-300">
