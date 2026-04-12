@@ -225,10 +225,35 @@ const deleteReviewByAdmin = async (req, res) => {
   }
 };
 
+
+// @desc  Delete logged-in user's review for a product
+// @route DELETE /api/products/:id/reviews/me
+const deleteMyProductReview = async (req, res) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return res.status(400).json({ message: 'Invalid product ID' });
+  }
+
+  try {
+    const deleted = await Review.findOneAndDelete({
+      product: req.params.id,
+      user: req.user._id,
+    });
+
+    if (!deleted) {
+      return res.status(404).json({ message: 'Review not found for this product' });
+    }
+
+    res.json({ message: 'Review deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   getMyReviews,
   getProductReviews,
   createOrUpdateProductReview,
+  deleteMyProductReview,
   getAllReviews,
   updateReviewByAdmin,
   deleteReviewByAdmin,

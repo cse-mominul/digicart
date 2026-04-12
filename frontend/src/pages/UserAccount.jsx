@@ -124,6 +124,13 @@ const UserAccount = () => {
   const [ordersLoading, setOrdersLoading] = useState(false);
   const [myReviews, setMyReviews] = useState([]);
   const [myReviewsLoading, setMyReviewsLoading] = useState(false);
+  const [editingReviewId, setEditingReviewId] = useState(null);
+  const [reviewActionLoading, setReviewActionLoading] = useState(false);
+  const [reviewDraft, setReviewDraft] = useState({
+    rating: 5,
+    comment: '',
+    image: '',
+  });
   const [activeOrderFilter, setActiveOrderFilter] = useState('All');
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
@@ -483,6 +490,109 @@ const UserAccount = () => {
     setSelectedOrder(order);
   };
 
+  const startReviewEdit = (review) => {
+    setEditingReviewId(review._id);
+    setReviewDraft({
+      rating: Number(review?.rating) || 5,
+      comment: String(review?.comment || ''),
+      image: String(review?.image || ''),
+    });
+  };
+
+  const cancelReviewEdit = () => {
+    setEditingReviewId(null);
+    setReviewDraft({ rating: 5, comment: '', image: '' });
+  };
+
+  const handleReviewDraftImageChange = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select a valid image file');
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error('Image size must be under 2MB');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setReviewDraft((prev) => ({ ...prev, image: String(reader.result || '') }));
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleUpdateReview = async (review) => {
+    const productId = review?.product?._id;
+    if (!productId) {
+      toast.error('Product information is missing for this review');
+      return;
+    }
+
+    if (!String(reviewDraft.comment || '').trim()) {
+      toast.error('Comment is required');
+      return;
+    }
+
+    setReviewActionLoading(true);
+    try {
+      const { data } = await API.post(`/products/${productId}/reviews`, {
+        rating: Number(reviewDraft.rating) || 5,
+        comment: String(reviewDraft.comment || '').trim(),
+        image: String(reviewDraft.image || '').trim(),
+      });
+
+      const updatedReview = data?.review || {};
+      setMyReviews((prev) =>
+        prev.map((item) =>
+          item._id === review._id
+            ? {
+              ...item,
+              ...updatedReview,
+              product: item.product,
+            }
+            : item
+        )
+      );
+
+      toast.success(data?.message || 'Review updated successfully');
+      cancelReviewEdit();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to update review');
+    } finally {
+      setReviewActionLoading(false);
+    }
+  };
+
+  const handleDeleteReview = async (review) => {
+    const productId = review?.product?._id;
+    if (!productId) {
+      toast.error('Product information is missing for this review');
+      return;
+    }
+
+    const confirmed = window.confirm('Are you sure you want to delete this review?');
+    if (!confirmed) return;
+
+    setReviewActionLoading(true);
+    try {
+      const { data } = await API.delete(`/products/${productId}/reviews/me`);
+      setMyReviews((prev) => prev.filter((item) => item._id !== review._id));
+      toast.success(data?.message || 'Review deleted successfully');
+
+      if (editingReviewId === review._id) {
+        cancelReviewEdit();
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to delete review');
+    } finally {
+      setReviewActionLoading(false);
+    }
+  };
+
   const handleNavClick = (item) => {
     if (item.id === 'logout') {
       logout();
@@ -522,6 +632,8 @@ const UserAccount = () => {
                     ? 'profile'
                     : section === 'orders'
                       ? 'orders'
+                      : section === 'reviews'
+                        ? 'reviews'
                       : section === 'wishlist'
                         ? 'wishlist'
                         : 'address';
@@ -993,20 +1105,104 @@ const UserAccount = () => {
                         </span>
                       </div>
 
-                      <p className="pt-4 text-sm leading-6 text-gray-600 dark:text-gray-300">
-                        {review?.comment || 'No comment'}
-                      </p>
+                      {editingReviewId === review._id ? (
+                        <div className="mt-4 space-y-3">
+                          <div>
+                            <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Rating</label>
+                            <select
+                              value={reviewDraft.rating}
+                              onChange={(event) => setReviewDraft((prev) => ({ ...prev, rating: Number(event.target.value) }))}
+                              className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-pink-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                            >
+                              {[5, 4, 3, 2, 1].map((value) => (
+                                <option key={value} value={value}>{value} Star{value > 1 ? 's' : ''}</option>
+                              ))}
+                            </select>
+                          </div>
 
-                      {review?.image ? (
-                        <img
-                          src={review.image}
-                          alt="Review"
-                          className="mt-3 h-24 w-24 rounded-lg border border-gray-200 object-cover dark:border-gray-700"
-                          onError={(event) => {
-                            event.currentTarget.style.display = 'none';
-                          }}
-                        />
-                      ) : null}
+                          <div>
+                            <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Comment</label>
+                            <textarea
+                              rows={4}
+                              value={reviewDraft.comment}
+                              onChange={(event) => setReviewDraft((prev) => ({ ...prev, comment: event.target.value }))}
+                              className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-pink-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Upload Image (Optional)</label>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={handleReviewDraftImageChange}
+                              className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-pink-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                            />
+                            {reviewDraft.image ? (
+                              <img
+                                src={reviewDraft.image}
+                                alt="Review preview"
+                                className="mt-2 h-24 w-24 rounded-lg border border-gray-200 object-cover dark:border-gray-700"
+                              />
+                            ) : null}
+                          </div>
+
+                          <div className="flex flex-wrap gap-2 pt-2">
+                            <button
+                              type="button"
+                              disabled={reviewActionLoading}
+                              onClick={() => handleUpdateReview(review)}
+                              className="rounded-full bg-[#ff3366] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#ff1f58] disabled:opacity-50"
+                            >
+                              {reviewActionLoading ? 'Saving...' : 'Update'}
+                            </button>
+                            <button
+                              type="button"
+                              disabled={reviewActionLoading}
+                              onClick={cancelReviewEdit}
+                              className="rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition-colors hover:border-gray-300 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          <p className="pt-4 text-sm leading-6 text-gray-600 dark:text-gray-300">
+                            {review?.comment || 'No comment'}
+                          </p>
+
+                          {review?.image ? (
+                            <img
+                              src={review.image}
+                              alt="Review"
+                              className="mt-3 h-24 w-24 rounded-lg border border-gray-200 object-cover dark:border-gray-700"
+                              onError={(event) => {
+                                event.currentTarget.style.display = 'none';
+                              }}
+                            />
+                          ) : null}
+
+                          <div className="mt-4 flex flex-wrap gap-2">
+                            <button
+                              type="button"
+                              disabled={reviewActionLoading}
+                              onClick={() => startReviewEdit(review)}
+                              className="rounded-full border border-indigo-200 bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-700 transition-colors hover:bg-indigo-100 disabled:opacity-50 dark:border-indigo-500/40 dark:bg-indigo-500/10 dark:text-indigo-300"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              type="button"
+                              disabled={reviewActionLoading}
+                              onClick={() => handleDeleteReview(review)}
+                              className="rounded-full border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 transition-colors hover:bg-red-100 disabled:opacity-50 dark:border-red-500/40 dark:bg-red-500/10 dark:text-red-300"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </>
+                      )}
                     </article>
                   ))}
 
