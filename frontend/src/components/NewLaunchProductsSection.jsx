@@ -157,7 +157,11 @@ const NewLaunchProductsSection = ({ products = [], loading = false }) => {
           </button>
         </div>
 
-        <button className="group flex w-full items-center justify-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-2 text-sm font-bold text-white shadow-sm backdrop-blur-sm transition-colors hover:border-[#ff3366] hover:text-[#ff3366] sm:w-auto">
+        <button
+          type="button"
+          onClick={() => navigate('/products')}
+          className="group flex w-full items-center justify-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-2 text-sm font-bold text-white shadow-sm backdrop-blur-sm transition-colors hover:border-[#ff3366] hover:text-[#ff3366] sm:w-auto"
+        >
           View All Products
           <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#ff3366] text-white">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 rotate-45" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 10l7-7m0 0l7 7m-7-7v18" /></svg>

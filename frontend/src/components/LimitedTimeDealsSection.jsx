@@ -120,6 +120,7 @@ const LimitedTimeDealsSection = ({ products = [], loading = false }) => {
 
           <button
             type="button"
+            onClick={() => navigate('/products')}
             className="mt-3 sm:mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#0f8f84] px-3 sm:px-4 py-1.5 sm:py-2 text-[11px] sm:text-xs font-semibold text-white transition-colors hover:bg-[#117b72] active:scale-95 sm:w-auto"
           >
             View All Products
