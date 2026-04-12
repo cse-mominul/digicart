@@ -140,14 +140,14 @@ const TopMetricCard = ({ title, value, trendText, trendUp, bgClass, onClick, cli
         onClick?.();
       }
     }}
-    className={`rounded-2xl p-4 shadow-sm ${bgClass} ${clickable ? 'cursor-pointer transition-transform hover:-translate-y-0.5' : ''}`}
+    className={`rounded-xl p-3 shadow-sm ${bgClass} ${clickable ? 'cursor-pointer transition-transform hover:-translate-y-0.5' : ''}`}
   >
-    <h3 className="text-lg sm:text-xl font-medium text-slate-700">{title}</h3>
-    <div className="mt-2.5 flex items-end gap-2">
-      <div className="text-base sm:text-lg leading-none font-semibold text-slate-900">{value}</div>
-      <span className={`mb-0.5 inline-flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-xs sm:text-sm font-semibold ${trendUp ? 'text-teal-700' : 'text-rose-700'}`}>
+    <h3 className="text-base sm:text-lg font-medium text-slate-700">{title}</h3>
+    <div className="mt-2 flex items-end gap-1.5">
+      <div className="text-sm sm:text-base leading-none font-semibold text-slate-900">{value}</div>
+      <span className={`mb-0.5 inline-flex items-center gap-1 rounded-full bg-white/90 px-2 py-0.5 text-[11px] sm:text-xs font-semibold ${trendUp ? 'text-teal-700' : 'text-rose-700'}`}>
         {trendText}
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor">
           {trendUp ? (
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M7 17l10-10M10 7h7v7" />
           ) : (
@@ -262,17 +262,17 @@ const Dashboard = () => {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">Dashboard Overview</h2>
+      <h2 className="mb-4 text-xl font-bold text-gray-800 dark:text-white">Dashboard Overview</h2>
 
       {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3.5 mb-7">
+        <div className="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {[...Array(8)].map((_, i) => (
-            <div key={i} className="h-28 rounded-2xl bg-white dark:bg-gray-800 animate-pulse" />
+            <div key={i} className="h-22 rounded-xl bg-white dark:bg-gray-800 animate-pulse" />
           ))}
         </div>
       ) : (
         <>
-          <div className="mb-7 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3.5">
+          <div className="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
             {topCards.map((card) => (
               <TopMetricCard
                 key={card.title}
@@ -303,12 +303,12 @@ const Dashboard = () => {
             ))}
           </div>
 
-          <div className="mb-8 grid grid-cols-1 xl:grid-cols-3 gap-6">
-            <div className="xl:col-span-2 bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
-              <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div className="mb-6 grid grid-cols-1 gap-4 xl:grid-cols-3">
+            <div className="xl:col-span-2 rounded-xl bg-white p-4 shadow-md dark:bg-gray-800">
+              <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Sales Trend</h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Revenue line + order volume bars (click a bar to pin values)</p>
+                  <h3 className="text-base font-semibold text-gray-800 dark:text-white">Sales Trend</h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Revenue line + order volume bars (click a bar to pin values)</p>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2">
@@ -317,7 +317,7 @@ const Dashboard = () => {
                       key={filter.key}
                       type="button"
                       onClick={() => setChartRange(filter.key)}
-                      className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
+                      className={`rounded-full border px-2.5 py-1 text-[11px] font-semibold transition-colors ${
                         chartRange === filter.key
                           ? 'border-indigo-500 bg-indigo-500 text-white'
                           : 'border-gray-200 bg-white text-gray-600 hover:border-indigo-300 hover:text-indigo-600 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:hover:border-indigo-400 dark:hover:text-indigo-300'
@@ -327,37 +327,37 @@ const Dashboard = () => {
                     </button>
                   ))}
 
-                  <div className="ml-2 flex items-center gap-4 text-xs">
+                  <div className="ml-2 flex items-center gap-3 text-[11px]">
                     <span className="inline-flex items-center gap-1 text-gray-600 dark:text-gray-300">
-                      <span className="h-2.5 w-2.5 rounded-full bg-indigo-500" /> Revenue
+                      <span className="h-2 w-2 rounded-full bg-indigo-500" /> Revenue
                     </span>
                     <span className="inline-flex items-center gap-1 text-gray-600 dark:text-gray-300">
-                      <span className="h-2.5 w-2.5 rounded-full bg-emerald-500" /> Orders
+                      <span className="h-2 w-2 rounded-full bg-emerald-500" /> Orders
                     </span>
                   </div>
                 </div>
               </div>
 
               {selectedPoint && (
-                <div className="mb-4 grid grid-cols-1 sm:grid-cols-3 gap-3 rounded-xl border border-indigo-100 bg-indigo-50/70 p-3 dark:border-indigo-500/20 dark:bg-indigo-500/10">
+                <div className="mb-3 grid grid-cols-1 gap-2 rounded-xl border border-indigo-100 bg-indigo-50/70 p-2.5 sm:grid-cols-3 dark:border-indigo-500/20 dark:bg-indigo-500/10">
                   <div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Selected Period</p>
-                    <p className="text-sm font-semibold text-gray-800 dark:text-white">{selectedPoint.label}</p>
+                    <p className="text-[11px] text-gray-500 dark:text-gray-400">Selected Period</p>
+                    <p className="text-xs font-semibold text-gray-800 dark:text-white">{selectedPoint.label}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Revenue</p>
-                    <p className="text-sm font-semibold text-indigo-600 dark:text-indigo-300">{formatPrice(selectedPoint.revenue)}</p>
+                    <p className="text-[11px] text-gray-500 dark:text-gray-400">Revenue</p>
+                    <p className="text-xs font-semibold text-indigo-600 dark:text-indigo-300">{formatPrice(selectedPoint.revenue)}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Orders</p>
-                    <p className="text-sm font-semibold text-emerald-600 dark:text-emerald-300">{selectedPoint.orders}</p>
+                    <p className="text-[11px] text-gray-500 dark:text-gray-400">Orders</p>
+                    <p className="text-xs font-semibold text-emerald-600 dark:text-emerald-300">{selectedPoint.orders}</p>
                   </div>
                 </div>
               )}
 
               <div className="overflow-x-auto">
                 <div className="min-w-[700px]">
-                  <div className="h-[230px] w-full">
+                  <div className="h-[200px] w-full">
                     <ResponsiveContainer width="100%" height="100%">
                       <ComposedChart
                         data={chartData}
@@ -397,32 +397,32 @@ const Dashboard = () => {
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
-              <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">Recent Orders</h3>
+            <div className="rounded-xl bg-white p-4 shadow-md dark:bg-gray-800">
+              <h3 className="mb-3 text-base font-semibold text-gray-800 dark:text-white">Recent Orders</h3>
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-xs">
                   <thead>
                     <tr className="text-gray-500 dark:text-gray-400 border-b dark:border-gray-700 text-left">
-                      <th className="py-2 pr-4">Order ID</th>
-                      <th className="py-2 pr-4">Customer</th>
-                      <th className="py-2 pr-4">Amount</th>
-                      <th className="py-2">Status</th>
+                      <th className="py-1.5 pr-3">Order ID</th>
+                      <th className="py-1.5 pr-3">Customer</th>
+                      <th className="py-1.5 pr-3">Amount</th>
+                      <th className="py-1.5">Status</th>
                     </tr>
                   </thead>
                   <tbody>
                     {recentOrders.map((order) => (
                       <tr key={order._id} className="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
-                        <td className="py-3 pr-4 font-mono text-xs text-gray-500 dark:text-gray-400">
+                        <td className="py-2 pr-3 font-mono text-[11px] text-gray-500 dark:text-gray-400">
                           #{order._id.slice(-8).toUpperCase()}
                         </td>
-                        <td className="py-3 pr-4 text-gray-700 dark:text-gray-300">
+                        <td className="py-2 pr-3 text-gray-700 dark:text-gray-300">
                           {order.user?.name || 'N/A'}
                         </td>
-                        <td className="py-3 pr-4 font-semibold text-indigo-600">
+                        <td className="py-2 pr-3 font-semibold text-indigo-600">
                           {formatPrice(order.totalAmount)}
                         </td>
-                        <td className="py-3">
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[order.status]}`}>
+                        <td className="py-2">
+                          <span className={`rounded-full px-1.5 py-0.5 text-[11px] font-medium ${statusColors[order.status]}`}>
                             {order.status}
                           </span>
                         </td>
