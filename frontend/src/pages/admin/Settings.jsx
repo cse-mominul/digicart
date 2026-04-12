@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import API from '../../api/axios';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext';
+import Swal from 'sweetalert2';
 
 const validTabs = new Set(['delivery', 'company', 'site', 'users', 'payment']);
 
@@ -321,6 +322,21 @@ const Settings = () => {
       return;
     }
 
+    const confirmation = await Swal.fire({
+      title: 'Save payment settings?',
+      text: 'This will update the payment methods visible to customers.',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#ec4899',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Save',
+      cancelButtonText: 'Cancel',
+    });
+
+    if (!confirmation.isConfirmed) {
+      return;
+    }
+
     setSavingSettings(true);
     try {
       await API.patch('/settings/payment', { paymentMethods });
@@ -365,14 +381,104 @@ const Settings = () => {
   const handleResetPaymentMethod = (methodKey) => {
     const defaults = defaultPaymentMethodState[methodKey] || { enabled: false };
 
-    if (!window.confirm(`Reset ${methodKey} payment settings?`)) {
+    Swal.fire({
+      title: 'Reset payment method?',
+      text: `This will restore ${methodKey} to its default values.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d97706',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Reset',
+      cancelButtonText: 'Cancel',
+    }).then(async (result) => {
+      if (!result.isConfirmed) {
+        return;
+      }
+
+      const nextPaymentMethods = {
+        ...paymentMethods,
+        [methodKey]: { ...defaults },
+      };
+
+      setSavingSettings(true);
+      try {
+        const { data } = await API.patch('/settings/payment', {
+          paymentMethods: nextPaymentMethods,
+        });
+
+        setPaymentMethods(data?.paymentMethods || nextPaymentMethods);
+        toast.success(`${methodKey} reset successfully`);
+      } catch (error) {
+        toast.error(error.response?.data?.message || 'Failed to reset payment method');
+      } finally {
+        setSavingSettings(false);
+      }
+    });
+  };
+
+  const handleResetAllPaymentSettings = async () => {
+    const confirmation = await Swal.fire({
+      title: 'Reset all payment settings?',
+      text: 'This will restore all payment methods to default values.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d97706',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Reset All',
+      cancelButtonText: 'Cancel',
+    });
+
+    if (!confirmation.isConfirmed) {
       return;
     }
 
-    setPaymentMethods((prev) => ({
-      ...prev,
-      [methodKey]: { ...defaults },
-    }));
+    setSavingSettings(true);
+    try {
+      const { data } = await API.patch('/settings/payment', {
+        paymentMethods: defaultPaymentMethodState,
+      });
+
+      setPaymentMethods(data?.paymentMethods || defaultPaymentMethodState);
+      toast.success('Payment settings reset successfully');
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to reset payment settings');
+    } finally {
+      setSavingSettings(false);
+    }
+  };
+
+  const handleDeleteCustomPaymentMethod = async (methodKey) => {
+    const result = await Swal.fire({
+      title: 'Delete payment method?',
+      text: `This will remove ${methodKey} from payment settings.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#e11d48',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Delete',
+      cancelButtonText: 'Cancel',
+    });
+
+    if (!result.isConfirmed) {
+      return;
+    }
+
+    const nextPaymentMethods = { ...paymentMethods };
+    delete nextPaymentMethods[methodKey];
+
+    setSavingSettings(true);
+    try {
+      const { data } = await API.patch('/settings/payment', {
+        paymentMethods: nextPaymentMethods,
+      });
+
+      setPaymentMethods(data?.paymentMethods || nextPaymentMethods);
+      toast.success(`${methodKey} deleted successfully`);
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to delete payment method');
+    } finally {
+      setSavingSettings(false);
+    }
   };
 
   const handleAddPaymentMethod = async () => {
@@ -678,6 +784,64 @@ const Settings = () => {
             <form onSubmit={handleSavePaymentSettings} className="space-y-6">
               <p className="text-sm text-gray-400">Configure payment methods and their credentials.</p>
 
+              <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-gray-700 bg-gray-800/50 p-4">
+                {!showAddPaymentMethod ? (
+                  <button
+                    type="button"
+                    onClick={() => setShowAddPaymentMethod(true)}
+                    className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-100 rounded-lg font-medium text-sm transition"
+                  >
+                    + Add Payment Method
+                  </button>
+                ) : (
+                  <div className="flex gap-2 flex-col md:flex-row md:items-center">
+                    <div className="flex-1">
+                      <input
+                        type="text"
+                        placeholder="e.g., Stripe, PayPal"
+                        value={newPaymentMethod.name}
+                        onChange={(e) => setNewPaymentMethod((prev) => ({ ...prev, name: e.target.value }))}
+                        className="w-full rounded-lg border border-gray-700 bg-gray-700 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                      />
+                    </div>
+                    <label className="flex items-center gap-2 px-3">
+                      <input
+                        type="checkbox"
+                        checked={newPaymentMethod.enabled}
+                        onChange={(e) => setNewPaymentMethod((prev) => ({ ...prev, enabled: e.target.checked }))}
+                        className="w-4 h-4 rounded border-gray-600 accent-pink-500"
+                      />
+                      <span className="text-sm text-gray-300">Enable</span>
+                    </label>
+                    <button
+                      type="button"
+                      onClick={handleAddPaymentMethod}
+                      className="px-4 py-2 bg-pink-500 hover:bg-pink-600 text-white rounded-lg font-medium text-sm transition"
+                    >
+                      Add
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowAddPaymentMethod(false);
+                        setNewPaymentMethod({ name: '', enabled: true });
+                      }}
+                      className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-100 rounded-lg font-medium text-sm transition"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                )}
+
+                <button
+                  type="button"
+                  onClick={handleResetAllPaymentSettings}
+                  className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-medium text-sm transition"
+                >
+                  Reset All
+                </button>
+              </div>
+
               <div className="overflow-x-auto rounded-2xl border border-gray-700 bg-gray-800/50">
                 <table className="w-full min-w-[920px] text-sm">
                   <thead className="bg-gray-800 text-gray-300">
@@ -798,67 +962,16 @@ const Settings = () => {
                           <td className="px-4 py-4 align-top">
                             <button
                               type="button"
-                              onClick={() => handleResetPaymentMethod(key)}
-                              className="rounded-lg bg-gray-700 px-3 py-2 text-xs font-medium text-gray-100 hover:bg-gray-600 transition-colors"
+                              onClick={() => handleDeleteCustomPaymentMethod(key)}
+                              className="rounded-lg bg-red-600 px-3 py-2 text-xs font-medium text-white hover:bg-red-700 transition-colors"
                             >
-                              Reset
+                              Delete
                             </button>
                           </td>
                         </tr>
                       ))}
                   </tbody>
                 </table>
-              </div>
-
-              {/* Add New Payment Method */}
-              <div className="border-t border-gray-700 pt-4">
-                {!showAddPaymentMethod ? (
-                  <button
-                    type="button"
-                    onClick={() => setShowAddPaymentMethod(true)}
-                    className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-100 rounded-lg font-medium text-sm transition"
-                  >
-                    + Add Payment Method
-                  </button>
-                ) : (
-                  <div className="flex gap-2">
-                    <div className="flex-1">
-                      <input
-                        type="text"
-                        placeholder="e.g., Stripe, PayPal"
-                        value={newPaymentMethod.name}
-                        onChange={(e) => setNewPaymentMethod((prev) => ({ ...prev, name: e.target.value }))}
-                        className="w-full rounded-lg border border-gray-700 bg-gray-700 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
-                      />
-                    </div>
-                    <label className="flex items-center gap-2 px-3">
-                      <input
-                        type="checkbox"
-                        checked={newPaymentMethod.enabled}
-                        onChange={(e) => setNewPaymentMethod((prev) => ({ ...prev, enabled: e.target.checked }))}
-                        className="w-4 h-4 rounded border-gray-600 accent-pink-500"
-                      />
-                      <span className="text-sm text-gray-300">Enable</span>
-                    </label>
-                    <button
-                      type="button"
-                      onClick={handleAddPaymentMethod}
-                      className="px-4 py-2 bg-pink-500 hover:bg-pink-600 text-white rounded-lg font-medium text-sm transition"
-                    >
-                      Add
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowAddPaymentMethod(false);
-                        setNewPaymentMethod({ name: '', enabled: true });
-                      }}
-                      className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-100 rounded-lg font-medium text-sm transition"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                )}
               </div>
 
               <button
