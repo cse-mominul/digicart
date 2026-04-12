@@ -520,27 +520,39 @@ const Payments = () => {
       </div>
 
       {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="mt-6 flex items-center justify-between">
+      <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="text-xs text-gray-600 dark:text-gray-400">
+          <span className="font-medium">
+            Showing {filteredOrders.length === 0 ? 0 : (currentPage - 1) * ITEMS_PER_PAGE + 1}-{Math.min(currentPage * ITEMS_PER_PAGE, filteredOrders.length)}
+          </span>
+          <span> of </span>
+          <span className="font-medium">{filteredOrders.length}</span>
+        </div>
+
+        <div className="flex items-center gap-2">
           <button
             onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
             disabled={currentPage === 1}
-            className="px-4 py-2 bg-orange-600 hover:bg-orange-700 disabled:bg-gray-400 text-white rounded-lg transition font-medium"
+            className="px-3 py-1.5 bg-orange-600 hover:bg-orange-700 disabled:bg-gray-400 text-white text-xs rounded-lg transition font-medium"
           >
-            Previous
+            ← Previous
           </button>
-          <span className="text-sm text-gray-600 dark:text-gray-400">
-            Page {currentPage} of {totalPages}
-          </span>
+          <div className="px-3 py-1.5 text-xs text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 rounded-lg">
+            Page <span className="font-semibold">{currentPage}</span> of <span className="font-semibold">{totalPages || 1}</span>
+          </div>
           <button
             onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-            disabled={currentPage === totalPages}
-            className="px-4 py-2 bg-orange-600 hover:bg-orange-700 disabled:bg-gray-400 text-white rounded-lg transition font-medium"
+            disabled={currentPage === totalPages || totalPages === 0}
+            className="px-3 py-1.5 bg-orange-600 hover:bg-orange-700 disabled:bg-gray-400 text-white text-xs rounded-lg transition font-medium"
           >
-            Next
+            Next →
           </button>
         </div>
-      )}
+
+        <div className="text-xs text-gray-600 dark:text-gray-400">
+          <span className="font-medium">{ITEMS_PER_PAGE}</span> items per page
+        </div>
+      </div>
     </div>
   );
 };
