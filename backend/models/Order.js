@@ -42,6 +42,11 @@ const orderSchema = new mongoose.Schema(
       trim: true,
       default: '',
     },
+    paymentSenderNumber: {
+      type: String,
+      trim: true,
+      default: '',
+    },
     paymentSubmittedAt: {
       type: Date,
       default: null,

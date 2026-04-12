@@ -47,6 +47,7 @@ const ProductDetails = () => {
   const [bkashModalOpen, setBkashModalOpen] = useState(false);
   const [bkashOrder, setBkashOrder] = useState(null);
   const [bkashTrxId, setBkashTrxId] = useState('');
+  const [bkashSenderNumber, setBkashSenderNumber] = useState('');
   const [submittingBkashTrx, setSubmittingBkashTrx] = useState(false);
   const [form, setForm] = useState({
     fullName: '',
@@ -451,6 +452,7 @@ const ProductDetails = () => {
           totalAmount: Number(data?.totalAmount) || grandTotal,
         });
         setBkashTrxId('');
+        setBkashSenderNumber('');
         setBkashModalOpen(true);
         return;
       }
@@ -491,10 +493,16 @@ const ProductDetails = () => {
       return;
     }
 
+    if (!bkashSenderNumber.trim()) {
+      toast.error('Please enter sender number');
+      return;
+    }
+
     setSubmittingBkashTrx(true);
     try {
       const { data } = await API.put(`/orders/${bkashOrder.orderId}/transaction`, {
         trxId: bkashTrxId.trim(),
+        senderNumber: bkashSenderNumber.trim(),
       });
 
       toast.success(data?.message || 'Transaction submitted');
@@ -1104,6 +1112,17 @@ const ProductDetails = () => {
             </div>
 
             <form onSubmit={handleSubmitBkashTrx} className="mt-4 space-y-3">
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Sender Number</label>
+                <input
+                  type="text"
+                  value={bkashSenderNumber}
+                  onChange={(event) => setBkashSenderNumber(event.target.value)}
+                  placeholder="Enter number used to send money"
+                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-pink-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+                />
+              </div>
+
               <div>
                 <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Transaction ID (TrxID)</label>
                 <input

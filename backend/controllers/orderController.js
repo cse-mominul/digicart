@@ -213,7 +213,7 @@ const deleteOrder = async (req, res) => {
 // @route GET /api/orders/:id/payment-info
 const getOrderPaymentInfo = async (req, res) => {
   try {
-    const order = await Order.findById(req.params.id).select('_id totalAmount paymentMethod paymentTrxId paymentSubmittedAt status createdAt');
+    const order = await Order.findById(req.params.id).select('_id totalAmount paymentMethod paymentTrxId paymentSenderNumber paymentSubmittedAt status createdAt');
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
     }
@@ -228,8 +228,13 @@ const getOrderPaymentInfo = async (req, res) => {
 // @route PUT /api/orders/:id/transaction
 const submitOrderTransaction = async (req, res) => {
   const trxId = String(req.body?.trxId || '').trim();
+  const senderNumber = String(req.body?.senderNumber || '').trim();
   if (!trxId) {
     return res.status(400).json({ message: 'Transaction ID is required' });
+  }
+
+  if (!senderNumber) {
+    return res.status(400).json({ message: 'Sender number is required' });
   }
 
   try {
@@ -243,6 +248,7 @@ const submitOrderTransaction = async (req, res) => {
     }
 
     order.paymentTrxId = trxId;
+    order.paymentSenderNumber = senderNumber;
     order.paymentSubmittedAt = new Date();
     await order.save();
 
@@ -250,6 +256,7 @@ const submitOrderTransaction = async (req, res) => {
       message: 'Transaction ID submitted successfully',
       orderId: order._id,
       paymentTrxId: order.paymentTrxId,
+      paymentSenderNumber: order.paymentSenderNumber,
       paymentSubmittedAt: order.paymentSubmittedAt,
     });
   } catch (error) {
