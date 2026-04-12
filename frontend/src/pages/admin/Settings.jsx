@@ -256,6 +256,21 @@ const Settings = () => {
       return;
     }
 
+    const confirmation = await Swal.fire({
+      title: 'Save delivery settings?',
+      text: 'This will update delivery charges used during checkout.',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#ec4899',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Save',
+      cancelButtonText: 'Cancel',
+    });
+
+    if (!confirmation.isConfirmed) {
+      return;
+    }
+
     setSavingSettings(true);
     try {
       await saveSettings('Delivery settings updated');
