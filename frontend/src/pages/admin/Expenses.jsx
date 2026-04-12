@@ -38,6 +38,10 @@ const Expenses = () => {
   const [form, setForm] = useState(defaultForm);
   const [showAddModal, setShowAddModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterCategory, setFilterCategory] = useState('all');
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
 
   const fetchExpenses = async () => {
     setLoading(true);
@@ -77,12 +81,48 @@ const Expenses = () => {
     };
   }, [expenses]);
 
-  const totalPages = useMemo(() => Math.max(1, Math.ceil(expenses.length / ITEMS_PER_PAGE)), [expenses.length]);
+  const filteredExpenses = useMemo(() => {
+    const normalizedSearch = String(searchTerm || '').trim().toLowerCase();
+    const fromMs = fromDate ? new Date(fromDate).setHours(0, 0, 0, 0) : null;
+    const toMs = toDate ? new Date(toDate).setHours(23, 59, 59, 999) : null;
+
+    return expenses.filter((expense) => {
+      const expenseDateMs = new Date(expense?.expenseDate || expense?.createdAt).getTime();
+
+      if (filterCategory !== 'all' && String(expense?.category || '') !== filterCategory) {
+        return false;
+      }
+
+      if (Number.isFinite(fromMs) && Number.isFinite(expenseDateMs) && expenseDateMs < fromMs) {
+        return false;
+      }
+
+      if (Number.isFinite(toMs) && Number.isFinite(expenseDateMs) && expenseDateMs > toMs) {
+        return false;
+      }
+
+      if (!normalizedSearch) {
+        return true;
+      }
+
+      const title = String(expense?.title || '').toLowerCase();
+      const note = String(expense?.note || '').toLowerCase();
+      const category = String(labelFromCategory(expense?.category || '')).toLowerCase();
+
+      return title.includes(normalizedSearch) || note.includes(normalizedSearch) || category.includes(normalizedSearch);
+    });
+  }, [expenses, filterCategory, fromDate, searchTerm, toDate]);
+
+  const totalPages = useMemo(() => Math.max(1, Math.ceil(filteredExpenses.length / ITEMS_PER_PAGE)), [filteredExpenses.length]);
 
   const paginatedExpenses = useMemo(() => {
     const start = (currentPage - 1) * ITEMS_PER_PAGE;
-    return expenses.slice(start, start + ITEMS_PER_PAGE);
-  }, [expenses, currentPage]);
+    return filteredExpenses.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredExpenses, currentPage]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, filterCategory, fromDate, toDate]);
 
   useEffect(() => {
     if (currentPage > totalPages) {
@@ -196,6 +236,61 @@ const Expenses = () => {
         </div>
       </div>
 
+      <div className="mb-4 rounded-xl border border-gray-300 bg-white p-3 dark:border-gray-700 dark:bg-gray-800">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-5">
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(event) => setSearchTerm(event.target.value)}
+            placeholder="Search title, note, category..."
+            className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 lg:col-span-2"
+          />
+
+          <select
+            value={filterCategory}
+            onChange={(event) => setFilterCategory(event.target.value)}
+            className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
+          >
+            <option value="all">All Categories</option>
+            {categoryOptions.map((option) => (
+              <option key={option.value} value={option.value}>{option.label}</option>
+            ))}
+          </select>
+
+          <input
+            type="date"
+            value={fromDate}
+            onChange={(event) => setFromDate(event.target.value)}
+            className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
+          />
+
+          <input
+            type="date"
+            value={toDate}
+            onChange={(event) => setToDate(event.target.value)}
+            className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
+          />
+        </div>
+
+        <div className="mt-3 flex items-center justify-between gap-2">
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            Showing {filteredExpenses.length} of {expenses.length} entries
+          </p>
+          <button
+            type="button"
+            onClick={() => {
+              setSearchTerm('');
+              setFilterCategory('all');
+              setFromDate('');
+              setToDate('');
+            }}
+            className="rounded-md border border-gray-300 bg-white px-3 py-1 text-xs font-semibold text-gray-700 transition-colors hover:border-indigo-500 hover:text-indigo-600 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-200"
+          >
+            Clear Filters
+          </button>
+        </div>
+      </div>
+
       <div className="overflow-x-auto rounded-xl border border-gray-300 bg-white dark:border-gray-700 dark:bg-gray-800">
         <table className="w-full text-sm">
           <thead className="bg-gray-50 dark:bg-gray-700/50">
@@ -213,9 +308,9 @@ const Expenses = () => {
               <tr>
                 <td colSpan={6} className="px-4 py-8 text-center text-sm text-gray-500 dark:text-gray-400">Loading expenses...</td>
               </tr>
-            ) : expenses.length === 0 ? (
+            ) : filteredExpenses.length === 0 ? (
               <tr>
-                <td colSpan={6} className="px-4 py-8 text-center text-sm text-gray-500 dark:text-gray-400">No expense entries yet.</td>
+                <td colSpan={6} className="px-4 py-8 text-center text-sm text-gray-500 dark:text-gray-400">No matching expense found.</td>
               </tr>
             ) : (
               paginatedExpenses.map((expense) => (
@@ -244,7 +339,7 @@ const Expenses = () => {
         </table>
       </div>
 
-      {expenses.length > 0 && (
+      {filteredExpenses.length > 0 && (
         <div className="mt-4 flex flex-col items-start justify-between gap-3 border-t border-gray-300 pt-4 text-sm text-gray-600 dark:border-gray-700 dark:text-gray-300 sm:flex-row sm:items-center">
           <p>
             Page {currentPage} of {totalPages}
