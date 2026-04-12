@@ -10,6 +10,7 @@ import ContactUs from './pages/ContactUs';
 import UserAccount from './pages/UserAccount';
 import AdminLayout from './pages/admin/AdminLayout';
 import Dashboard from './pages/admin/Dashboard';
+import SalesReport from './pages/admin/SalesReport';
 import Products from './pages/admin/Products';
 import CouponVoucher from './pages/admin/CouponVoucher';
 import Orders from './pages/admin/Orders';
@@ -153,6 +154,7 @@ function App() {
           }
         >
           <Route index element={<Dashboard />} />
+          <Route path="sales-report" element={<SalesReport />} />
           <Route path="products" element={<Products />} />
           <Route path="coupons" element={<CouponVoucher />} />
           <Route path="categories" element={<CategoryManager />} />

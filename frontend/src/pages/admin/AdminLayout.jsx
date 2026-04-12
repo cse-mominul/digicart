@@ -57,6 +57,8 @@ const AdminLayout = () => {
   const navigate = useNavigate();
   const [dark, setDark] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const isDashboardSectionOpen = location.pathname === '/admin' || location.pathname.startsWith('/admin/sales-report');
+  const [dashboardDropdownOpen, setDashboardDropdownOpen] = useState(isDashboardSectionOpen);
 
   const isOrderSectionOpen =
     location.pathname.startsWith('/admin/orders') ||
@@ -66,6 +68,12 @@ const AdminLayout = () => {
   const [ordersDropdownOpen, setOrdersDropdownOpen] = useState(isOrderSectionOpen);
   const isProductsSectionOpen = location.pathname.startsWith('/admin/products') || location.pathname.startsWith('/admin/coupons');
   const [productsDropdownOpen, setProductsDropdownOpen] = useState(isProductsSectionOpen);
+
+  useEffect(() => {
+    if (isDashboardSectionOpen) {
+      setDashboardDropdownOpen(true);
+    }
+  }, [isDashboardSectionOpen]);
 
   useEffect(() => {
     if (isOrderSectionOpen) {
@@ -113,7 +121,61 @@ const AdminLayout = () => {
           <nav className="flex-1 py-4">
             {navItems.map((item) => (
               <div key={item.to}>
-                {item.to === '/admin/products' ? (
+                {item.to === '/admin' ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => setDashboardDropdownOpen((prev) => !prev)}
+                      className={`w-full flex items-center gap-3 px-4 py-3 text-sm transition-colors ${
+                        sidebarOpen ? '' : 'justify-center'
+                      } ${
+                        isDashboardSectionOpen
+                          ? 'bg-indigo-600 text-white'
+                          : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                      }`}
+                    >
+                      <span className="flex-shrink-0">{item.icon}</span>
+                      {sidebarOpen && (
+                        <>
+                          <span className="flex-1 text-left">{item.label}</span>
+                          <svg xmlns="http://www.w3.org/2000/svg" className={`h-4 w-4 transition-transform ${dashboardDropdownOpen ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </>
+                      )}
+                    </button>
+
+                    {sidebarOpen && dashboardDropdownOpen && (
+                      <div className="mt-1 space-y-1">
+                        <NavLink
+                          to="/admin"
+                          end
+                          className={({ isActive }) =>
+                            `ml-10 mr-2 flex items-center rounded-lg px-3 py-2 text-xs transition-colors ${
+                              isActive
+                                ? 'bg-indigo-500 text-white'
+                                : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                            }`
+                          }
+                        >
+                          Overview
+                        </NavLink>
+                        <NavLink
+                          to="/admin/sales-report"
+                          className={({ isActive }) =>
+                            `ml-10 mr-2 flex items-center rounded-lg px-3 py-2 text-xs transition-colors ${
+                              isActive
+                                ? 'bg-indigo-500 text-white'
+                                : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                            }`
+                          }
+                        >
+                          Sales Report
+                        </NavLink>
+                      </div>
+                    )}
+                  </>
+                ) : item.to === '/admin/products' ? (
                   <>
                     <button
                       type="button"
