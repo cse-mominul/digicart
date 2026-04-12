@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { Fragment, useState, useEffect, useMemo } from 'react';
 import API from '../../api/axios';
 import toast from 'react-hot-toast';
 import { formatPrice } from '../../utils/formatPrice';
@@ -484,186 +484,167 @@ const Orders = () => {
           {orders.length === 0 ? 'No orders found.' : 'No matching orders for this filter/search.'}
         </div>
       ) : (
-        <div className="space-y-5">
-          {paginatedOrders.map((order) => {
-            const items = Array.isArray(order?.items) ? order.items : [];
-            const isExpanded = expandedOrderId === order._id;
-            const paymentDraft = getPaymentDraft(order);
-            const paymentBadge = paymentStatusColors[paymentDraft.paymentStatus] || paymentStatusColors.Unpaid;
+        <div className="space-y-4">
+          <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-[#1a1a1a]">
+            <div className="overflow-x-auto">
+              <table className="min-w-[1200px] w-full text-sm">
+                <thead className="bg-gray-50 dark:bg-gray-800/70">
+                  <tr>
+                    <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Order</th>
+                    <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Customer</th>
+                    <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">City</th>
+                    <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Total</th>
+                    <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Status</th>
+                    <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Payment</th>
+                    <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                  {paginatedOrders.map((order) => {
+                    const items = Array.isArray(order?.items) ? order.items : [];
+                    const isExpanded = expandedOrderId === order._id;
+                    const paymentDraft = getPaymentDraft(order);
+                    const paymentBadge = paymentStatusColors[paymentDraft.paymentStatus] || paymentStatusColors.Unpaid;
 
-            return (
-              <article
-                key={order._id}
-                className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-[#1a1a1a]"
-              >
-                <div className="flex flex-col gap-4 border-b border-gray-100 pb-4 dark:border-gray-700 sm:flex-row sm:items-start sm:justify-between">
-                  <div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Order ID</p>
-                    <p className="font-mono text-sm font-semibold text-gray-800 dark:text-white">#{order._id}</p>
-                    <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                      {new Date(order.createdAt).toLocaleString()}
-                    </p>
-                  </div>
+                    return (
+                      <Fragment key={order._id}>
+                        <tr className="align-top hover:bg-gray-50/70 dark:hover:bg-gray-800/40">
+                          <td className="px-4 py-4">
+                            <p className="font-mono text-xs font-semibold text-gray-800 dark:text-gray-100">#{order._id}</p>
+                            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">{new Date(order.createdAt).toLocaleString()}</p>
+                            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">{items.length} item(s)</p>
+                          </td>
 
-                  <div className="text-left sm:text-right">
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Customer</p>
-                    <p className="text-sm font-semibold text-gray-800 dark:text-white">{order?.user?.name || 'N/A'}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">{order?.user?.email || 'N/A'}</p>
-                  </div>
-                </div>
+                          <td className="px-4 py-4">
+                            <p className="font-semibold text-gray-800 dark:text-gray-100">{order?.user?.name || 'N/A'}</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">{order?.user?.email || 'N/A'}</p>
+                          </td>
 
-                <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
-                  <div className="rounded-xl bg-gray-50 px-3 py-2 dark:bg-gray-800/60">
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Items</p>
-                    <p className="text-sm font-semibold text-gray-800 dark:text-white">{items.length} item(s)</p>
-                  </div>
+                          <td className="px-4 py-4 text-gray-700 dark:text-gray-300">{order?.shippingAddress?.city || 'N/A'}</td>
 
-                  <div className="rounded-xl bg-gray-50 px-3 py-2 dark:bg-gray-800/60">
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Delivery City</p>
-                    <p className="text-sm font-semibold text-gray-800 dark:text-white">{order?.shippingAddress?.city || 'N/A'}</p>
-                  </div>
+                          <td className="px-4 py-4 font-semibold text-indigo-600 dark:text-indigo-300">{formatPrice(order.totalAmount)}</td>
 
-                  <div className="rounded-xl bg-gray-50 px-3 py-2 dark:bg-gray-800/60">
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Total Amount</p>
-                    <p className="text-sm font-semibold text-indigo-600 dark:text-indigo-300">{formatPrice(order.totalAmount)}</p>
-                  </div>
+                          <td className="px-4 py-4">
+                            <span className={`mb-2 inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${statusColors[order.status]}`}>
+                              {order.status}
+                            </span>
+                            <select
+                              value={order.status}
+                              disabled={updatingId === order._id}
+                              onChange={(e) => handleStatusChange(order._id, e.target.value)}
+                              className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-2.5 py-2 text-xs text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-60 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+                            >
+                              {STATUS_OPTIONS.map((s) => (
+                                <option key={s} value={s}>{s === 'Failed' ? 'Payment Failures' : s}</option>
+                              ))}
+                            </select>
+                          </td>
 
-                  <div className="rounded-xl bg-gray-50 px-3 py-2 dark:bg-gray-800/60">
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Status</p>
-                    <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${statusColors[order.status]}`}>
-                      {order.status}
-                    </span>
-                  </div>
+                          <td className="px-4 py-4">
+                            <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${paymentBadge}`}>
+                              {paymentDraft.paymentStatus}
+                            </span>
+                            <p className="mt-1 text-xs text-gray-600 dark:text-gray-300">
+                              Paid: {formatPrice(Number(order?.amountPaid) || 0)}
+                            </p>
 
-                  <div className="rounded-xl bg-gray-50 px-3 py-2 dark:bg-gray-800/60">
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Payment</p>
-                    <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${paymentBadge}`}>
-                      {paymentDraft.paymentStatus}
-                    </span>
-                    <p className="mt-1 text-xs font-medium text-gray-600 dark:text-gray-300">
-                      Paid: {formatPrice(Number(order?.amountPaid) || 0)}
-                    </p>
-                  </div>
-                </div>
+                            <div className="mt-2 flex gap-2">
+                              <select
+                                value={paymentDraft.paymentStatus}
+                                disabled={updatingId === order._id}
+                                onChange={(e) => updatePaymentDraft(order, { paymentStatus: e.target.value })}
+                                className="rounded-lg border border-gray-300 bg-white px-2 py-2 text-xs text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-60 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+                              >
+                                {PAYMENT_STATUS_OPTIONS.map((status) => (
+                                  <option key={status} value={status}>{status}</option>
+                                ))}
+                              </select>
 
-                <div className="mt-4 flex flex-col gap-3 border-t border-gray-100 pt-4 dark:border-gray-700 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="flex items-center gap-3">
-                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Change Status:</label>
-                    <select
-                      value={order.status}
-                      disabled={updatingId === order._id}
-                      onChange={(e) => handleStatusChange(order._id, e.target.value)}
-                      className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-60 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
-                    >
-                      {STATUS_OPTIONS.map((s) => (
-                        <option key={s} value={s}>{s === 'Failed' ? 'Payment Failures' : s}</option>
-                      ))}
-                    </select>
-
-                    <button
-                      type="button"
-                      disabled={deletingId === order._id}
-                      onClick={() => handleDeleteOrder(order._id)}
-                      className="rounded-xl border border-red-300 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 transition-colors hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-60 dark:border-red-500/40 dark:bg-red-500/10 dark:text-red-300"
-                    >
-                      {deletingId === order._id ? 'Deleting...' : 'Delete'}
-                    </button>
-                  </div>
-
-                  <div className="flex flex-wrap items-center gap-2">
-                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Payment:</label>
-                    <select
-                      value={paymentDraft.paymentStatus}
-                      disabled={updatingId === order._id}
-                      onChange={(e) => updatePaymentDraft(order, { paymentStatus: e.target.value })}
-                      className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-60 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
-                    >
-                      {PAYMENT_STATUS_OPTIONS.map((status) => (
-                        <option key={status} value={status}>{status}</option>
-                      ))}
-                    </select>
-
-                    <input
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      value={paymentDraft.amountPaid}
-                      disabled={updatingId === order._id}
-                      onChange={(e) => updatePaymentDraft(order, { amountPaid: e.target.value })}
-                      className="w-32 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-60 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
-                    />
-
-                    <button
-                      type="button"
-                      disabled={updatingId === order._id}
-                      onClick={() => handlePaymentUpdate(order)}
-                      className="rounded-xl border border-emerald-300 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700 transition-colors hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-60 dark:border-emerald-500/40 dark:bg-emerald-500/10 dark:text-emerald-300"
-                    >
-                      {updatingId === order._id ? 'Saving...' : 'Update Payment'}
-                    </button>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => toggleExpand(order._id)}
-                    className="rounded-xl border border-gray-300 bg-transparent px-4 py-2 text-sm font-semibold text-gray-700 transition-colors hover:border-gray-400 hover:text-gray-900 dark:border-gray-600 dark:text-gray-200 dark:hover:border-gray-500 dark:hover:text-white"
-                  >
-                    {isExpanded ? 'Hide Details' : 'View Details'}
-                  </button>
-                </div>
-
-                {isExpanded && (
-                  <div className="mt-4 space-y-4 rounded-xl border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-900/40">
-                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                      <div className="rounded-lg bg-white px-3 py-3 dark:bg-gray-800">
-                        <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Ordered By</p>
-                        <p className="mt-1 text-sm font-semibold text-gray-800 dark:text-gray-100">{order?.user?.name || 'N/A'}</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">{order?.user?.email || 'N/A'}</p>
-                      </div>
-
-                      <div className="rounded-lg bg-white px-3 py-3 dark:bg-gray-800">
-                        <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Ordered At</p>
-                        <p className="mt-1 text-sm font-semibold text-gray-800 dark:text-gray-100">
-                          {new Date(order.createdAt).toLocaleDateString()}
-                        </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
-                          {new Date(order.createdAt).toLocaleTimeString()}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div>
-                      <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Shipping Address</p>
-                      <p className="mt-1 text-sm text-gray-700 dark:text-gray-200">
-                        {order?.shippingAddress?.address || 'N/A'}, {order?.shippingAddress?.city || 'N/A'}
-                      </p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        {order?.shippingAddress?.postalCode || ''} {order?.shippingAddress?.country || ''}
-                      </p>
-                      <p className="mt-1 text-sm text-gray-700 dark:text-gray-300">
-                        Phone: {order?.shippingAddress?.phone || 'N/A'}
-                      </p>
-                    </div>
-
-                    <div>
-                      <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Ordered Items</p>
-                      <div className="mt-2 space-y-2">
-                        {items.map((item, idx) => (
-                          <div key={`${order._id}-${idx}`} className="flex items-center justify-between rounded-lg bg-white px-3 py-2 text-sm dark:bg-gray-800">
-                            <div>
-                              <p className="font-medium text-gray-800 dark:text-gray-100">{item?.name || item?.product?.name || 'Product'}</p>
-                              <p className="text-xs text-gray-500 dark:text-gray-400">Qty: {item?.quantity || 1}</p>
+                              <input
+                                type="number"
+                                min="0"
+                                step="0.01"
+                                value={paymentDraft.amountPaid}
+                                disabled={updatingId === order._id}
+                                onChange={(e) => updatePaymentDraft(order, { amountPaid: e.target.value })}
+                                className="w-24 rounded-lg border border-gray-300 bg-white px-2 py-2 text-xs text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-60 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+                              />
                             </div>
-                            <p className="font-semibold text-gray-700 dark:text-gray-200">{formatPrice((Number(item?.price) || 0) * (Number(item?.quantity) || 1))}</p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </article>
-            );
-          })}
+
+                            <button
+                              type="button"
+                              disabled={updatingId === order._id}
+                              onClick={() => handlePaymentUpdate(order)}
+                              className="mt-2 rounded-lg border border-emerald-300 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700 transition-colors hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-60 dark:border-emerald-500/40 dark:bg-emerald-500/10 dark:text-emerald-300"
+                            >
+                              {updatingId === order._id ? 'Saving...' : 'Update Payment'}
+                            </button>
+                          </td>
+
+                          <td className="px-4 py-4">
+                            <div className="flex flex-col gap-2">
+                              <button
+                                type="button"
+                                onClick={() => toggleExpand(order._id)}
+                                className="rounded-lg border border-gray-300 bg-transparent px-3 py-1.5 text-xs font-semibold text-gray-700 transition-colors hover:border-gray-400 hover:text-gray-900 dark:border-gray-600 dark:text-gray-200 dark:hover:border-gray-500 dark:hover:text-white"
+                              >
+                                {isExpanded ? 'Hide Details' : 'View Details'}
+                              </button>
+
+                              <button
+                                type="button"
+                                disabled={deletingId === order._id}
+                                onClick={() => handleDeleteOrder(order._id)}
+                                className="rounded-lg border border-red-300 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700 transition-colors hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-60 dark:border-red-500/40 dark:bg-red-500/10 dark:text-red-300"
+                              >
+                                {deletingId === order._id ? 'Deleting...' : 'Delete'}
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+
+                        {isExpanded && (
+                          <tr className="bg-gray-50/70 dark:bg-gray-900/40">
+                            <td colSpan={7} className="px-4 py-4">
+                              <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                                <div>
+                                  <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Shipping Address</p>
+                                  <p className="mt-1 text-sm text-gray-700 dark:text-gray-200">
+                                    {order?.shippingAddress?.address || 'N/A'}, {order?.shippingAddress?.city || 'N/A'}
+                                  </p>
+                                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                                    {order?.shippingAddress?.postalCode || ''} {order?.shippingAddress?.country || ''}
+                                  </p>
+                                  <p className="mt-1 text-sm text-gray-700 dark:text-gray-300">
+                                    Phone: {order?.shippingAddress?.phone || 'N/A'}
+                                  </p>
+                                </div>
+
+                                <div>
+                                  <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Ordered Items</p>
+                                  <div className="mt-2 space-y-2">
+                                    {items.map((item, idx) => (
+                                      <div key={`${order._id}-${idx}`} className="flex items-center justify-between rounded-lg bg-white px-3 py-2 text-sm dark:bg-gray-800">
+                                        <div>
+                                          <p className="font-medium text-gray-800 dark:text-gray-100">{item?.name || item?.product?.name || 'Product'}</p>
+                                          <p className="text-xs text-gray-500 dark:text-gray-400">Qty: {item?.quantity || 1}</p>
+                                        </div>
+                                        <p className="font-semibold text-gray-700 dark:text-gray-200">{formatPrice((Number(item?.price) || 0) * (Number(item?.quantity) || 1))}</p>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                      </Fragment>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
 
           {filteredOrders.length > ITEMS_PER_PAGE && (
             <div className="mt-2 flex flex-col gap-3 border-t border-gray-200 pt-4 dark:border-gray-700 sm:flex-row sm:items-center sm:justify-between">

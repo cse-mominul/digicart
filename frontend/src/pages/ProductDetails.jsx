@@ -801,26 +801,28 @@ const ProductDetails = () => {
                   </select>
                 </div>
 
-                <div className="grid gap-2 sm:grid-cols-[1fr_auto] sm:items-end">
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Save Current Address As</label>
-                    <select
-                      value={addressTypeToSave}
-                      onChange={(event) => setAddressTypeToSave(event.target.value)}
-                      className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-pink-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
+                {!isUsingSavedAddress && (
+                  <div className="grid gap-2 sm:grid-cols-[1fr_auto] sm:items-end">
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Save Current Address As</label>
+                      <select
+                        value={addressTypeToSave}
+                        onChange={(event) => setAddressTypeToSave(event.target.value)}
+                        className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-pink-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
+                      >
+                        <option value="Home">Home</option>
+                        <option value="Office">Office</option>
+                      </select>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleSaveCurrentAddressType}
+                      className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:border-pink-400 hover:text-pink-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-100"
                     >
-                      <option value="Home">Home</option>
-                      <option value="Office">Office</option>
-                    </select>
+                      Save
+                    </button>
                   </div>
-                  <button
-                    type="button"
-                    onClick={handleSaveCurrentAddressType}
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:border-pink-400 hover:text-pink-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-100"
-                  >
-                    Save
-                  </button>
-                </div>
+                )}
               </div>
             )}
 
