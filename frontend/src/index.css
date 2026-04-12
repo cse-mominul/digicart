@@ -60,6 +60,66 @@ body::-webkit-scrollbar-button,
   display: none;
 }
 
+.price-range-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, #ff85a8 0%, #ff3366 100%);
+  outline: none;
+}
+
+.price-range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 3px solid #ff3366;
+  border-radius: 9999px;
+  background: #ffffff;
+  box-shadow: 0 3px 10px rgba(255, 51, 102, 0.35);
+  cursor: pointer;
+}
+
+.price-range-slider::-moz-range-track {
+  height: 6px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, #ff85a8 0%, #ff3366 100%);
+}
+
+.price-range-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border: 3px solid #ff3366;
+  border-radius: 9999px;
+  background: #ffffff;
+  box-shadow: 0 3px 10px rgba(255, 51, 102, 0.35);
+  cursor: pointer;
+}
+
+.price-range-slider:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.price-wave-bg {
+  position: relative;
+  overflow: hidden;
+}
+
+.price-wave-bg::before {
+  content: '';
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  top: 12px;
+  height: 54px;
+  background: linear-gradient(180deg, rgba(255, 51, 102, 0.28) 0%, rgba(255, 51, 102, 0.08) 100%);
+  clip-path: polygon(0% 100%, 8% 72%, 18% 84%, 28% 45%, 40% 78%, 52% 24%, 64% 66%, 76% 38%, 88% 70%, 100% 100%);
+  border-radius: 14px;
+  pointer-events: none;
+}
+
 /* Scroll reveal animation */
 @keyframes revealFromBottom {
   from {

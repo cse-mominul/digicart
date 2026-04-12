@@ -213,22 +213,29 @@ const CategoryProducts = () => {
 
               <div className="px-4 py-4">
                 <div className="mb-6 border-b border-gray-200 pb-5 dark:border-gray-700">
-                  <p className="text-2xl font-bold leading-none text-gray-900 dark:text-white">Price Range</p>
-                  <input
-                    type="range"
-                    min={0}
-                    max={Math.max(maxPrice, 0)}
-                    value={priceLimit}
-                    onChange={(event) => setPriceLimit(Number(event.target.value))}
-                    className="mt-4 w-full accent-orange-600"
-                    disabled={maxPrice === 0}
-                  />
-                  <div className="mt-3 grid grid-cols-2 gap-3">
-                    <div className="rounded border border-gray-300 bg-white px-2 py-1.5 text-center text-sm text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200">
-                      0
+                  <div className="rounded-3xl border border-[#ff3366]/10 bg-gray-50 p-4">
+                    <div className="mb-3 flex items-start justify-between gap-3">
+                      <div>
+                        <p className="text-xl font-bold leading-none text-gray-900 dark:text-white">Price Range</p>
+                        <p className="mt-1 text-xs font-medium text-gray-500 dark:text-gray-400">Up to {formatPrice(maxPrice)}</p>
+                      </div>
+                      <span className="text-xs font-semibold text-gray-400">Reset</span>
                     </div>
-                    <div className="rounded border border-gray-300 bg-white px-2 py-1.5 text-center text-sm text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200">
-                      {priceLimit}
+
+                    <div className="price-wave-bg rounded-2xl px-1 pb-2 pt-9">
+                      <div className="mb-2 flex items-center justify-between px-1">
+                        <span className="rounded-full bg-gray-900 px-3 py-1 text-xs font-semibold text-white">{formatPrice(0)}</span>
+                        <span className="rounded-full bg-gray-900 px-3 py-1 text-xs font-semibold text-white">{formatPrice(priceLimit)}</span>
+                      </div>
+                      <input
+                        type="range"
+                        min={0}
+                        max={Math.max(maxPrice, 0)}
+                        value={priceLimit}
+                        onChange={(event) => setPriceLimit(Number(event.target.value))}
+                        className="price-range-slider w-full"
+                        disabled={maxPrice === 0}
+                      />
                     </div>
                   </div>
                 </div>
@@ -287,18 +294,30 @@ const CategoryProducts = () => {
           <div className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-2xl p-5 lg:sticky lg:top-5 lg:h-[calc(100vh-2.5rem)] lg:overflow-y-auto no-scrollbar">
             <h2 className="text-base font-semibold text-gray-900 dark:text-white mb-5">Filters</h2>
 
-            <div className="mb-6">
-              <p className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Price Range</p>
-              <input
-                type="range"
-                min={0}
-                max={Math.max(maxPrice, 0)}
-                value={priceLimit}
-                onChange={(event) => setPriceLimit(Number(event.target.value))}
-                className="w-full accent-gray-900 dark:accent-white"
-                disabled={maxPrice === 0}
-              />
-              <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">Up to {formatPrice(priceLimit)}</p>
+            <div className="mb-6 rounded-3xl border border-[#ff3366]/10 bg-gray-50 p-4">
+              <div className="mb-3 flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-lg font-bold text-gray-900 dark:text-gray-100">Price Range</p>
+                  <p className="mt-1 text-xs font-medium text-gray-500 dark:text-gray-400">The average price is {formatPrice(maxPrice)}</p>
+                </div>
+                <span className="text-xs font-semibold text-gray-400">Reset</span>
+              </div>
+
+              <div className="price-wave-bg rounded-2xl px-1 pb-2 pt-10">
+                <div className="mb-2 flex items-center justify-between px-1">
+                  <span className="rounded-full bg-gray-900 px-3 py-1 text-xs font-semibold text-white">{formatPrice(0)}</span>
+                  <span className="rounded-full bg-gray-900 px-3 py-1 text-xs font-semibold text-white">{formatPrice(priceLimit)}</span>
+                </div>
+                <input
+                  type="range"
+                  min={0}
+                  max={Math.max(maxPrice, 0)}
+                  value={priceLimit}
+                  onChange={(event) => setPriceLimit(Number(event.target.value))}
+                  className="price-range-slider w-full"
+                  disabled={maxPrice === 0}
+                />
+              </div>
             </div>
 
             <div className="mb-6">
