@@ -293,170 +293,172 @@ const Dashboard = () => {
             ))}
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-8">
-            <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Sales Trend</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Revenue line + order volume bars (click a bar to pin values)</p>
-              </div>
-
-              <div className="flex flex-wrap items-center gap-2">
-                {chartFilters.map((filter) => (
-                  <button
-                    key={filter.key}
-                    type="button"
-                    onClick={() => setChartRange(filter.key)}
-                    className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
-                      chartRange === filter.key
-                        ? 'border-indigo-500 bg-indigo-500 text-white'
-                        : 'border-gray-200 bg-white text-gray-600 hover:border-indigo-300 hover:text-indigo-600 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:hover:border-indigo-400 dark:hover:text-indigo-300'
-                    }`}
-                  >
-                    {filter.label}
-                  </button>
-                ))}
-
-                <div className="ml-2 flex items-center gap-4 text-xs">
-                  <span className="inline-flex items-center gap-1 text-gray-600 dark:text-gray-300">
-                    <span className="h-2.5 w-2.5 rounded-full bg-indigo-500" /> Revenue
-                  </span>
-                  <span className="inline-flex items-center gap-1 text-gray-600 dark:text-gray-300">
-                    <span className="h-2.5 w-2.5 rounded-full bg-emerald-500" /> Orders
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {selectedPoint && (
-              <div className="mb-4 grid grid-cols-1 sm:grid-cols-3 gap-3 rounded-xl border border-indigo-100 bg-indigo-50/70 p-3 dark:border-indigo-500/20 dark:bg-indigo-500/10">
+          <div className="mb-8 grid grid-cols-1 xl:grid-cols-3 gap-6">
+            <div className="xl:col-span-2 bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+              <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Selected Period</p>
-                  <p className="text-sm font-semibold text-gray-800 dark:text-white">{selectedPoint.label}</p>
+                  <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Sales Trend</h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Revenue line + order volume bars (click a bar to pin values)</p>
                 </div>
-                <div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Revenue</p>
-                  <p className="text-sm font-semibold text-indigo-600 dark:text-indigo-300">{formatPrice(selectedPoint.revenue)}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Orders</p>
-                  <p className="text-sm font-semibold text-emerald-600 dark:text-emerald-300">{selectedPoint.orders}</p>
-                </div>
-              </div>
-            )}
 
-            <div className="overflow-x-auto">
-              <div className="min-w-[700px]">
-                <svg viewBox="0 0 700 230" className="h-[230px] w-full">
-                  {[0, 1, 2, 3].map((step) => {
-                    const y = 50 + (step * 40);
-                    return (
-                      <line
-                        key={`grid-${step}`}
-                        x1="50"
-                        y1={y}
-                        x2="680"
-                        y2={y}
-                        stroke="currentColor"
-                        className="text-gray-200 dark:text-gray-700"
-                      />
-                    );
-                  })}
-
-                  {chartSeries.map((item, index) => {
-                    const x = 60 + (index * (620 / Math.max(1, chartSeries.length - 1)));
-                    const barHeight = (item.orders / maxOrders) * 80;
-                    const isSelected = selectedPointIndex === index;
-                    return (
-                      <g
-                        key={item.key}
-                        onClick={() => setSelectedPointIndex(index)}
-                        className="cursor-pointer"
-                      >
-                        <rect
-                          x={x - 12}
-                          y={180 - barHeight}
-                          width="24"
-                          height={barHeight}
-                          rx="6"
-                          className={isSelected ? 'fill-emerald-500' : 'fill-emerald-500/70'}
-                        />
-                        <text
-                          x={x}
-                          y="212"
-                          textAnchor="middle"
-                          className="fill-gray-500 text-[10px] dark:fill-gray-400"
-                        >
-                          {item.label}
-                        </text>
-                      </g>
-                    );
-                  })}
-
-                  <polyline
-                    fill="none"
-                    points={linePoints}
-                    stroke="currentColor"
-                    strokeWidth="3"
-                    className="text-indigo-500"
-                  />
-
-                  {chartSeries.map((item, index) => {
-                    const x = 60 + (index * (620 / Math.max(1, chartSeries.length - 1)));
-                    const y = 170 - ((item.revenue / maxRevenue) * 120);
-                    const isSelected = selectedPointIndex === index;
-                    return (
-                      <circle
-                        key={`dot-${item.key}`}
-                        cx={x}
-                        cy={y}
-                        r={isSelected ? '6' : '4.5'}
-                        className={isSelected ? 'fill-indigo-600' : 'fill-indigo-500'}
-                      />
-                    );
-                  })}
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">Recent Orders</h3>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="text-gray-500 dark:text-gray-400 border-b dark:border-gray-700 text-left">
-                    <th className="py-2 pr-4">Order ID</th>
-                    <th className="py-2 pr-4">Customer</th>
-                    <th className="py-2 pr-4">Amount</th>
-                    <th className="py-2">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {recentOrders.map((order) => (
-                    <tr key={order._id} className="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
-                      <td className="py-3 pr-4 font-mono text-xs text-gray-500 dark:text-gray-400">
-                        #{order._id.slice(-8).toUpperCase()}
-                      </td>
-                      <td className="py-3 pr-4 text-gray-700 dark:text-gray-300">
-                        {order.user?.name || 'N/A'}
-                      </td>
-                      <td className="py-3 pr-4 font-semibold text-indigo-600">
-                        {formatPrice(order.totalAmount)}
-                      </td>
-                      <td className="py-3">
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[order.status]}`}>
-                          {order.status}
-                        </span>
-                      </td>
-                    </tr>
+                <div className="flex flex-wrap items-center gap-2">
+                  {chartFilters.map((filter) => (
+                    <button
+                      key={filter.key}
+                      type="button"
+                      onClick={() => setChartRange(filter.key)}
+                      className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
+                        chartRange === filter.key
+                          ? 'border-indigo-500 bg-indigo-500 text-white'
+                          : 'border-gray-200 bg-white text-gray-600 hover:border-indigo-300 hover:text-indigo-600 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:hover:border-indigo-400 dark:hover:text-indigo-300'
+                      }`}
+                    >
+                      {filter.label}
+                    </button>
                   ))}
-                  {recentOrders.length === 0 && (
-                    <tr>
-                      <td colSpan={4} className="py-8 text-center text-gray-400">No orders yet</td>
+
+                  <div className="ml-2 flex items-center gap-4 text-xs">
+                    <span className="inline-flex items-center gap-1 text-gray-600 dark:text-gray-300">
+                      <span className="h-2.5 w-2.5 rounded-full bg-indigo-500" /> Revenue
+                    </span>
+                    <span className="inline-flex items-center gap-1 text-gray-600 dark:text-gray-300">
+                      <span className="h-2.5 w-2.5 rounded-full bg-emerald-500" /> Orders
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {selectedPoint && (
+                <div className="mb-4 grid grid-cols-1 sm:grid-cols-3 gap-3 rounded-xl border border-indigo-100 bg-indigo-50/70 p-3 dark:border-indigo-500/20 dark:bg-indigo-500/10">
+                  <div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Selected Period</p>
+                    <p className="text-sm font-semibold text-gray-800 dark:text-white">{selectedPoint.label}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Revenue</p>
+                    <p className="text-sm font-semibold text-indigo-600 dark:text-indigo-300">{formatPrice(selectedPoint.revenue)}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Orders</p>
+                    <p className="text-sm font-semibold text-emerald-600 dark:text-emerald-300">{selectedPoint.orders}</p>
+                  </div>
+                </div>
+              )}
+
+              <div className="overflow-x-auto">
+                <div className="min-w-[700px]">
+                  <svg viewBox="0 0 700 230" className="h-[230px] w-full">
+                    {[0, 1, 2, 3].map((step) => {
+                      const y = 50 + (step * 40);
+                      return (
+                        <line
+                          key={`grid-${step}`}
+                          x1="50"
+                          y1={y}
+                          x2="680"
+                          y2={y}
+                          stroke="currentColor"
+                          className="text-gray-200 dark:text-gray-700"
+                        />
+                      );
+                    })}
+
+                    {chartSeries.map((item, index) => {
+                      const x = 60 + (index * (620 / Math.max(1, chartSeries.length - 1)));
+                      const barHeight = (item.orders / maxOrders) * 80;
+                      const isSelected = selectedPointIndex === index;
+                      return (
+                        <g
+                          key={item.key}
+                          onClick={() => setSelectedPointIndex(index)}
+                          className="cursor-pointer"
+                        >
+                          <rect
+                            x={x - 12}
+                            y={180 - barHeight}
+                            width="24"
+                            height={barHeight}
+                            rx="6"
+                            className={isSelected ? 'fill-emerald-500' : 'fill-emerald-500/70'}
+                          />
+                          <text
+                            x={x}
+                            y="212"
+                            textAnchor="middle"
+                            className="fill-gray-500 text-[10px] dark:fill-gray-400"
+                          >
+                            {item.label}
+                          </text>
+                        </g>
+                      );
+                    })}
+
+                    <polyline
+                      fill="none"
+                      points={linePoints}
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      className="text-indigo-500"
+                    />
+
+                    {chartSeries.map((item, index) => {
+                      const x = 60 + (index * (620 / Math.max(1, chartSeries.length - 1)));
+                      const y = 170 - ((item.revenue / maxRevenue) * 120);
+                      const isSelected = selectedPointIndex === index;
+                      return (
+                        <circle
+                          key={`dot-${item.key}`}
+                          cx={x}
+                          cy={y}
+                          r={isSelected ? '6' : '4.5'}
+                          className={isSelected ? 'fill-indigo-600' : 'fill-indigo-500'}
+                        />
+                      );
+                    })}
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">Recent Orders</h3>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="text-gray-500 dark:text-gray-400 border-b dark:border-gray-700 text-left">
+                      <th className="py-2 pr-4">Order ID</th>
+                      <th className="py-2 pr-4">Customer</th>
+                      <th className="py-2 pr-4">Amount</th>
+                      <th className="py-2">Status</th>
                     </tr>
-                  )}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {recentOrders.map((order) => (
+                      <tr key={order._id} className="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                        <td className="py-3 pr-4 font-mono text-xs text-gray-500 dark:text-gray-400">
+                          #{order._id.slice(-8).toUpperCase()}
+                        </td>
+                        <td className="py-3 pr-4 text-gray-700 dark:text-gray-300">
+                          {order.user?.name || 'N/A'}
+                        </td>
+                        <td className="py-3 pr-4 font-semibold text-indigo-600">
+                          {formatPrice(order.totalAmount)}
+                        </td>
+                        <td className="py-3">
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[order.status]}`}>
+                            {order.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                    {recentOrders.length === 0 && (
+                      <tr>
+                        <td colSpan={4} className="py-8 text-center text-gray-400">No orders yet</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </>
