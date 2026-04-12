@@ -7,6 +7,7 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { formatPrice } from '../utils/formatPrice';
+import { showAddToCartSuccess } from '../utils/showAddToCartSuccess';
 
 const ADDRESS_STORAGE_KEY = 'digicart_saved_addresses';
 const WISHLIST_ITEMS_PER_PAGE = 6;
@@ -469,7 +470,7 @@ const UserAccount = () => {
   const handleAddToCart = (product) => {
     addToCart(product);
     removeFromWishlist(product._id);
-    toast.success(`${product.name} moved to cart`);
+    showAddToCartSuccess(product.name);
   };
 
   const handleOrderAgain = (order) => {

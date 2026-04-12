@@ -3,6 +3,7 @@ import { useWishlist } from '../context/WishlistContext';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { formatPrice } from '../utils/formatPrice';
+import { showAddToCartSuccess } from '../utils/showAddToCartSuccess';
 
 const ProductCard = ({ product }) => {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ const ProductCard = ({ product }) => {
 
   const handleAddToCart = () => {
     addToCart(product);
-    toast.success(`${product.name} added to cart!`);
+    showAddToCartSuccess(product.name);
   };
 
   const handleWishlist = () => {

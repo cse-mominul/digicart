@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { formatPrice } from '../utils/formatPrice';
+import { showAddToCartSuccess } from '../utils/showAddToCartSuccess';
 
 const discountSteps = [10, 15, 20, 25, 30];
 
@@ -79,7 +80,7 @@ const LimitedTimeDealsSection = ({ products = [], loading = false }) => {
 
   const handleAddToCart = (product) => {
     addToCart(product);
-    toast.success(`${product.name} added to cart`);
+    showAddToCartSuccess(product.name);
   };
 
   const handleWishlist = (product) => {

@@ -3,6 +3,7 @@ import { useWishlist } from '../context/WishlistContext';
 import { useCart } from '../context/CartContext';
 import toast from 'react-hot-toast';
 import { formatPrice } from '../utils/formatPrice';
+import { showAddToCartSuccess } from '../utils/showAddToCartSuccess';
 
 const Wishlist = () => {
   const { wishlistItems, removeFromWishlist } = useWishlist();
@@ -11,7 +12,7 @@ const Wishlist = () => {
   const handleAddToCart = (product) => {
     addToCart(product);
     removeFromWishlist(product._id);
-    toast.success(`${product.name} moved to cart`);
+    showAddToCartSuccess(product.name);
   };
 
   return (
