@@ -26,6 +26,7 @@ import Users from './pages/admin/Users';
 import CategoryManager from './pages/admin/CategoryManager';
 import Settings from './pages/admin/Settings';
 import Campaigns from './pages/admin/Campaigns';
+import Payments from './pages/admin/Payments';
 import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
@@ -160,6 +161,7 @@ function App() {
           <Route path="settings" element={<Settings />} />
           <Route path="orders" element={<Orders />} />
           <Route path="orders/:id" element={<OrderDetails />} />
+          <Route path="payments" element={<Payments />} />
           <Route path="shipping-delays" element={<ShippingDelays />} />
           <Route path="payment-failures" element={<PaymentFailures />} />
           <Route path="refund-requests" element={<RefundRequests />} />
