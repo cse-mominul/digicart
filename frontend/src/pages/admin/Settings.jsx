@@ -939,6 +939,9 @@ const Settings = () => {
                     placeholder="https://example.com/logo.png"
                     className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
+                  <p className="mt-1 text-xs text-gray-400">
+                    Recommended logo size: 320x80 px (or similar 4:1 ratio), PNG/SVG, transparent background.
+                  </p>
                 </div>
 
                 <div>
@@ -952,6 +955,9 @@ const Settings = () => {
                     placeholder="https://example.com/favicon.ico"
                     className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
+                  <p className="mt-1 text-xs text-gray-400">
+                    Recommended favicon size: 32x32 px (ICO/PNG).
+                  </p>
                 </div>
 
               </div>

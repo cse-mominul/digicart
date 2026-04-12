@@ -139,7 +139,7 @@ const Navbar = () => {
     };
 
     fetchSiteBranding();
-  }, []);
+  }, [location.pathname]);
 
   const handleLogout = () => {
     logout();
