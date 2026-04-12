@@ -372,18 +372,18 @@ const Products = () => {
 
   return (
     <div>
-      <div className="mb-6 rounded-3xl border border-gray-200 bg-gray-50 p-5 dark:border-gray-700 dark:bg-gray-800/50">
-        <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mb-5 rounded-2xl border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800/50">
+        <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Stock Products</h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Manage inventory, stock status, and product availability</p>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Stock Products</h2>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Manage inventory, stock status, and product availability</p>
           </div>
 
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={handleExport}
-              className="rounded-full border border-gray-300 bg-white px-5 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-700"
+              className="rounded-full border border-gray-300 bg-white px-4 py-1.5 text-xs font-semibold text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-700"
             >
               Download
             </button>
@@ -391,40 +391,40 @@ const Products = () => {
             <button
               type="button"
               onClick={openCreate}
-              className="rounded-full bg-teal-600 px-5 py-2 text-sm font-semibold text-white hover:bg-teal-700"
+              className="rounded-full bg-teal-600 px-4 py-1.5 text-xs font-semibold text-white hover:bg-teal-700"
             >
               Add Stock
             </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-5">
-          <div className="rounded-3xl bg-[#b8dbdc] p-5">
-            <p className="text-lg font-medium text-gray-700">Total Products</p>
-            <p className="mt-2 text-4xl font-bold text-gray-900">{stockSummary.total}</p>
+        <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="rounded-2xl bg-[#b8dbdc] p-4">
+            <p className="text-sm font-medium text-gray-700">Total Products</p>
+            <p className="mt-1 text-3xl font-bold text-gray-900">{stockSummary.total}</p>
           </div>
-          <div className="rounded-3xl bg-[#efe7a8] p-5">
-            <p className="text-lg font-medium text-gray-700">In Stock Products</p>
-            <p className="mt-2 text-4xl font-bold text-gray-900">{stockSummary.inStock}</p>
+          <div className="rounded-2xl bg-[#efe7a8] p-4">
+            <p className="text-sm font-medium text-gray-700">In Stock Products</p>
+            <p className="mt-1 text-3xl font-bold text-gray-900">{stockSummary.inStock}</p>
           </div>
-          <div className="rounded-3xl bg-[#b8df9f] p-5">
-            <p className="text-lg font-medium text-gray-700">Low Stock Products</p>
-            <p className="mt-2 text-4xl font-bold text-gray-900">{stockSummary.lowStock}</p>
+          <div className="rounded-2xl bg-[#b8df9f] p-4">
+            <p className="text-sm font-medium text-gray-700">Low Stock Products</p>
+            <p className="mt-1 text-3xl font-bold text-gray-900">{stockSummary.lowStock}</p>
           </div>
-          <div className="rounded-3xl bg-[#e8d0e3] p-5">
-            <p className="text-lg font-medium text-gray-700">Out of Stock</p>
-            <p className="mt-2 text-4xl font-bold text-gray-900">{stockSummary.outOfStock}</p>
+          <div className="rounded-2xl bg-[#e8d0e3] p-4">
+            <p className="text-sm font-medium text-gray-700">Out of Stock</p>
+            <p className="mt-1 text-3xl font-bold text-gray-900">{stockSummary.outOfStock}</p>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[2fr_repeat(4,minmax(0,1fr))] gap-3">
+        <div className="grid grid-cols-1 gap-3 lg:grid-cols-[2fr_repeat(4,minmax(0,1fr))]">
           <div className="relative">
             <input
               type="text"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder="Search..."
-              className="w-full rounded-full border border-gray-300 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-800 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
+              className="w-full rounded-full border border-gray-300 bg-white py-2 pl-10 pr-4 text-sm text-gray-800 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
             />
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -443,7 +443,7 @@ const Products = () => {
               setCurrentPage(1);
               setSelectedCategory(e.target.value);
             }}
-            className="rounded-full border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-700 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200"
+            className="rounded-full border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200"
           >
             <option value="all">Category</option>
             {categories.map((category) => (
@@ -454,7 +454,7 @@ const Products = () => {
           <select
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
-            className="rounded-full border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-700 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200"
+            className="rounded-full border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200"
           >
             <option value="all">Status</option>
             <option value="in-stock">In Stock</option>
@@ -464,7 +464,7 @@ const Products = () => {
           <select
             value={selectedStockRange}
             onChange={(e) => setSelectedStockRange(e.target.value)}
-            className="rounded-full border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-700 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200"
+            className="rounded-full border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200"
           >
             <option value="all">Stock Range</option>
             <option value="low">Low (1-10)</option>

@@ -167,13 +167,13 @@ const AdminLayout = () => {
         {/* Sidebar */}
         <aside
           className={`${
-            sidebarOpen ? 'w-64' : 'w-16'
+            sidebarOpen ? 'w-56' : 'w-14'
           } bg-gray-900 dark:bg-black text-white flex flex-col transition-all duration-300 flex-shrink-0`}
         >
           {/* Sidebar Header */}
-          <div className="flex items-center justify-between p-4 border-b border-gray-700 min-h-[64px]">
+          <div className="flex items-center justify-between p-3 border-b border-gray-700 min-h-[56px]">
             {sidebarOpen && (
-              <span className="text-lg font-bold text-indigo-400 truncate">DigiCart Admin</span>
+              <span className="text-base font-bold text-indigo-400 truncate">DigiCart Admin</span>
             )}
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -187,7 +187,7 @@ const AdminLayout = () => {
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 py-4">
+          <nav className="flex-1 min-h-0 overflow-y-auto py-2">
             {navItems.map((item) => (
               <div key={item.to}>
                 {item.to === '/admin/reports' ? (
@@ -195,7 +195,7 @@ const AdminLayout = () => {
                     <button
                       type="button"
                       onClick={() => setReportDropdownOpen((prev) => !prev)}
-                      className={`w-full flex items-center gap-3 px-4 py-3 text-sm transition-colors ${
+                      className={`w-full flex items-center gap-2.5 px-3 py-2.5 text-sm transition-colors ${
                         sidebarOpen ? '' : 'justify-center'
                       } ${
                         isReportSectionOpen
@@ -219,7 +219,7 @@ const AdminLayout = () => {
                         <NavLink
                           to="/admin/sales-report"
                           className={({ isActive }) =>
-                            `ml-10 mr-2 flex items-center rounded-lg px-3 py-2 text-xs transition-colors ${
+                            `ml-8 mr-2 flex items-center rounded-lg px-2.5 py-1.5 text-xs transition-colors ${
                               isActive
                                 ? 'bg-indigo-500 text-white'
                                 : 'text-gray-400 hover:bg-gray-800 hover:text-white'
@@ -231,7 +231,7 @@ const AdminLayout = () => {
                         <NavLink
                           to="/admin/expenses"
                           className={({ isActive }) =>
-                            `ml-10 mr-2 flex items-center rounded-lg px-3 py-2 text-xs transition-colors ${
+                            `ml-8 mr-2 flex items-center rounded-lg px-2.5 py-1.5 text-xs transition-colors ${
                               isActive
                                 ? 'bg-indigo-500 text-white'
                                 : 'text-gray-400 hover:bg-gray-800 hover:text-white'
@@ -248,7 +248,7 @@ const AdminLayout = () => {
                     <button
                       type="button"
                       onClick={() => setProductsDropdownOpen((prev) => !prev)}
-                      className={`w-full flex items-center gap-3 px-4 py-3 text-sm transition-colors ${
+                      className={`w-full flex items-center gap-2.5 px-3 py-2.5 text-sm transition-colors ${
                         sidebarOpen ? '' : 'justify-center'
                       } ${
                         isProductsSectionOpen
@@ -273,7 +273,7 @@ const AdminLayout = () => {
                           to="/admin/products"
                           end
                           className={({ isActive }) =>
-                            `ml-10 mr-2 flex items-center rounded-lg px-3 py-2 text-xs transition-colors ${
+                            `ml-8 mr-2 flex items-center rounded-lg px-2.5 py-1.5 text-xs transition-colors ${
                               isActive
                                 ? 'bg-indigo-500 text-white'
                                 : 'text-gray-400 hover:bg-gray-800 hover:text-white'
@@ -285,7 +285,7 @@ const AdminLayout = () => {
                         <NavLink
                           to="/admin/coupons"
                           className={({ isActive }) =>
-                            `ml-10 mr-2 flex items-center rounded-lg px-3 py-2 text-xs transition-colors ${
+                            `ml-8 mr-2 flex items-center rounded-lg px-2.5 py-1.5 text-xs transition-colors ${
                               isActive
                                 ? 'bg-indigo-500 text-white'
                                 : 'text-gray-400 hover:bg-gray-800 hover:text-white'
@@ -297,7 +297,7 @@ const AdminLayout = () => {
                         <NavLink
                           to="/admin/categories"
                           className={({ isActive }) =>
-                            `ml-10 mr-2 flex items-center rounded-lg px-3 py-2 text-xs transition-colors ${
+                            `ml-8 mr-2 flex items-center rounded-lg px-2.5 py-1.5 text-xs transition-colors ${
                               isActive
                                 ? 'bg-indigo-500 text-white'
                                 : 'text-gray-400 hover:bg-gray-800 hover:text-white'
@@ -314,7 +314,7 @@ const AdminLayout = () => {
                     <button
                       type="button"
                       onClick={() => setOrdersDropdownOpen((prev) => !prev)}
-                      className={`w-full flex items-center gap-3 px-4 py-3 text-sm transition-colors ${
+                      className={`w-full flex items-center gap-2.5 px-3 py-2.5 text-sm transition-colors ${
                         sidebarOpen ? '' : 'justify-center'
                       } ${
                         isOrderSectionOpen
@@ -339,7 +339,7 @@ const AdminLayout = () => {
                           to="/admin/orders"
                           end
                           className={({ isActive }) =>
-                            `ml-10 mr-2 flex items-center rounded-lg px-3 py-2 text-xs transition-colors ${
+                            `ml-8 mr-2 flex items-center rounded-lg px-2.5 py-1.5 text-xs transition-colors ${
                               isActive
                                 ? 'bg-indigo-500 text-white'
                                 : 'text-gray-400 hover:bg-gray-800 hover:text-white'
@@ -351,7 +351,7 @@ const AdminLayout = () => {
                         <NavLink
                           to="/admin/shipping-delays"
                           className={({ isActive }) =>
-                            `ml-10 mr-2 flex items-center rounded-lg px-3 py-2 text-xs transition-colors ${
+                            `ml-8 mr-2 flex items-center rounded-lg px-2.5 py-1.5 text-xs transition-colors ${
                               isActive
                                 ? 'bg-indigo-500 text-white'
                                 : 'text-gray-400 hover:bg-gray-800 hover:text-white'
@@ -363,7 +363,7 @@ const AdminLayout = () => {
                         <NavLink
                           to="/admin/payment-failures"
                           className={({ isActive }) =>
-                            `ml-10 mr-2 flex items-center rounded-lg px-3 py-2 text-xs transition-colors ${
+                            `ml-8 mr-2 flex items-center rounded-lg px-2.5 py-1.5 text-xs transition-colors ${
                               isActive
                                 ? 'bg-indigo-500 text-white'
                                 : 'text-gray-400 hover:bg-gray-800 hover:text-white'
@@ -392,7 +392,7 @@ const AdminLayout = () => {
                     to={item.to}
                     end={item.end}
                     className={({ isActive }) =>
-                      `flex items-center gap-3 px-4 py-3 text-sm transition-colors ${
+                        `flex items-center gap-2.5 px-3 py-2.5 text-sm transition-colors ${
                         sidebarOpen ? '' : 'justify-center'
                       } ${
                         isActive
@@ -411,9 +411,9 @@ const AdminLayout = () => {
 
           {/* User Info */}
           {sidebarOpen && (
-            <div className="p-4 border-t border-gray-700">
+            <div className="border-t border-gray-700 p-3">
               <p className="text-xs text-gray-500 uppercase tracking-wide">Logged in as</p>
-              <p className="text-sm font-semibold text-white mt-1 truncate">{user?.name}</p>
+              <p className="mt-1 truncate text-sm font-semibold text-white">{user?.name}</p>
               <p className="text-xs text-indigo-400">{user?.email}</p>
             </div>
           )}

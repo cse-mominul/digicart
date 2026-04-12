@@ -548,21 +548,21 @@ const Orders = () => {
         <div className="space-y-4">
           <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-[#1a1a1a]">
             <div className="overflow-x-auto">
-              <table className="min-w-[1080px] w-full text-xs">
+              <table className="min-w-[1020px] w-full text-[11px]">
                 <thead className="bg-gray-50 dark:bg-gray-800/70">
                   <tr>
-                    <th className="px-3 py-2.5 text-left font-semibold text-gray-700 dark:text-gray-300">Order</th>
-                    <th className="px-3 py-2.5 text-left font-semibold text-gray-700 dark:text-gray-300">Customer</th>
-                    <th className="px-3 py-2.5 text-left font-semibold text-gray-700 dark:text-gray-300">City</th>
-                    <th className="px-3 py-2.5 text-left font-semibold text-gray-700 dark:text-gray-300">Total</th>
-                    <th className="px-3 py-2.5 text-left font-semibold text-gray-700 dark:text-gray-300">
+                    <th className="px-2.5 py-2 text-left font-semibold text-gray-700 dark:text-gray-300">Order</th>
+                    <th className="px-2.5 py-2 text-left font-semibold text-gray-700 dark:text-gray-300">Customer</th>
+                    <th className="px-2.5 py-2 text-left font-semibold text-gray-700 dark:text-gray-300">City</th>
+                    <th className="px-2.5 py-2 text-left font-semibold text-gray-700 dark:text-gray-300">Total</th>
+                    <th className="px-2.5 py-2 text-left font-semibold text-gray-700 dark:text-gray-300">
                       <span className="inline-flex items-center gap-1.5">{getColumnIcon('status')} Status</span>
                     </th>
-                    <th className="px-3 py-2.5 text-left font-semibold text-gray-700 dark:text-gray-300">
+                    <th className="px-2.5 py-2 text-left font-semibold text-gray-700 dark:text-gray-300">
                       <span className="inline-flex items-center gap-1.5">{getColumnIcon('payment')} Payment</span>
                     </th>
-                    <th className="px-3 py-2.5 text-left font-semibold text-gray-700 dark:text-gray-300">Due Amount</th>
-                    <th className="px-3 py-2.5 text-left font-semibold text-gray-700 dark:text-gray-300">
+                    <th className="px-2.5 py-2 text-left font-semibold text-gray-700 dark:text-gray-300">Due Amount</th>
+                    <th className="px-2.5 py-2 text-left font-semibold text-gray-700 dark:text-gray-300">
                       <span className="inline-flex items-center gap-1.5">{getColumnIcon('actions')} Actions</span>
                     </th>
                   </tr>
@@ -587,24 +587,24 @@ const Orders = () => {
                     return (
                       <Fragment key={order._id}>
                         <tr className="align-top hover:bg-gray-50/70 dark:hover:bg-gray-800/40">
-                          <td className="px-3 py-3">
-                            <p className="font-mono text-xs font-semibold text-gray-800 dark:text-gray-100" title={orderIdText || 'N/A'}>{shortOrderId}</p>
-                            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">{new Date(order.createdAt).toLocaleString()}</p>
-                            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">{items.length} item(s)</p>
+                          <td className="px-2.5 py-2.5">
+                            <p className="font-mono text-[11px] font-semibold text-gray-800 dark:text-gray-100" title={orderIdText || 'N/A'}>{shortOrderId}</p>
+                            <p className="mt-0.5 text-[11px] text-gray-500 dark:text-gray-400">{new Date(order.createdAt).toLocaleString()}</p>
+                            <p className="mt-0.5 text-[11px] text-gray-500 dark:text-gray-400">{items.length} item(s)</p>
                           </td>
 
-                          <td className="px-3 py-3">
+                          <td className="px-2.5 py-2.5">
                             <p className="font-semibold text-gray-800 dark:text-gray-100">{order?.user?.name || order?.customer?.name || 'N/A'}</p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">{order?.user?.email || order?.customer?.email || 'N/A'}</p>
+                            <p className="text-[11px] text-gray-500 dark:text-gray-400">{order?.user?.email || order?.customer?.email || 'N/A'}</p>
                           </td>
 
-                          <td className="px-3 py-3 text-gray-700 dark:text-gray-300">{order?.shippingAddress?.city || 'N/A'}</td>
+                          <td className="px-2.5 py-2.5 text-gray-700 dark:text-gray-300">{order?.shippingAddress?.city || 'N/A'}</td>
 
-                          <td className="px-3 py-3 font-semibold text-indigo-600 dark:text-indigo-300">{formatPrice(order.totalAmount)}</td>
+                          <td className="px-2.5 py-2.5 font-semibold text-indigo-600 dark:text-indigo-300">{formatPrice(order.totalAmount)}</td>
 
-                          <td className="px-3 py-3">
-                            <span className={`mb-2 inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${statusColors[order.status]}`}>
-                              <svg xmlns="http://www.w3.org/2000/svg" className="mr-1 h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                          <td className="px-2.5 py-2.5">
+                            <span className={`mb-1 inline-flex rounded-full px-2 py-0.5 text-[11px] font-semibold ${statusColors[order.status]}`}>
+                              <svg xmlns="http://www.w3.org/2000/svg" className="mr-1 h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4" />
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                               </svg>
@@ -612,34 +612,34 @@ const Orders = () => {
                             </span>
                           </td>
 
-                          <td className="px-3 py-3">
-                            <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${paymentBadge}`}>
-                              <svg xmlns="http://www.w3.org/2000/svg" className="mr-1 h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                          <td className="px-2.5 py-2.5">
+                            <span className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-semibold ${paymentBadge}`}>
+                              <svg xmlns="http://www.w3.org/2000/svg" className="mr-1 h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a5 5 0 00-10 0v2m-2 0h14a1 1 0 011 1v9a1 1 0 01-1 1H5a1 1 0 01-1-1v-9a1 1 0 011-1z" />
                               </svg>
                               {paymentDraft.paymentStatus}
                             </span>
-                            <p className="mt-1 text-xs text-gray-600 dark:text-gray-300">
+                            <p className="mt-1 text-[11px] text-gray-600 dark:text-gray-300">
                               Paid: {formatPrice(Number(order?.amountPaid) || 0)}
                             </p>
                           </td>
 
-                          <td className="px-3 py-3">
+                          <td className="px-2.5 py-2.5">
                             <p className={`font-semibold ${dueAmount > 0 ? 'text-rose-600 dark:text-rose-300' : 'text-emerald-600 dark:text-emerald-300'}`}>
                               {formatPrice(dueAmount)}
                             </p>
                           </td>
 
-                          <td className="px-3 py-3">
-                            <div className="flex items-center gap-2">
+                          <td className="px-2.5 py-2.5">
+                            <div className="flex items-center gap-1.5">
                               <button
                                 type="button"
                                 onClick={() => openActionsModal(order)}
-                                className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-indigo-200 bg-indigo-50 text-indigo-700 transition-colors hover:bg-indigo-100 dark:border-indigo-500/40 dark:bg-indigo-500/10 dark:text-indigo-300"
+                                className="inline-flex h-7 w-7 items-center justify-center rounded-md border border-indigo-200 bg-indigo-50 text-indigo-700 transition-colors hover:bg-indigo-100 dark:border-indigo-500/40 dark:bg-indigo-500/10 dark:text-indigo-300"
                                 title="Edit"
                                 aria-label="Edit order"
                               >
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5" />
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.5 2.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z" />
                                 </svg>
@@ -648,11 +648,11 @@ const Orders = () => {
                               <button
                                 type="button"
                                 onClick={() => navigate(`/admin/orders/${order._id}`)}
-                                className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-700 transition-colors hover:bg-slate-100 dark:border-slate-600 dark:bg-slate-700/40 dark:text-slate-200"
+                                className="inline-flex h-7 w-7 items-center justify-center rounded-md border border-slate-200 bg-slate-50 text-slate-700 transition-colors hover:bg-slate-100 dark:border-slate-600 dark:bg-slate-700/40 dark:text-slate-200"
                                 title="View details"
                                 aria-label="View order details"
                               >
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                 </svg>
@@ -662,11 +662,11 @@ const Orders = () => {
                                 type="button"
                                 disabled={deletingId === order._id}
                                 onClick={() => handleDeleteOrder(order._id)}
-                                className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-red-200 bg-red-50 text-red-700 transition-colors hover:bg-red-100 disabled:opacity-60 dark:border-red-500/40 dark:bg-red-500/10 dark:text-red-300"
+                                className="inline-flex h-7 w-7 items-center justify-center rounded-md border border-red-200 bg-red-50 text-red-700 transition-colors hover:bg-red-100 disabled:opacity-60 dark:border-red-500/40 dark:bg-red-500/10 dark:text-red-300"
                                 title="Delete"
                                 aria-label="Delete order"
                               >
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 7h12M9 7V5h6v2m-7 4v6m4-6v6m4-10v12a1 1 0 01-1 1H9a1 1 0 01-1-1V7h8z" />
                                 </svg>
                               </button>
@@ -676,29 +676,29 @@ const Orders = () => {
 
                         {isExpanded && (
                           <tr className="bg-gray-50/70 dark:bg-gray-900/40">
-                            <td colSpan={8} className="px-4 py-4">
-                              <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                            <td colSpan={8} className="px-3 py-3">
+                              <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
                                 <div>
-                                  <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Shipping Address</p>
-                                  <p className="mt-1 text-sm text-gray-700 dark:text-gray-200">
+                                  <p className="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400">Shipping Address</p>
+                                  <p className="mt-1 text-xs text-gray-700 dark:text-gray-200">
                                     {order?.shippingAddress?.address || 'N/A'}, {order?.shippingAddress?.city || 'N/A'}
                                   </p>
-                                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                                  <p className="text-xs text-gray-500 dark:text-gray-400">
                                     {order?.shippingAddress?.postalCode || ''} {order?.shippingAddress?.country || ''}
                                   </p>
-                                  <p className="mt-1 text-sm text-gray-700 dark:text-gray-300">
+                                  <p className="mt-1 text-xs text-gray-700 dark:text-gray-300">
                                     Phone: {order?.shippingAddress?.phone || 'N/A'}
                                   </p>
                                 </div>
 
                                 <div>
-                                  <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Ordered Items</p>
-                                  <div className="mt-2 space-y-2">
+                                  <p className="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400">Ordered Items</p>
+                                  <div className="mt-2 space-y-1.5">
                                     {items.map((item, idx) => (
-                                      <div key={`${order._id}-${idx}`} className="flex items-center justify-between rounded-lg bg-white px-3 py-2 text-sm dark:bg-gray-800">
+                                      <div key={`${order._id}-${idx}`} className="flex items-center justify-between rounded-lg bg-white px-2.5 py-1.5 text-xs dark:bg-gray-800">
                                         <div>
                                           <p className="font-medium text-gray-800 dark:text-gray-100">{item?.name || item?.product?.name || 'Product'}</p>
-                                          <p className="text-xs text-gray-500 dark:text-gray-400">Qty: {item?.quantity || 1}</p>
+                                          <p className="text-[11px] text-gray-500 dark:text-gray-400">Qty: {item?.quantity || 1}</p>
                                         </div>
                                         <p className="font-semibold text-gray-700 dark:text-gray-200">{formatPrice((Number(item?.price) || 0) * (Number(item?.quantity) || 1))}</p>
                                       </div>
@@ -718,8 +718,8 @@ const Orders = () => {
           </div>
 
           {filteredOrders.length > ITEMS_PER_PAGE && (
-            <div className="mt-2 flex flex-col gap-3 border-t border-gray-200 pt-4 dark:border-gray-700 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+            <div className="mt-2 flex flex-col gap-2 border-t border-gray-200 pt-3 dark:border-gray-700 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-xs text-gray-500 dark:text-gray-400">
                 Page {currentPage} of {totalPages}
               </p>
               <div className="flex flex-wrap items-center gap-2">
@@ -727,7 +727,7 @@ const Orders = () => {
                   type="button"
                   onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
                   disabled={currentPage === 1}
-                  className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:border-indigo-400 hover:text-indigo-600 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
+                    className="rounded-md border border-gray-300 bg-white px-2.5 py-1 text-xs font-medium text-gray-700 transition-colors hover:border-indigo-400 hover:text-indigo-600 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
                 >
                   Prev
                 </button>
@@ -736,7 +736,7 @@ const Orders = () => {
                   item === '...' ? (
                     <span
                       key={`ellipsis-${index}`}
-                      className="px-1 text-sm font-semibold text-gray-400 dark:text-gray-500"
+                      className="px-1 text-xs font-semibold text-gray-400 dark:text-gray-500"
                     >
                       ...
                     </span>
@@ -745,7 +745,7 @@ const Orders = () => {
                       key={item}
                       type="button"
                       onClick={() => setCurrentPage(item)}
-                      className={`rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors ${
+                      className={`rounded-md px-2.5 py-1 text-xs font-semibold transition-colors ${
                         currentPage === item
                           ? 'bg-indigo-600 text-white'
                           : 'border border-gray-300 bg-white text-gray-700 hover:border-indigo-400 hover:text-indigo-600 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200'
@@ -760,7 +760,7 @@ const Orders = () => {
                   type="button"
                   onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
                   disabled={currentPage === totalPages}
-                  className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:border-indigo-400 hover:text-indigo-600 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
+                  className="rounded-md border border-gray-300 bg-white px-2.5 py-1 text-xs font-medium text-gray-700 transition-colors hover:border-indigo-400 hover:text-indigo-600 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
                 >
                   Next
                 </button>
