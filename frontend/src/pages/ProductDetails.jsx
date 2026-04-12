@@ -29,6 +29,7 @@ const ProductDetails = () => {
     rating: 5,
     title: '',
     comment: '',
+    image: '',
   });
   const [submittingReview, setSubmittingReview] = useState(false);
   const [deliveryCharge, setDeliveryCharge] = useState(80);
@@ -91,6 +92,7 @@ const ProductDetails = () => {
             rating: Number(data.currentUserReview.rating) || 5,
             title: data.currentUserReview.title || '',
             comment: data.currentUserReview.comment || '',
+            image: data.currentUserReview.image || '',
           });
         }
       } catch (error) {
@@ -334,6 +336,7 @@ const ProductDetails = () => {
         rating: reviewForm.rating,
         title: reviewForm.title,
         comment: reviewForm.comment,
+        image: reviewForm.image,
       });
 
       setReviewsState({
@@ -345,7 +348,7 @@ const ProductDetails = () => {
       });
 
       toast.success(data?.message || 'Review saved successfully');
-      setReviewForm((prev) => ({ ...prev, title: '', comment: '' }));
+      setReviewForm((prev) => ({ ...prev, title: '', comment: '', image: '' }));
     } catch (error) {
       if (error.response?.status === 401) {
         toast.error('Please login first to write a review');
@@ -357,6 +360,27 @@ const ProductDetails = () => {
     } finally {
       setSubmittingReview(false);
     }
+  };
+
+  const handleReviewImageChange = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select a valid image');
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error('Review image must be under 2MB');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setReviewForm((prev) => ({ ...prev, image: String(reader.result || '') }));
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleConfirmOrder = async (event) => {
@@ -675,6 +699,16 @@ const ProductDetails = () => {
                           <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300 break-words [overflow-wrap:anywhere]">
                             {review.comment}
                           </p>
+                          {review.image ? (
+                            <img
+                              src={review.image}
+                              alt="Review"
+                              className="mt-3 h-28 w-28 rounded-lg object-cover border border-slate-200 dark:border-white/10"
+                              onError={(event) => {
+                                event.currentTarget.style.display = 'none';
+                              }}
+                            />
+                          ) : null}
                         </div>
                       ))}
                     </div>
@@ -751,6 +785,23 @@ const ProductDetails = () => {
                             className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-pink-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
                             placeholder="Tell others what you liked or what could be better"
                           />
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Upload Image (Optional)</label>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleReviewImageChange}
+                            className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-pink-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
+                          />
+                          {reviewForm.image ? (
+                            <img
+                              src={reviewForm.image}
+                              alt="Review preview"
+                              className="mt-2 h-24 w-24 rounded-lg object-cover border border-slate-200 dark:border-white/10"
+                            />
+                          ) : null}
                         </div>
 
                         <button

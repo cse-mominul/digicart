@@ -1,18 +1,43 @@
 import { useState, useEffect } from 'react';
 import API from '../api/axios';
 import { formatPrice } from '../utils/formatPrice';
+import toast from 'react-hot-toast';
 
 const statusColors = {
   Pending: 'bg-yellow-100 text-yellow-800',
   Processing: 'bg-blue-100 text-blue-800',
   Shipped: 'bg-indigo-100 text-indigo-800',
   Delivered: 'bg-green-100 text-green-800',
+  Completed: 'bg-green-100 text-green-800',
   Cancelled: 'bg-red-100 text-red-800',
+};
+
+const isSuccessfulOrder = (status) => {
+  const normalized = String(status || '').toLowerCase();
+  return normalized === 'delivered' || normalized === 'completed';
+};
+
+const getOrderItemProductId = (item) => {
+  if (typeof item?.product === 'string') return item.product;
+  if (item?.product?._id) return item.product._id;
+  return '';
 };
 
 const MyOrders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [reviewLoading, setReviewLoading] = useState(false);
+  const [reviewSubmitting, setReviewSubmitting] = useState(false);
+  const [reviewModal, setReviewModal] = useState({
+    open: false,
+    orderId: '',
+    productId: '',
+    productName: '',
+    productImage: '',
+    rating: 5,
+    comment: '',
+    image: '',
+  });
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -27,6 +52,113 @@ const MyOrders = () => {
     };
     fetchOrders();
   }, []);
+
+  const openReviewModal = async (order, item) => {
+    if (!isSuccessfulOrder(order?.status)) {
+      toast.error('You can review only after successful delivery');
+      return;
+    }
+
+    const productId = getOrderItemProductId(item);
+    if (!productId) {
+      toast.error('Unable to find product information for review');
+      return;
+    }
+
+    const basePayload = {
+      open: true,
+      orderId: order._id,
+      productId,
+      productName: item?.name || item?.product?.name || 'Product',
+      productImage: item?.image || item?.product?.image || 'https://placehold.co/80x80?text=?',
+      rating: 5,
+      comment: '',
+      image: '',
+    };
+
+    setReviewModal(basePayload);
+    setReviewLoading(true);
+    try {
+      const { data } = await API.get(`/products/${productId}/reviews`);
+      const existing = data?.currentUserReview;
+      if (existing) {
+        setReviewModal((prev) => ({
+          ...prev,
+          rating: Number(existing.rating) || 5,
+          comment: existing.comment || '',
+          image: existing.image || '',
+        }));
+      }
+    } catch {
+      // Keep modal open with default empty review form.
+    } finally {
+      setReviewLoading(false);
+    }
+  };
+
+  const closeReviewModal = () => {
+    setReviewModal({
+      open: false,
+      orderId: '',
+      productId: '',
+      productName: '',
+      productImage: '',
+      rating: 5,
+      comment: '',
+      image: '',
+    });
+  };
+
+  const handleReviewImageChange = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select a valid image file');
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error('Image size must be under 2MB');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setReviewModal((prev) => ({ ...prev, image: String(reader.result || '') }));
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const submitReview = async (event) => {
+    event.preventDefault();
+
+    if (!reviewModal.productId) {
+      toast.error('Product not found for review');
+      return;
+    }
+
+    if (!String(reviewModal.comment || '').trim()) {
+      toast.error('Please write your review comment');
+      return;
+    }
+
+    setReviewSubmitting(true);
+    try {
+      await API.post(`/products/${reviewModal.productId}/reviews`, {
+        rating: Number(reviewModal.rating) || 5,
+        comment: String(reviewModal.comment || '').trim(),
+        image: String(reviewModal.image || '').trim(),
+      });
+
+      toast.success('Review submitted successfully');
+      closeReviewModal();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to submit review');
+    } finally {
+      setReviewSubmitting(false);
+    }
+  };
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
@@ -62,7 +194,8 @@ const MyOrders = () => {
 
               <div className="space-y-2">
                 {order.items.map((item, idx) => (
-                  <div key={idx} className="flex items-center gap-3">
+                  <div key={idx} className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
                     <img
                       src={item.image}
                       alt={item.name}
@@ -75,6 +208,16 @@ const MyOrders = () => {
                         Qty: {item.quantity} &times; {formatPrice(item.price)}
                       </p>
                     </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      disabled={!isSuccessfulOrder(order.status)}
+                      onClick={() => openReviewModal(order, item)}
+                      className="rounded-lg border border-pink-200 bg-pink-50 px-3 py-1.5 text-xs font-semibold text-pink-700 transition-colors hover:bg-pink-100 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      Review
+                    </button>
                   </div>
                 ))}
               </div>
@@ -89,6 +232,100 @@ const MyOrders = () => {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {reviewModal.open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+          <div className="w-full max-w-lg rounded-2xl bg-white p-5 shadow-xl">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-lg font-bold text-gray-900">Write Review</h2>
+              <button
+                type="button"
+                onClick={closeReviewModal}
+                className="text-gray-500 hover:text-gray-800"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="mb-4 flex items-center gap-3 rounded-xl border border-gray-200 bg-gray-50 p-3">
+              <img
+                src={reviewModal.productImage}
+                alt={reviewModal.productName}
+                className="h-14 w-14 rounded-lg object-cover"
+                onError={(e) => { e.target.src = 'https://placehold.co/56x56?text=?'; }}
+              />
+              <div>
+                <p className="text-sm font-semibold text-gray-900">{reviewModal.productName}</p>
+                <p className="text-xs text-gray-500">Order: #{reviewModal.orderId}</p>
+              </div>
+            </div>
+
+            {reviewLoading ? (
+              <div className="rounded-xl border border-gray-200 bg-gray-50 p-4 text-sm text-gray-500">Loading review details...</div>
+            ) : (
+              <form onSubmit={submitReview} className="space-y-3">
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700">Rating</label>
+                  <select
+                    value={reviewModal.rating}
+                    onChange={(e) => setReviewModal((prev) => ({ ...prev, rating: Number(e.target.value) }))}
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+                  >
+                    {[5, 4, 3, 2, 1].map((value) => (
+                      <option key={value} value={value}>{value} Star{value > 1 ? 's' : ''}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700">Comment</label>
+                  <textarea
+                    rows={4}
+                    value={reviewModal.comment}
+                    onChange={(e) => setReviewModal((prev) => ({ ...prev, comment: e.target.value }))}
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+                    placeholder="Share your experience"
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700">Upload Image (optional)</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleReviewImageChange}
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+                  />
+                  {reviewModal.image && (
+                    <img
+                      src={reviewModal.image}
+                      alt="Review upload preview"
+                      className="mt-2 h-24 w-24 rounded-lg object-cover border border-gray-200"
+                    />
+                  )}
+                </div>
+
+                <div className="flex justify-end gap-2 pt-2">
+                  <button
+                    type="button"
+                    onClick={closeReviewModal}
+                    className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={reviewSubmitting}
+                    className="rounded-lg bg-pink-500 px-4 py-2 text-sm font-semibold text-white hover:bg-pink-600 disabled:opacity-60"
+                  >
+                    {reviewSubmitting ? 'Submitting...' : 'Submit Review'}
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
         </div>
       )}
     </div>

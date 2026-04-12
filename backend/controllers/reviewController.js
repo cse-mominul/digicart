@@ -26,7 +26,7 @@ const hasPurchasedProduct = async (userId, productId) => {
   return Boolean(
     await Order.exists({
       user: userId,
-      status: { $ne: 'Cancelled' },
+      status: { $in: ['Delivered', 'Completed'] },
       items: { $elemMatch: { product: productObjectId } },
     })
   );
@@ -90,7 +90,7 @@ const getProductReviews = async (req, res) => {
 // @desc  Create or update a product review
 // @route POST /api/products/:id/reviews
 const createOrUpdateProductReview = async (req, res) => {
-  const { rating, title, comment } = req.body;
+  const { rating, title, comment, image } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
     return res.status(400).json({ message: 'Invalid product ID' });
@@ -121,6 +121,7 @@ const createOrUpdateProductReview = async (req, res) => {
         rating: Number(rating),
         title: String(title || '').trim(),
         comment: String(comment).trim(),
+        image: String(image || '').trim(),
       },
       { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true }
     ).populate('user', 'name');
@@ -155,7 +156,7 @@ const getAllReviews = async (req, res) => {
 // @desc  Update a review (admin only)
 // @route PUT /api/admin/reviews/:id
 const updateReviewByAdmin = async (req, res) => {
-  const { rating, title, comment } = req.body;
+  const { rating, title, comment, image } = req.body;
 
   if (rating != null) {
     const parsed = Number(rating);
@@ -184,6 +185,10 @@ const updateReviewByAdmin = async (req, res) => {
         return res.status(400).json({ message: 'Comment is required' });
       }
       review.comment = trimmedComment;
+    }
+
+    if (image != null) {
+      review.image = String(image).trim();
     }
 
     const updated = await review.save();
