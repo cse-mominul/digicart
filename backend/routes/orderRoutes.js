@@ -3,6 +3,7 @@ const router = express.Router();
 const {
   createOrder,
   getMyOrders,
+  getMyPayments,
   getAllOrders,
   getOrderById,
   getOrderPaymentInfo,
@@ -20,6 +21,7 @@ const requireAdmin = require('../middleware/requireAdmin');
 // User routes
 router.post('/', optionalProtect, createOrder);
 router.get('/myorders', protect, getMyOrders);
+router.get('/my-payments', protect, getMyPayments);
 router.get('/:id/payment-info', optionalProtect, getOrderPaymentInfo);
 router.put('/:id/transaction', optionalProtect, submitOrderTransaction);
 

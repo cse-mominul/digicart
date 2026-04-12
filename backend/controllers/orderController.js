@@ -440,6 +440,7 @@ const deleteOrderTransaction = async (req, res) => {
 module.exports = {
   createOrder,
   getMyOrders,
+  getMyPayments,
   getAllOrders,
   getOrderById,
   getOrderPaymentInfo,
