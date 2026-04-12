@@ -548,20 +548,20 @@ const Orders = () => {
         <div className="space-y-4">
           <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-[#1a1a1a]">
             <div className="overflow-x-auto">
-              <table className="min-w-[1200px] w-full text-sm">
+              <table className="min-w-[980px] w-full text-xs">
                 <thead className="bg-gray-50 dark:bg-gray-800/70">
                   <tr>
-                    <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Order</th>
-                    <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Customer</th>
-                    <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">City</th>
-                    <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Total</th>
-                    <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">
+                    <th className="px-3 py-2.5 text-left font-semibold text-gray-700 dark:text-gray-300">Order</th>
+                    <th className="px-3 py-2.5 text-left font-semibold text-gray-700 dark:text-gray-300">Customer</th>
+                    <th className="px-3 py-2.5 text-left font-semibold text-gray-700 dark:text-gray-300">City</th>
+                    <th className="px-3 py-2.5 text-left font-semibold text-gray-700 dark:text-gray-300">Total</th>
+                    <th className="px-3 py-2.5 text-left font-semibold text-gray-700 dark:text-gray-300">
                       <span className="inline-flex items-center gap-1.5">{getColumnIcon('status')} Status</span>
                     </th>
-                    <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">
+                    <th className="px-3 py-2.5 text-left font-semibold text-gray-700 dark:text-gray-300">
                       <span className="inline-flex items-center gap-1.5">{getColumnIcon('payment')} Payment</span>
                     </th>
-                    <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">
+                    <th className="px-3 py-2.5 text-left font-semibold text-gray-700 dark:text-gray-300">
                       <span className="inline-flex items-center gap-1.5">{getColumnIcon('actions')} Actions</span>
                     </th>
                   </tr>
@@ -572,26 +572,28 @@ const Orders = () => {
                     const isExpanded = expandedOrderId === order._id;
                     const paymentDraft = getPaymentDraft(order);
                     const paymentBadge = paymentStatusColors[paymentDraft.paymentStatus] || paymentStatusColors.Unpaid;
+                    const orderIdText = String(order?._id || '');
+                    const shortOrderId = orderIdText ? `#${orderIdText.slice(0, 8)}...` : 'N/A';
 
                     return (
                       <Fragment key={order._id}>
                         <tr className="align-top hover:bg-gray-50/70 dark:hover:bg-gray-800/40">
-                          <td className="px-4 py-4">
-                            <p className="font-mono text-xs font-semibold text-gray-800 dark:text-gray-100">#{order._id}</p>
+                          <td className="px-3 py-3">
+                            <p className="font-mono text-xs font-semibold text-gray-800 dark:text-gray-100" title={orderIdText || 'N/A'}>{shortOrderId}</p>
                             <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">{new Date(order.createdAt).toLocaleString()}</p>
                             <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">{items.length} item(s)</p>
                           </td>
 
-                          <td className="px-4 py-4">
+                          <td className="px-3 py-3">
                             <p className="font-semibold text-gray-800 dark:text-gray-100">{order?.user?.name || 'N/A'}</p>
                             <p className="text-xs text-gray-500 dark:text-gray-400">{order?.user?.email || 'N/A'}</p>
                           </td>
 
-                          <td className="px-4 py-4 text-gray-700 dark:text-gray-300">{order?.shippingAddress?.city || 'N/A'}</td>
+                          <td className="px-3 py-3 text-gray-700 dark:text-gray-300">{order?.shippingAddress?.city || 'N/A'}</td>
 
-                          <td className="px-4 py-4 font-semibold text-indigo-600 dark:text-indigo-300">{formatPrice(order.totalAmount)}</td>
+                          <td className="px-3 py-3 font-semibold text-indigo-600 dark:text-indigo-300">{formatPrice(order.totalAmount)}</td>
 
-                          <td className="px-4 py-4">
+                          <td className="px-3 py-3">
                             <span className={`mb-2 inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${statusColors[order.status]}`}>
                               <svg xmlns="http://www.w3.org/2000/svg" className="mr-1 h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4" />
@@ -601,7 +603,7 @@ const Orders = () => {
                             </span>
                           </td>
 
-                          <td className="px-4 py-4">
+                          <td className="px-3 py-3">
                             <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${paymentBadge}`}>
                               <svg xmlns="http://www.w3.org/2000/svg" className="mr-1 h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a5 5 0 00-10 0v2m-2 0h14a1 1 0 011 1v9a1 1 0 01-1 1H5a1 1 0 01-1-1v-9a1 1 0 011-1z" />
@@ -613,7 +615,7 @@ const Orders = () => {
                             </p>
                           </td>
 
-                          <td className="px-4 py-4">
+                          <td className="px-3 py-3">
                             <div className="flex items-center gap-2">
                               <button
                                 type="button"
