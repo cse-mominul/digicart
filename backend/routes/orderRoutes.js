@@ -7,6 +7,7 @@ const {
   getOrderById,
   getOrderPaymentInfo,
   submitOrderTransaction,
+  updateOrderTransactionStatus,
   updateOrderStatus,
   updateOrderPayment,
   deleteOrder,
@@ -25,6 +26,7 @@ router.get('/', protect, requireAdmin, getAllOrders);
 router.get('/:id', protect, requireAdmin, getOrderById);
 router.put('/:id/status', protect, requireAdmin, updateOrderStatus);
 router.put('/:id/payment', protect, requireAdmin, updateOrderPayment);
+router.put('/:id/transaction-status', protect, requireAdmin, updateOrderTransactionStatus);
 router.delete('/:id', protect, requireAdmin, deleteOrder);
 
 module.exports = router;

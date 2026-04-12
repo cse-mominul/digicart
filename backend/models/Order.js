@@ -51,6 +51,11 @@ const orderSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    paymentVerificationStatus: {
+      type: String,
+      default: '',
+      enum: ['', 'Pending', 'Success'],
+    },
     shippingAddress: {
       address: { type: String },
       city: { type: String },

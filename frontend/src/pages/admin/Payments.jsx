@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import API from '../../api/axios';
 import toast from 'react-hot-toast';
 import { formatPrice } from '../../utils/formatPrice';
+import Swal from 'sweetalert2';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -12,12 +13,19 @@ const paymentMethodColors = {
   card: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300',
 };
 
+const transactionStatusColors = {
+  Pending: 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300',
+  Success: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300',
+};
+
 const Payments = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterMethod, setFilterMethod] = useState('All');
+  const [filterTransactionStatus, setFilterTransactionStatus] = useState('All');
+  const [updatingStatusId, setUpdatingStatusId] = useState('');
 
   useEffect(() => {
     fetchOrders();
@@ -47,6 +55,14 @@ const Payments = () => {
       result = result.filter(order => order.paymentMethod === filterMethod.toLowerCase());
     }
 
+    // Filter by transaction status
+    if (filterTransactionStatus !== 'All') {
+      result = result.filter((order) => {
+        const status = String(order.paymentVerificationStatus || '').trim() || 'Pending';
+        return status === filterTransactionStatus;
+      });
+    }
+
     // Filter by search term (customer name, email, order ID, TrxID, sender number)
     if (searchTerm.trim()) {
       const search = searchTerm.toLowerCase();
@@ -68,7 +84,50 @@ const Payments = () => {
     }
 
     return result;
-  }, [orders, filterMethod, searchTerm]);
+  }, [orders, filterMethod, filterTransactionStatus, searchTerm]);
+
+  const paymentSummary = useMemo(() => {
+    const partialCustomerKeys = new Set();
+    const paidCustomerKeys = new Set();
+
+    let totalCollected = 0;
+    let totalDue = 0;
+    let partialOrders = 0;
+
+    filteredOrders.forEach((order) => {
+      const totalAmount = Number(order.totalAmount) || 0;
+      const amountPaid = Number(order.amountPaid) || 0;
+      const normalizedPaid = Math.min(Math.max(amountPaid, 0), totalAmount);
+      const dueAmount = Math.max(totalAmount - normalizedPaid, 0);
+
+      totalCollected += normalizedPaid;
+      totalDue += dueAmount;
+
+      const customerKey =
+        order.user?._id ||
+        order.user?.email ||
+        order.customer?.email ||
+        order.customer?.phone ||
+        order._id;
+
+      if (normalizedPaid > 0) {
+        paidCustomerKeys.add(customerKey);
+      }
+
+      if (order.paymentStatus === 'Partial') {
+        partialOrders += 1;
+        partialCustomerKeys.add(customerKey);
+      }
+    });
+
+    return {
+      totalCollected,
+      totalDue,
+      paidCustomers: paidCustomerKeys.size,
+      partialOrders,
+      partialCustomers: partialCustomerKeys.size,
+    };
+  }, [filteredOrders]);
 
   const paginatedOrders = useMemo(() => {
     const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -81,6 +140,55 @@ const Payments = () => {
     navigator.clipboard.writeText(text).then(() => {
       toast.success(`${label} copied!`);
     });
+  };
+
+  const handleUpdateTransactionStatus = async (orderId, nextStatus) => {
+    const order = orders.find((item) => item._id === orderId);
+    const currentStatus = String(order?.paymentVerificationStatus || '').trim() || 'Pending';
+
+    if (currentStatus === nextStatus) {
+      return;
+    }
+
+    const confirmation = await Swal.fire({
+      title: `Set transaction status to ${nextStatus}?`,
+      text: nextStatus === 'Success'
+        ? 'This will confirm the submitted payment and mark payment as paid.'
+        : 'This will keep this payment in pending verification state.',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#ec4899',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Update',
+      cancelButtonText: 'Cancel',
+    });
+
+    if (!confirmation.isConfirmed) {
+      return;
+    }
+
+    setUpdatingStatusId(orderId);
+    try {
+      const { data } = await API.put(`/orders/${orderId}/transaction-status`, { status: nextStatus });
+
+      setOrders((prev) => prev.map((item) => {
+        if (item._id !== orderId) return item;
+
+        return {
+          ...item,
+          paymentVerificationStatus: data?.paymentVerificationStatus || nextStatus,
+          paymentStatus: data?.paymentStatus || item.paymentStatus,
+          amountPaid: typeof data?.amountPaid === 'number' ? data.amountPaid : item.amountPaid,
+          isPaid: typeof data?.isPaid === 'boolean' ? data.isPaid : item.isPaid,
+        };
+      }));
+
+      toast.success('Transaction status updated');
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to update transaction status');
+    } finally {
+      setUpdatingStatusId('');
+    }
   };
 
   if (loading) {
@@ -101,8 +209,31 @@ const Payments = () => {
         </p>
       </div>
 
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4 mb-6">
+        <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 dark:border-emerald-900/40 dark:bg-emerald-900/20">
+          <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700 dark:text-emerald-300">Total Paid</p>
+          <p className="mt-1 text-xl font-bold text-emerald-800 dark:text-emerald-200">{formatPrice(paymentSummary.totalCollected)}</p>
+        </div>
+        <div className="rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 dark:border-rose-900/40 dark:bg-rose-900/20">
+          <p className="text-xs font-semibold uppercase tracking-wide text-rose-700 dark:text-rose-300">Total Due</p>
+          <p className="mt-1 text-xl font-bold text-rose-800 dark:text-rose-200">{formatPrice(paymentSummary.totalDue)}</p>
+        </div>
+        <div className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 dark:border-blue-900/40 dark:bg-blue-900/20">
+          <p className="text-xs font-semibold uppercase tracking-wide text-blue-700 dark:text-blue-300">Customers Paid</p>
+          <p className="mt-1 text-xl font-bold text-blue-800 dark:text-blue-200">{paymentSummary.paidCustomers}</p>
+        </div>
+        <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 dark:border-amber-900/40 dark:bg-amber-900/20">
+          <p className="text-xs font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-300">Partial Orders</p>
+          <p className="mt-1 text-xl font-bold text-amber-800 dark:text-amber-200">{paymentSummary.partialOrders}</p>
+        </div>
+        <div className="rounded-lg border border-violet-200 bg-violet-50 px-4 py-3 dark:border-violet-900/40 dark:bg-violet-900/20">
+          <p className="text-xs font-semibold uppercase tracking-wide text-violet-700 dark:text-violet-300">Partial Customers</p>
+          <p className="mt-1 text-xl font-bold text-violet-800 dark:text-violet-200">{paymentSummary.partialCustomers}</p>
+        </div>
+      </div>
+
       {/* Search and Filter */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <input
           type="text"
           placeholder="Search by customer, order ID, TrxID, or sender number..."
@@ -126,6 +257,18 @@ const Payments = () => {
           <option value="nogod">Nagad</option>
           <option value="cod">Cash on Delivery</option>
           <option value="card">Card</option>
+        </select>
+        <select
+          value={filterTransactionStatus}
+          onChange={(e) => {
+            setFilterTransactionStatus(e.target.value);
+            setCurrentPage(1);
+          }}
+          className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500"
+        >
+          <option value="All">All Status</option>
+          <option value="Pending">Pending</option>
+          <option value="Success">Success</option>
         </select>
       </div>
 
@@ -155,6 +298,9 @@ const Payments = () => {
               <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">
                 Date
               </th>
+              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">
+                Status
+              </th>
               <th className="px-4 py-3 text-center text-sm font-semibold text-gray-900 dark:text-gray-100">
                 Actions
               </th>
@@ -166,6 +312,7 @@ const Payments = () => {
                 const customerName = order.user?.name || order.customer?.name || 'N/A';
                 const customerEmail = order.user?.email || order.customer?.email || 'N/A';
                 const createdDate = new Date(order.createdAt).toLocaleDateString();
+                const transactionStatus = String(order.paymentVerificationStatus || '').trim() || 'Pending';
 
                 return (
                   <tr
@@ -259,6 +406,27 @@ const Payments = () => {
                     <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
                       {createdDate}
                     </td>
+                    <td className="px-4 py-3 text-sm">
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
+                            transactionStatusColors[transactionStatus] ||
+                            'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
+                          }`}
+                        >
+                          {transactionStatus}
+                        </span>
+                        <select
+                          value={transactionStatus}
+                          onChange={(e) => handleUpdateTransactionStatus(order._id, e.target.value)}
+                          disabled={updatingStatusId === order._id}
+                          className="px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500 disabled:opacity-60"
+                        >
+                          <option value="Pending">Pending</option>
+                          <option value="Success">Success</option>
+                        </select>
+                      </div>
+                    </td>
                     <td className="px-4 py-3 text-sm text-center">
                       <button
                         onClick={() => handleCopyToClipboard(
@@ -289,8 +457,8 @@ const Payments = () => {
               })
             ) : (
               <tr>
-                <td colSpan="8" className="px-4 py-8 text-center text-gray-600 dark:text-gray-400">
-                  {searchTerm || filterMethod !== 'All' ? 'No payments found' : 'No payment transactions yet'}
+                <td colSpan="9" className="px-4 py-8 text-center text-gray-600 dark:text-gray-400">
+                  {searchTerm || filterMethod !== 'All' || filterTransactionStatus !== 'All' ? 'No payments found' : 'No payment transactions yet'}
                 </td>
               </tr>
             )}

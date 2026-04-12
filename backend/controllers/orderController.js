@@ -273,6 +273,7 @@ const submitOrderTransaction = async (req, res) => {
     order.paymentTrxId = trxId;
     order.paymentSenderNumber = senderNumber;
     order.paymentSubmittedAt = new Date();
+    order.paymentVerificationStatus = 'Pending';
     await order.save();
 
     return res.json({
@@ -281,6 +282,51 @@ const submitOrderTransaction = async (req, res) => {
       paymentTrxId: order.paymentTrxId,
       paymentSenderNumber: order.paymentSenderNumber,
       paymentSubmittedAt: order.paymentSubmittedAt,
+      paymentVerificationStatus: order.paymentVerificationStatus,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc  Update payment transaction verification status (admin only)
+// @route PUT /api/orders/:id/transaction-status
+const updateOrderTransactionStatus = async (req, res) => {
+  const status = String(req.body?.status || '').trim();
+  const validStatuses = ['Pending', 'Success'];
+
+  if (!validStatuses.includes(status)) {
+    return res.status(400).json({ message: 'Invalid transaction status value' });
+  }
+
+  try {
+    const order = await Order.findById(req.params.id);
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    if (!String(order.paymentTrxId || '').trim() || !String(order.paymentSenderNumber || '').trim()) {
+      return res.status(400).json({ message: 'Transaction information is missing for this order' });
+    }
+
+    order.paymentVerificationStatus = status;
+
+    if (status === 'Success') {
+      const totalAmount = Number(order.totalAmount) || 0;
+      order.paymentStatus = 'Paid';
+      order.amountPaid = totalAmount;
+      order.isPaid = true;
+    }
+
+    await order.save();
+
+    return res.json({
+      message: 'Transaction status updated successfully',
+      orderId: order._id,
+      paymentVerificationStatus: order.paymentVerificationStatus,
+      paymentStatus: order.paymentStatus,
+      amountPaid: order.amountPaid,
+      isPaid: order.isPaid,
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -294,6 +340,7 @@ module.exports = {
   getOrderById,
   getOrderPaymentInfo,
   submitOrderTransaction,
+  updateOrderTransactionStatus,
   updateOrderStatus,
   updateOrderPayment,
   deleteOrder,
