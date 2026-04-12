@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import Swal from 'sweetalert2';
 import API from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -574,8 +575,19 @@ const UserAccount = () => {
       return;
     }
 
-    const confirmed = window.confirm('Are you sure you want to delete this review?');
-    if (!confirmed) return;
+    const result = await Swal.fire({
+      title: 'Delete this review?',
+      text: 'This action cannot be undone.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#dc2626',
+      cancelButtonColor: '#64748b',
+      reverseButtons: true,
+    });
+
+    if (!result.isConfirmed) return;
 
     setReviewActionLoading(true);
     try {
@@ -619,6 +631,11 @@ const UserAccount = () => {
     setEditingAddressId(item.id);
     setAddressModalOpen(true);
   };
+
+  const editingReview = useMemo(
+    () => myReviews.find((item) => item._id === editingReviewId) || null,
+    [myReviews, editingReviewId]
+  );
 
   return (
     <div className="bg-gray-50 min-h-[calc(100vh-140px)] py-6 sm:py-8 dark:bg-gray-950">
@@ -1080,131 +1097,86 @@ const UserAccount = () => {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {paginatedMyReviews.map((review) => (
-                    <article key={review._id} className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-900">
-                      <div className="flex flex-wrap items-start justify-between gap-3 border-b border-gray-100 pb-4 dark:border-gray-800">
-                        <div className="flex items-center gap-3">
-                          <img
-                            src={review?.product?.image || 'https://placehold.co/64x64?text=?'}
-                            alt={review?.product?.name || 'Product'}
-                            className="h-12 w-12 rounded-lg object-cover"
-                            onError={(event) => {
-                              event.currentTarget.src = 'https://placehold.co/64x64?text=?';
-                            }}
-                          />
-                          <div>
-                            <p className="font-semibold text-gray-900 dark:text-white">{review?.product?.name || 'Product'}</p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">
-                              Reviewed on {review?.createdAt ? new Date(review.createdAt).toLocaleDateString() : 'N/A'}
-                            </p>
-                          </div>
-                        </div>
-
-                        <span className="rounded-full bg-yellow-100 px-3 py-1 text-xs font-semibold text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300">
-                          {Number(review?.rating || 0).toFixed(1)} / 5
-                        </span>
-                      </div>
-
-                      {editingReviewId === review._id ? (
-                        <div className="mt-4 space-y-3">
-                          <div>
-                            <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Rating</label>
-                            <select
-                              value={reviewDraft.rating}
-                              onChange={(event) => setReviewDraft((prev) => ({ ...prev, rating: Number(event.target.value) }))}
-                              className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-pink-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
-                            >
-                              {[5, 4, 3, 2, 1].map((value) => (
-                                <option key={value} value={value}>{value} Star{value > 1 ? 's' : ''}</option>
-                              ))}
-                            </select>
-                          </div>
-
-                          <div>
-                            <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Comment</label>
-                            <textarea
-                              rows={4}
-                              value={reviewDraft.comment}
-                              onChange={(event) => setReviewDraft((prev) => ({ ...prev, comment: event.target.value }))}
-                              className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-pink-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
-                            />
-                          </div>
-
-                          <div>
-                            <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Upload Image (Optional)</label>
-                            <input
-                              type="file"
-                              accept="image/*"
-                              onChange={handleReviewDraftImageChange}
-                              className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-pink-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
-                            />
-                            {reviewDraft.image ? (
-                              <img
-                                src={reviewDraft.image}
-                                alt="Review preview"
-                                className="mt-2 h-24 w-24 rounded-lg border border-gray-200 object-cover dark:border-gray-700"
-                              />
-                            ) : null}
-                          </div>
-
-                          <div className="flex flex-wrap gap-2 pt-2">
-                            <button
-                              type="button"
-                              disabled={reviewActionLoading}
-                              onClick={() => handleUpdateReview(review)}
-                              className="rounded-full bg-[#ff3366] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#ff1f58] disabled:opacity-50"
-                            >
-                              {reviewActionLoading ? 'Saving...' : 'Update'}
-                            </button>
-                            <button
-                              type="button"
-                              disabled={reviewActionLoading}
-                              onClick={cancelReviewEdit}
-                              className="rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition-colors hover:border-gray-300 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
-                            >
-                              Cancel
-                            </button>
-                          </div>
-                        </div>
-                      ) : (
-                        <>
-                          <p className="pt-4 text-sm leading-6 text-gray-600 dark:text-gray-300">
-                            {review?.comment || 'No comment'}
-                          </p>
-
-                          {review?.image ? (
-                            <img
-                              src={review.image}
-                              alt="Review"
-                              className="mt-3 h-24 w-24 rounded-lg border border-gray-200 object-cover dark:border-gray-700"
-                              onError={(event) => {
-                                event.currentTarget.style.display = 'none';
-                              }}
-                            />
-                          ) : null}
-
-                          <div className="mt-4 flex flex-wrap gap-2">
-                            <button
-                              type="button"
-                              disabled={reviewActionLoading}
-                              onClick={() => startReviewEdit(review)}
-                              className="rounded-full border border-indigo-200 bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-700 transition-colors hover:bg-indigo-100 disabled:opacity-50 dark:border-indigo-500/40 dark:bg-indigo-500/10 dark:text-indigo-300"
-                            >
-                              Edit
-                            </button>
-                            <button
-                              type="button"
-                              disabled={reviewActionLoading}
-                              onClick={() => handleDeleteReview(review)}
-                              className="rounded-full border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 transition-colors hover:bg-red-100 disabled:opacity-50 dark:border-red-500/40 dark:bg-red-500/10 dark:text-red-300"
-                            >
-                              Delete
-                            </button>
-                          </div>
-                        </>
-                      )}
-                    </article>
-                  ))}
+                  <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900">
+                    <div className="overflow-x-auto">
+                      <table className="w-full min-w-[900px] text-sm">
+                        <thead className="bg-gray-50 dark:bg-gray-800/60">
+                          <tr>
+                            <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Product</th>
+                            <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Rating</th>
+                            <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Comment</th>
+                            <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Image</th>
+                            <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Date</th>
+                            <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                          {paginatedMyReviews.map((review) => (
+                            <tr key={review._id} className="align-top hover:bg-gray-50/80 dark:hover:bg-gray-800/40">
+                              <td className="px-4 py-4">
+                                <div className="flex items-center gap-3">
+                                  <img
+                                    src={review?.product?.image || 'https://placehold.co/64x64?text=?'}
+                                    alt={review?.product?.name || 'Product'}
+                                    className="h-10 w-10 rounded-lg object-cover"
+                                    onError={(event) => {
+                                      event.currentTarget.src = 'https://placehold.co/64x64?text=?';
+                                    }}
+                                  />
+                                  <p className="font-semibold text-gray-900 dark:text-white">{review?.product?.name || 'Product'}</p>
+                                </div>
+                              </td>
+                              <td className="px-4 py-4">
+                                <span className="rounded-full bg-yellow-100 px-3 py-1 text-xs font-semibold text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300">
+                                  {Number(review?.rating || 0).toFixed(1)} / 5
+                                </span>
+                              </td>
+                              <td className="px-4 py-4 max-w-md text-gray-600 dark:text-gray-300">
+                                <p className="line-clamp-3 leading-6">{review?.comment || 'No comment'}</p>
+                              </td>
+                              <td className="px-4 py-4">
+                                {review?.image ? (
+                                  <img
+                                    src={review.image}
+                                    alt="Review"
+                                    className="h-16 w-16 rounded-lg border border-gray-200 object-cover dark:border-gray-700"
+                                    onError={(event) => {
+                                      event.currentTarget.style.display = 'none';
+                                    }}
+                                  />
+                                ) : (
+                                  <span className="text-xs text-gray-400 dark:text-gray-500">No image</span>
+                                )}
+                              </td>
+                              <td className="px-4 py-4 text-gray-500 dark:text-gray-400">
+                                {review?.createdAt ? new Date(review.createdAt).toLocaleDateString() : 'N/A'}
+                              </td>
+                              <td className="px-4 py-4">
+                                <div className="flex flex-wrap gap-2">
+                                  <button
+                                    type="button"
+                                    disabled={reviewActionLoading}
+                                    onClick={() => startReviewEdit(review)}
+                                    className="rounded-full border border-indigo-200 bg-indigo-50 px-4 py-2 text-xs font-semibold text-indigo-700 transition-colors hover:bg-indigo-100 disabled:opacity-50 dark:border-indigo-500/40 dark:bg-indigo-500/10 dark:text-indigo-300"
+                                  >
+                                    Edit
+                                  </button>
+                                  <button
+                                    type="button"
+                                    disabled={reviewActionLoading}
+                                    onClick={() => handleDeleteReview(review)}
+                                    className="rounded-full border border-red-200 bg-red-50 px-4 py-2 text-xs font-semibold text-red-700 transition-colors hover:bg-red-100 disabled:opacity-50 dark:border-red-500/40 dark:bg-red-500/10 dark:text-red-300"
+                                  >
+                                    Delete
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
 
                   <div className="mt-2 flex flex-col gap-3 border-t border-gray-100 pt-4 dark:border-gray-700 sm:flex-row sm:items-center sm:justify-between">
                     <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -1426,6 +1398,92 @@ const UserAccount = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {editingReview && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4 py-8 backdrop-blur-sm">
+          <div className="w-full max-w-3xl rounded-[28px] border border-gray-200 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.2)] dark:border-gray-700 dark:bg-gray-900">
+            <div className="flex items-center justify-between border-b border-gray-100 px-5 py-5 dark:border-gray-800 sm:px-6">
+              <div>
+                <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">Edit Review</h2>
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                  {editingReview?.product?.name || 'Product'}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={cancelReviewEdit}
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                aria-label="Close review modal"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-5 w-5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="space-y-4 px-5 py-5 sm:px-6 sm:py-6">
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Rating</label>
+                <select
+                  value={reviewDraft.rating}
+                  onChange={(event) => setReviewDraft((prev) => ({ ...prev, rating: Number(event.target.value) }))}
+                  className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-pink-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                >
+                  {[5, 4, 3, 2, 1].map((value) => (
+                    <option key={value} value={value}>{value} Star{value > 1 ? 's' : ''}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Comment</label>
+                <textarea
+                  rows={4}
+                  value={reviewDraft.comment}
+                  onChange={(event) => setReviewDraft((prev) => ({ ...prev, comment: event.target.value }))}
+                  className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-pink-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                />
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Upload Image (Optional)</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleReviewDraftImageChange}
+                  className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-pink-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                />
+                {reviewDraft.image ? (
+                  <img
+                    src={reviewDraft.image}
+                    alt="Review preview"
+                    className="mt-2 h-24 w-24 rounded-lg border border-gray-200 object-cover dark:border-gray-700"
+                  />
+                ) : null}
+              </div>
+
+              <div className="flex flex-wrap gap-2 pt-2">
+                <button
+                  type="button"
+                  disabled={reviewActionLoading}
+                  onClick={() => handleUpdateReview(editingReview)}
+                  className="rounded-full bg-[#ff3366] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#ff1f58] disabled:opacity-50"
+                >
+                  {reviewActionLoading ? 'Saving...' : 'Update'}
+                </button>
+                <button
+                  type="button"
+                  disabled={reviewActionLoading}
+                  onClick={cancelReviewEdit}
+                  className="rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition-colors hover:border-gray-300 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
