@@ -82,6 +82,15 @@ const settingSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    paymentMethods: {
+      type: mongoose.Schema.Types.Mixed,
+      default: {
+        bkash: { enabled: true, number: '' },
+        nogod: { enabled: true, number: '' },
+        cod: { enabled: true },
+        card: { enabled: false },
+      },
+    },
   },
   {
     timestamps: true,

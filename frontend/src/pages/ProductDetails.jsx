@@ -7,8 +7,7 @@ import { showOrderSuccess } from '../utils/showOrderSuccess';
 import { useAuth } from '../context/AuthContext';
 
 const ADDRESS_STORAGE_KEY = 'digicart_saved_addresses';
-const BKASH_NUMBER = '017XXXXXXXX';
-const paymentMethods = [
+const paymentMethodOptions = [
   { id: 'cod', label: 'Cash on Delivery' },
   { id: 'bkash', label: 'bKash' },
   { id: 'nogod', label: 'Nagad' },
@@ -49,6 +48,12 @@ const ProductDetails = () => {
   const [bkashTrxId, setBkashTrxId] = useState('');
   const [bkashSenderNumber, setBkashSenderNumber] = useState('');
   const [submittingBkashTrx, setSubmittingBkashTrx] = useState(false);
+  const [paymentSettings, setPaymentSettings] = useState({
+    bkash: { enabled: true, number: '' },
+    nogod: { enabled: true, number: '' },
+    cod: { enabled: true },
+    card: { enabled: false },
+  });
   const [form, setForm] = useState({
     fullName: '',
     phone: '',
@@ -136,6 +141,21 @@ const ProductDetails = () => {
     };
 
     fetchDeliverySettings();
+  }, []);
+
+  useEffect(() => {
+    const fetchPaymentSettings = async () => {
+      try {
+        const { data } = await API.get('/settings/payment');
+        if (data?.paymentMethods) {
+          setPaymentSettings(data.paymentMethods);
+        }
+      } catch (error) {
+        console.error('Failed to fetch payment settings:', error);
+      }
+    };
+
+    fetchPaymentSettings();
   }, []);
 
   useEffect(() => {
@@ -472,8 +492,13 @@ const ProductDetails = () => {
   };
 
   const handleCopyBkashNumber = async () => {
+    const bkashNumber = paymentSettings?.bkash?.number || '';
+    if (!bkashNumber.trim()) {
+      toast.error('bKash number not configured');
+      return;
+    }
     try {
-      await navigator.clipboard.writeText(BKASH_NUMBER);
+      await navigator.clipboard.writeText(bkashNumber);
       toast.success('bKash number copied');
     } catch {
       toast.error('Failed to copy number');
@@ -1014,7 +1039,7 @@ const ProductDetails = () => {
             <div className="rounded-2xl border border-slate-200 bg-white p-4 space-y-3 dark:border-white/10 dark:bg-white/5">
               <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">Payment Method</p>
 
-              {paymentMethods.map((method) => (
+              {paymentMethodOptions.map((method) => (
                 <label
                   key={method.id}
                   className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-3 py-2 cursor-pointer hover:border-pink-400/40 transition-colors dark:border-white/10 dark:bg-white/5"
@@ -1089,11 +1114,12 @@ const ProductDetails = () => {
             <div className="rounded-xl border border-pink-200 bg-pink-50 p-3 dark:border-pink-900/30 dark:bg-pink-900/10">
               <p className="text-[11px] uppercase tracking-wide text-pink-700 dark:text-pink-300">bKash Number</p>
               <div className="mt-2 flex items-center justify-between gap-2">
-                <p className="text-base font-black text-pink-700 dark:text-pink-300">{BKASH_NUMBER}</p>
+                <p className="text-base font-black text-pink-700 dark:text-pink-300">{paymentSettings?.bkash?.number || 'N/A'}</p>
                 <button
                   type="button"
                   onClick={handleCopyBkashNumber}
-                  className="rounded-md bg-pink-600 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-pink-700"
+                  className="rounded-md bg-pink-600 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-pink-700 disabled:opacity-60"
+                  disabled={!paymentSettings?.bkash?.number?.trim()}
                 >
                   Copy
                 </button>

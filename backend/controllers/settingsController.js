@@ -215,6 +215,47 @@ const updateSettings = async (req, res) => {
 module.exports = {
   getSettings,
   updateSettings,
+  getPaymentSettings: async (req, res) => {
+    try {
+      const settings = await ensureDefaultSettings();
+      return res.json({
+        paymentMethods: settings.paymentMethods || {
+          bkash: { enabled: true, number: '' },
+          nogod: { enabled: true, number: '' },
+          cod: { enabled: true },
+          card: { enabled: false },
+        },
+      });
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  },
+  updatePaymentSettings: async (req, res) => {
+    try {
+      const { paymentMethods } = req.body;
+
+      if (!paymentMethods || typeof paymentMethods !== 'object') {
+        return res.status(400).json({ message: 'Invalid payment methods data' });
+      }
+
+      // Validate that at least one payment method is enabled
+      const hasEnabledMethod = Object.values(paymentMethods).some(m => m?.enabled);
+      if (!hasEnabledMethod) {
+        return res.status(400).json({ message: 'At least one payment method must be enabled' });
+      }
+
+      const settings = await ensureDefaultSettings();
+      settings.paymentMethods = paymentMethods;
+      await settings.save();
+
+      return res.json({
+        success: true,
+        paymentMethods: settings.paymentMethods,
+      });
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  },
   getCouponStats: async (req, res) => {
     try {
       const Order = require('../models/Order');

@@ -4,7 +4,7 @@ import API from '../../api/axios';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext';
 
-const validTabs = new Set(['delivery', 'company', 'site', 'users']);
+const validTabs = new Set(['delivery', 'company', 'site', 'users', 'payment']);
 
 const resolveTab = (rawTab) => {
   const value = String(rawTab || '').toLowerCase();
@@ -38,6 +38,14 @@ const Settings = () => {
   const [editingCustomer, setEditingCustomer] = useState(null);
   const [customerEditForm, setCustomerEditForm] = useState({ name: '', email: '', phone: '' });
   const [savingCustomer, setSavingCustomer] = useState(false);
+  const [paymentMethods, setPaymentMethods] = useState({
+    bkash: { enabled: true, number: '' },
+    nogod: { enabled: true, number: '' },
+    cod: { enabled: true },
+    card: { enabled: false },
+  });
+  const [newPaymentMethod, setNewPaymentMethod] = useState({ name: '', enabled: true });
+  const [showAddPaymentMethod, setShowAddPaymentMethod] = useState(false);
 
   useEffect(() => {
     const tabFromUrl = resolveTab(searchParams.get('tab'));
@@ -98,6 +106,23 @@ const Settings = () => {
       fetchCustomers();
     }
   }, [activeTab]);
+
+  useEffect(() => {
+    if (activeTab === 'payment') {
+      fetchPaymentSettings();
+    }
+  }, [activeTab]);
+
+  const fetchPaymentSettings = async () => {
+    try {
+      const { data } = await API.get('/settings/payment');
+      if (data?.paymentMethods) {
+        setPaymentMethods(data.paymentMethods);
+      }
+    } catch (error) {
+      toast.error('Failed to load payment settings');
+    }
+  };
 
   const handleDeleteCustomer = async (id) => {
     if (id === currentUser?._id) {
@@ -279,6 +304,78 @@ const Settings = () => {
     }
   };
 
+  const handleSavePaymentSettings = async (event) => {
+    event.preventDefault();
+
+    // Validate bKash number if enabled
+    if (paymentMethods.bkash?.enabled && !paymentMethods.bkash?.number?.trim()) {
+      toast.error('bKash number is required when enabled');
+      return;
+    }
+
+    // Validate Nogod number if enabled
+    if (paymentMethods.nogod?.enabled && !paymentMethods.nogod?.number?.trim()) {
+      toast.error('Nogod number is required when enabled');
+      return;
+    }
+
+    setSavingSettings(true);
+    try {
+      await API.patch('/settings/payment', { paymentMethods });
+      toast.success('Payment settings updated');
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to update payment settings');
+    } finally {
+      setSavingSettings(false);
+    }
+  };
+
+  const handleTogglePaymentMethod = (methodKey) => {
+    setPaymentMethods((prev) => ({
+      ...prev,
+      [methodKey]: {
+        ...prev[methodKey],
+        enabled: !prev[methodKey]?.enabled,
+      },
+    }));
+  };
+
+  const handleUpdatePaymentNumber = (methodKey, number) => {
+    setPaymentMethods((prev) => ({
+      ...prev,
+      [methodKey]: {
+        ...prev[methodKey],
+        number,
+      },
+    }));
+  };
+
+  const handleAddPaymentMethod = async () => {
+    const methodName = newPaymentMethod.name?.trim().toLowerCase();
+    
+    if (!methodName) {
+      toast.error('Payment method name is required');
+      return;
+    }
+
+    if (paymentMethods[methodName]) {
+      toast.error('This payment method already exists');
+      return;
+    }
+
+    setPaymentMethods((prev) => ({
+      ...prev,
+      [methodName]: {
+        enabled: newPaymentMethod.enabled,
+        number: '',
+      },
+    }));
+
+    setNewPaymentMethod({ name: '', enabled: true });
+    setShowAddPaymentMethod(false);
+    toast.success(`${newPaymentMethod.name} added successfully`);
+  };
+
   return (
     <div>
       <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">Settings</h2>
@@ -331,6 +428,17 @@ const Settings = () => {
               }`}
             >
               Users
+            </button>
+            <button
+              type="button"
+              onClick={() => updateActiveTab('payment')}
+              className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                activeTab === 'payment'
+                  ? 'bg-pink-500 text-white'
+                  : 'text-gray-300 hover:text-white'
+              }`}
+            >
+              Payments
             </button>
           </div>
 
@@ -539,6 +647,207 @@ const Settings = () => {
                 className="w-full md:w-auto rounded-xl bg-pink-500 text-white px-6 py-2.5 font-semibold hover:bg-pink-600 transition-colors disabled:opacity-60"
               >
                 {savingSettings ? 'Saving...' : 'Save Site Settings'}
+              </button>
+            </form>
+          ) : activeTab === 'payment' ? (
+            <form onSubmit={handleSavePaymentSettings} className="space-y-6">
+              <p className="text-sm text-gray-400">Configure payment methods and their credentials.</p>
+
+              <div className="space-y-4">
+                {/* bKash Payment Method */}
+                <div className="border border-gray-700 rounded-xl p-4 bg-gray-800/50">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <h3 className="text-lg font-semibold text-gray-100">bKash</h3>
+                      <span className="px-2 py-1 text-xs rounded-full bg-pink-500/20 text-pink-300">Mobile Payment</span>
+                    </div>
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={paymentMethods.bkash?.enabled || false}
+                        onChange={() => handleTogglePaymentMethod('bkash')}
+                        className="w-4 h-4 rounded border-gray-600 accent-pink-500"
+                      />
+                      <span className="ml-2 text-sm text-gray-300">
+                        {paymentMethods.bkash?.enabled ? 'Enabled' : 'Disabled'}
+                      </span>
+                    </label>
+                  </div>
+                  {paymentMethods.bkash?.enabled && (
+                    <div>
+                      <label className="block text-sm text-gray-300 mb-2">bKash Number</label>
+                      <input
+                        type="text"
+                        placeholder="01XXXXXXXXX"
+                        value={paymentMethods.bkash?.number || ''}
+                        onChange={(e) => handleUpdatePaymentNumber('bkash', e.target.value)}
+                        className="w-full rounded-lg border border-gray-700 bg-gray-700 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                {/* Nogod Payment Method */}
+                <div className="border border-gray-700 rounded-xl p-4 bg-gray-800/50">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <h3 className="text-lg font-semibold text-gray-100">Nagad</h3>
+                      <span className="px-2 py-1 text-xs rounded-full bg-orange-500/20 text-orange-300">Mobile Payment</span>
+                    </div>
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={paymentMethods.nogod?.enabled || false}
+                        onChange={() => handleTogglePaymentMethod('nogod')}
+                        className="w-4 h-4 rounded border-gray-600 accent-pink-500"
+                      />
+                      <span className="ml-2 text-sm text-gray-300">
+                        {paymentMethods.nogod?.enabled ? 'Enabled' : 'Disabled'}
+                      </span>
+                    </label>
+                  </div>
+                  {paymentMethods.nogod?.enabled && (
+                    <div>
+                      <label className="block text-sm text-gray-300 mb-2">Nagad Number</label>
+                      <input
+                        type="text"
+                        placeholder="01XXXXXXXXX"
+                        value={paymentMethods.nogod?.number || ''}
+                        onChange={(e) => handleUpdatePaymentNumber('nogod', e.target.value)}
+                        className="w-full rounded-lg border border-gray-700 bg-gray-700 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                {/* Cash on Delivery */}
+                <div className="border border-gray-700 rounded-xl p-4 bg-gray-800/50">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <h3 className="text-lg font-semibold text-gray-100">Cash on Delivery</h3>
+                      <span className="px-2 py-1 text-xs rounded-full bg-slate-500/20 text-slate-300">Cash</span>
+                    </div>
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={paymentMethods.cod?.enabled || false}
+                        onChange={() => handleTogglePaymentMethod('cod')}
+                        className="w-4 h-4 rounded border-gray-600 accent-pink-500"
+                      />
+                      <span className="ml-2 text-sm text-gray-300">
+                        {paymentMethods.cod?.enabled ? 'Enabled' : 'Disabled'}
+                      </span>
+                    </label>
+                  </div>
+                </div>
+
+                {/* Card Payment */}
+                <div className="border border-gray-700 rounded-xl p-4 bg-gray-800/50">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <h3 className="text-lg font-semibold text-gray-100">Credit/Debit Card</h3>
+                      <span className="px-2 py-1 text-xs rounded-full bg-purple-500/20 text-purple-300">Card</span>
+                    </div>
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={paymentMethods.card?.enabled || false}
+                        onChange={() => handleTogglePaymentMethod('card')}
+                        className="w-4 h-4 rounded border-gray-600 accent-pink-500"
+                      />
+                      <span className="ml-2 text-sm text-gray-300">
+                        {paymentMethods.card?.enabled ? 'Enabled' : 'Disabled'}
+                      </span>
+                    </label>
+                  </div>
+                </div>
+
+                {/* Additional Payment Methods */}
+                {Object.entries(paymentMethods).map(([key, method]) => {
+                  if (!['bkash', 'nogod', 'cod', 'card'].includes(key)) {
+                    return (
+                      <div key={key} className="border border-gray-700 rounded-xl p-4 bg-gray-800/50">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <h3 className="text-lg font-semibold text-gray-100 capitalize">{key}</h3>
+                            <span className="px-2 py-1 text-xs rounded-full bg-blue-500/20 text-blue-300">Custom</span>
+                          </div>
+                          <label className="flex items-center cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={method?.enabled || false}
+                              onChange={() => handleTogglePaymentMethod(key)}
+                              className="w-4 h-4 rounded border-gray-600 accent-pink-500"
+                            />
+                            <span className="ml-2 text-sm text-gray-300">
+                              {method?.enabled ? 'Enabled' : 'Disabled'}
+                            </span>
+                          </label>
+                        </div>
+                      </div>
+                    );
+                  }
+                  return null;
+                })}
+              </div>
+
+              {/* Add New Payment Method */}
+              <div className="border-t border-gray-700 pt-4">
+                {!showAddPaymentMethod ? (
+                  <button
+                    type="button"
+                    onClick={() => setShowAddPaymentMethod(true)}
+                    className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-100 rounded-lg font-medium text-sm transition"
+                  >
+                    + Add Payment Method
+                  </button>
+                ) : (
+                  <div className="flex gap-2">
+                    <div className="flex-1">
+                      <input
+                        type="text"
+                        placeholder="e.g., Stripe, PayPal"
+                        value={newPaymentMethod.name}
+                        onChange={(e) => setNewPaymentMethod((prev) => ({ ...prev, name: e.target.value }))}
+                        className="w-full rounded-lg border border-gray-700 bg-gray-700 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                      />
+                    </div>
+                    <label className="flex items-center gap-2 px-3">
+                      <input
+                        type="checkbox"
+                        checked={newPaymentMethod.enabled}
+                        onChange={(e) => setNewPaymentMethod((prev) => ({ ...prev, enabled: e.target.checked }))}
+                        className="w-4 h-4 rounded border-gray-600 accent-pink-500"
+                      />
+                      <span className="text-sm text-gray-300">Enable</span>
+                    </label>
+                    <button
+                      type="button"
+                      onClick={handleAddPaymentMethod}
+                      className="px-4 py-2 bg-pink-500 hover:bg-pink-600 text-white rounded-lg font-medium text-sm transition"
+                    >
+                      Add
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowAddPaymentMethod(false);
+                        setNewPaymentMethod({ name: '', enabled: true });
+                      }}
+                      className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-100 rounded-lg font-medium text-sm transition"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              <button
+                type="submit"
+                disabled={savingSettings}
+                className="w-full md:w-auto rounded-xl bg-pink-500 text-white px-6 py-2.5 font-semibold hover:bg-pink-600 transition-colors disabled:opacity-60"
+              >
+                {savingSettings ? 'Saving...' : 'Save Payment Settings'}
               </button>
             </form>
           ) : (
