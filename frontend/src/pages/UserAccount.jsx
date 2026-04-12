@@ -1133,6 +1133,7 @@ const UserAccount = () => {
                     <table className="w-full text-sm">
                       <thead className="border-b border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800/50">
                         <tr>
+                          <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Order ID</th>
                           <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Amount</th>
                           <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Method</th>
                           <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Status</th>
@@ -1149,6 +1150,9 @@ const UserAccount = () => {
 
                           return (
                             <tr key={payment._id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                              <td className="px-4 py-3 font-mono text-xs text-gray-700 dark:text-gray-300">
+                                #{String(payment._id || '').slice(-8).toUpperCase()}
+                              </td>
                               <td className="px-4 py-3 font-semibold text-gray-900 dark:text-gray-100">{formatPrice(payment.totalAmount)}</td>
                               <td className="px-4 py-3 text-gray-700 dark:text-gray-300">
                                 <span className="inline-flex rounded-full bg-pink-50 px-3 py-1 text-xs font-semibold text-[#ff3366] dark:bg-gray-800 dark:text-pink-300">
