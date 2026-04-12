@@ -91,6 +91,20 @@ const settingSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    whatsappChatEnabled: {
+      type: Boolean,
+      default: true,
+    },
+    whatsappNumber: {
+      type: String,
+      default: '+8801700123456',
+      trim: true,
+    },
+    whatsappDefaultMessage: {
+      type: String,
+      default: 'Hello, I need help with my order.',
+      trim: true,
+    },
     paymentMethods: {
       type: mongoose.Schema.Types.Mixed,
       default: {

@@ -42,6 +42,9 @@ const ensureDefaultSettings = async () => {
       siteWebsiteUrl: 'www.digicart.com',
       facebookPixelId: '',
       facebookPixelEnabled: false,
+      whatsappChatEnabled: true,
+      whatsappNumber: '+8801700123456',
+      whatsappDefaultMessage: 'Hello, I need help with my order.',
       couponCode: DEFAULT_COUPON_CODE,
       couponDiscountPercent: DEFAULT_COUPON_DISCOUNT_PERCENT,
       couponActive: true,
@@ -84,6 +87,9 @@ const updateSettings = async (req, res) => {
     siteWebsiteUrl,
     facebookPixelId,
     facebookPixelEnabled,
+    whatsappChatEnabled,
+    whatsappNumber,
+    whatsappDefaultMessage,
     couponCode,
     couponDiscountPercent,
     couponActive,
@@ -157,6 +163,17 @@ const updateSettings = async (req, res) => {
     const resolvedFacebookPixelEnabled = typeof facebookPixelEnabled === 'boolean'
       ? facebookPixelEnabled
       : Boolean(existingSettings.facebookPixelEnabled);
+    const resolvedWhatsappChatEnabled = typeof whatsappChatEnabled === 'boolean'
+      ? whatsappChatEnabled
+      : typeof existingSettings.whatsappChatEnabled === 'boolean'
+        ? existingSettings.whatsappChatEnabled
+        : true;
+    const resolvedWhatsappNumber = typeof whatsappNumber === 'string' && whatsappNumber.trim()
+      ? whatsappNumber.trim()
+      : String(existingSettings.whatsappNumber || '').trim() || '+8801700123456';
+    const resolvedWhatsappDefaultMessage = typeof whatsappDefaultMessage === 'string' && whatsappDefaultMessage.trim()
+      ? whatsappDefaultMessage.trim()
+      : String(existingSettings.whatsappDefaultMessage || '').trim() || 'Hello, I need help with my order.';
     const resolvedCouponCode =
       typeof couponCode === 'string'
         ? couponCode.trim().toUpperCase()
@@ -210,6 +227,9 @@ const updateSettings = async (req, res) => {
         siteWebsiteUrl: resolvedSiteWebsiteUrl,
         facebookPixelId: resolvedFacebookPixelId,
         facebookPixelEnabled: resolvedFacebookPixelEnabled,
+        whatsappChatEnabled: resolvedWhatsappChatEnabled,
+        whatsappNumber: resolvedWhatsappNumber,
+        whatsappDefaultMessage: resolvedWhatsappDefaultMessage,
         couponCode: resolvedCouponCode,
         couponDiscountPercent: resolvedCouponDiscountPercent,
         couponActive: resolvedCouponActive,

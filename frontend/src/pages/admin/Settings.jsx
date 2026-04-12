@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext';
 import Swal from 'sweetalert2';
 
-const validTabs = new Set(['delivery', 'company', 'site', 'pixel', 'users', 'payment']);
+const validTabs = new Set(['delivery', 'company', 'site', 'pixel', 'whatsapp', 'users', 'payment']);
 
 const resolveTab = (rawTab) => {
   const value = String(rawTab || '').toLowerCase();
@@ -39,6 +39,9 @@ const Settings = () => {
     siteWebsiteUrl: 'www.digicart.com',
     facebookPixelId: '',
     facebookPixelEnabled: false,
+    whatsappChatEnabled: true,
+    whatsappNumber: '+8801700123456',
+    whatsappDefaultMessage: 'Hello, I need help with my order.',
   });
   const [loading, setLoading] = useState(true);
   const [savingSettings, setSavingSettings] = useState(false);
@@ -79,6 +82,9 @@ const Settings = () => {
           siteWebsiteUrl: data?.siteWebsiteUrl || 'www.digicart.com',
           facebookPixelId: data?.facebookPixelId || '',
           facebookPixelEnabled: Boolean(data?.facebookPixelEnabled),
+          whatsappChatEnabled: typeof data?.whatsappChatEnabled === 'boolean' ? data.whatsappChatEnabled : true,
+          whatsappNumber: data?.whatsappNumber || '+8801700123456',
+          whatsappDefaultMessage: data?.whatsappDefaultMessage || 'Hello, I need help with my order.',
         });
       } catch (error) {
         toast.error(error.response?.data?.message || 'Failed to load settings');
@@ -228,6 +234,9 @@ const Settings = () => {
       siteWebsiteUrl: settingsForm.siteWebsiteUrl,
       facebookPixelId: settingsForm.facebookPixelId,
       facebookPixelEnabled: Boolean(settingsForm.facebookPixelEnabled),
+      whatsappChatEnabled: Boolean(settingsForm.whatsappChatEnabled),
+      whatsappNumber: settingsForm.whatsappNumber,
+      whatsappDefaultMessage: settingsForm.whatsappDefaultMessage,
     });
 
     setSettingsForm({
@@ -248,6 +257,11 @@ const Settings = () => {
       facebookPixelEnabled: typeof data?.facebookPixelEnabled === 'boolean'
         ? data.facebookPixelEnabled
         : Boolean(settingsForm.facebookPixelEnabled),
+      whatsappChatEnabled: typeof data?.whatsappChatEnabled === 'boolean'
+        ? data.whatsappChatEnabled
+        : Boolean(settingsForm.whatsappChatEnabled),
+      whatsappNumber: data?.whatsappNumber || settingsForm.whatsappNumber,
+      whatsappDefaultMessage: data?.whatsappDefaultMessage || settingsForm.whatsappDefaultMessage,
     });
 
     toast.success(successMessage);
@@ -403,6 +417,39 @@ const Settings = () => {
       await saveSettings('Facebook Pixel settings updated');
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to update Facebook Pixel settings');
+    } finally {
+      setSavingSettings(false);
+    }
+  };
+
+  const handleSaveWhatsappSettings = async (event) => {
+    event.preventDefault();
+
+    if (settingsForm.whatsappChatEnabled && !String(settingsForm.whatsappNumber || '').trim()) {
+      toast.error('WhatsApp number is required when chat is enabled');
+      return;
+    }
+
+    const confirmation = await Swal.fire({
+      title: 'Save WhatsApp chat settings?',
+      text: 'This will update floating chat button configuration on storefront.',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#ec4899',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Save',
+      cancelButtonText: 'Cancel',
+    });
+
+    if (!confirmation.isConfirmed) {
+      return;
+    }
+
+    setSavingSettings(true);
+    try {
+      await saveSettings('WhatsApp chat settings updated');
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to update WhatsApp chat settings');
     } finally {
       setSavingSettings(false);
     }
@@ -677,6 +724,17 @@ const Settings = () => {
             </button>
             <button
               type="button"
+              onClick={() => updateActiveTab('whatsapp')}
+              className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                activeTab === 'whatsapp'
+                  ? 'bg-pink-500 text-white'
+                  : 'text-gray-300 hover:text-white'
+              }`}
+            >
+              WhatsApp Chat
+            </button>
+            <button
+              type="button"
               onClick={() => updateActiveTab('users')}
               className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
                 activeTab === 'users'
@@ -946,6 +1004,59 @@ const Settings = () => {
                 className="w-full md:w-auto rounded-xl bg-pink-500 text-white px-6 py-2.5 font-semibold hover:bg-pink-600 transition-colors disabled:opacity-60"
               >
                 {savingSettings ? 'Saving...' : 'Save Facebook Pixel Settings'}
+              </button>
+            </form>
+          ) : activeTab === 'whatsapp' ? (
+            <form onSubmit={handleSaveWhatsappSettings} className="space-y-5">
+              <p className="text-sm text-gray-400">Configure floating WhatsApp chat button for storefront users.</p>
+
+              <div className="rounded-xl border border-gray-700 bg-gray-800/60 p-4 space-y-4">
+                <label className="inline-flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={Boolean(settingsForm.whatsappChatEnabled)}
+                    onChange={(event) =>
+                      setSettingsForm((prev) => ({ ...prev, whatsappChatEnabled: event.target.checked }))
+                    }
+                    className="h-4 w-4 rounded border-gray-600 accent-pink-500"
+                  />
+                  <span className="text-sm font-medium text-gray-200">Enable Floating WhatsApp Chat Button</span>
+                </label>
+
+                <div>
+                  <label className="block text-sm text-gray-300 mb-1">WhatsApp Number</label>
+                  <input
+                    type="text"
+                    value={settingsForm.whatsappNumber}
+                    onChange={(event) =>
+                      setSettingsForm((prev) => ({ ...prev, whatsappNumber: event.target.value }))
+                    }
+                    placeholder="e.g., +8801700123456"
+                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                  />
+                  <p className="mt-2 text-xs text-gray-400">Use country code format (e.g., +880...).</p>
+                </div>
+
+                <div>
+                  <label className="block text-sm text-gray-300 mb-1">Default Chat Message</label>
+                  <textarea
+                    rows="3"
+                    value={settingsForm.whatsappDefaultMessage}
+                    onChange={(event) =>
+                      setSettingsForm((prev) => ({ ...prev, whatsappDefaultMessage: event.target.value }))
+                    }
+                    placeholder="Hello, I need help with my order."
+                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink-500 resize-none"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={savingSettings}
+                className="w-full md:w-auto rounded-xl bg-pink-500 text-white px-6 py-2.5 font-semibold hover:bg-pink-600 transition-colors disabled:opacity-60"
+              >
+                {savingSettings ? 'Saving...' : 'Save WhatsApp Settings'}
               </button>
             </form>
           ) : activeTab === 'payment' ? (

@@ -32,6 +32,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import FloatingChatButton from './components/FloatingChatButton';
 import API from './api/axios';
 
 const UserLayout = ({ children }) => (
@@ -39,6 +40,7 @@ const UserLayout = ({ children }) => (
     <Navbar />
     {children}
     <Footer />
+    <FloatingChatButton />
   </div>
 );
 
