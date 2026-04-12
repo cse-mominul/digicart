@@ -13,6 +13,11 @@ const {
 	resolveAbandonedCartByAdmin,
 	deleteAbandonedCartByAdmin,
 } = require('../controllers/analyticsController');
+const {
+	getAdminNotifications,
+	markNotificationRead,
+	markAllNotificationsRead,
+} = require('../controllers/notificationController');
 const { protect } = require('../middleware/authMiddleware');
 const requireAdmin = require('../middleware/requireAdmin');
 
@@ -24,6 +29,9 @@ router.get('/reviews', protect, requireAdmin, getAllReviews);
 router.get('/reviews/:id', protect, requireAdmin, getReviewByAdmin);
 router.put('/reviews/:id', protect, requireAdmin, updateReviewByAdmin);
 router.delete('/reviews/:id', protect, requireAdmin, deleteReviewByAdmin);
+router.get('/notifications', protect, requireAdmin, getAdminNotifications);
+router.put('/notifications/read-all', protect, requireAdmin, markAllNotificationsRead);
+router.put('/notifications/:id/read', protect, requireAdmin, markNotificationRead);
 router.get('/abandoned-carts', protect, requireAdmin, getAbandonedCartInsights);
 router.get('/abandoned-carts/:userId', protect, requireAdmin, getAbandonedCartDetailsByAdmin);
 router.put('/abandoned-carts/:userId', protect, requireAdmin, resolveAbandonedCartByAdmin);

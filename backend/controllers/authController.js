@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
+const { createNotification } = require('../utils/notificationService');
 
 const generateToken = (id) =>
   jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '7d' });
@@ -63,6 +64,15 @@ const login = async (req, res) => {
         { $set: { lastLoginAt: now } },
         { new: true }
       );
+
+      await createNotification({
+        type: 'login',
+        title: 'User Login',
+        message: `${updatedUser.name || 'A user'} logged in`,
+        actorName: updatedUser.name || '',
+        actorEmail: updatedUser.email || '',
+        actorUserId: updatedUser._id,
+      });
 
       res.json({
         _id: updatedUser._id,

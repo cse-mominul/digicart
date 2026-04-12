@@ -1,4 +1,5 @@
 const Order = require('../models/Order');
+const { createNotification } = require('../utils/notificationService');
 
 // @desc  Create new order
 // @route POST /api/orders
@@ -43,6 +44,17 @@ const createOrder = async (req, res) => {
       amountPaid: 0,
       isPaid: false,
     });
+
+    await createNotification({
+      type: 'order',
+      title: 'New Order',
+      message: `${customerName || req.user?.name || 'Guest customer'} placed a new order`,
+      actorName: customerName || String(req.user?.name || '').trim(),
+      actorEmail: String(customer?.email || req.user?.email || '').trim(),
+      actorUserId: req.user?._id || null,
+      orderId: order._id,
+    });
+
     res.status(201).json(order);
   } catch (error) {
     res.status(500).json({ message: error.message });

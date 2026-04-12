@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import API from '../../api/axios';
+import toast from 'react-hot-toast';
 
 const navItems = [
   { to: '/admin', label: 'Dashboard', end: true, icon: (
@@ -68,6 +70,66 @@ const AdminLayout = () => {
   const [ordersDropdownOpen, setOrdersDropdownOpen] = useState(isOrderSectionOpen);
   const isProductsSectionOpen = location.pathname.startsWith('/admin/products') || location.pathname.startsWith('/admin/coupons');
   const [productsDropdownOpen, setProductsDropdownOpen] = useState(isProductsSectionOpen);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [notificationsLoading, setNotificationsLoading] = useState(false);
+
+  const formatNotificationTime = (value) => {
+    if (!value) return 'Now';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return 'Now';
+    return date.toLocaleString();
+  };
+
+  const fetchNotifications = async (showError = false) => {
+    setNotificationsLoading(true);
+    try {
+      const { data } = await API.get('/admin/notifications?limit=10');
+      setNotifications(Array.isArray(data?.items) ? data.items : []);
+      setUnreadCount(Number(data?.unreadCount) || 0);
+    } catch {
+      if (showError) {
+        toast.error('Failed to load notifications');
+      }
+    } finally {
+      setNotificationsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchNotifications();
+    const intervalId = setInterval(() => {
+      fetchNotifications();
+    }, 15000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
+  const handleMarkAllRead = async () => {
+    try {
+      await API.put('/admin/notifications/read-all');
+      setNotifications((prev) => prev.map((item) => ({ ...item, readByAdmin: true })));
+      setUnreadCount(0);
+      toast.success('All notifications marked as read');
+    } catch {
+      toast.error('Failed to mark notifications as read');
+    }
+  };
+
+  const handleMarkSingleRead = async (notificationId) => {
+    if (!notificationId) return;
+
+    try {
+      await API.put(`/admin/notifications/${notificationId}/read`);
+      setNotifications((prev) => prev.map((item) => (
+        item._id === notificationId ? { ...item, readByAdmin: true } : item
+      )));
+      setUnreadCount((prev) => Math.max(0, prev - 1));
+    } catch {
+      toast.error('Failed to update notification');
+    }
+  };
 
   useEffect(() => {
     if (isReportSectionOpen) {
@@ -344,6 +406,77 @@ const AdminLayout = () => {
           <header className="bg-white dark:bg-gray-800 shadow-sm px-6 flex justify-between items-center flex-shrink-0 h-16">
             <h1 className="text-lg font-semibold text-gray-800 dark:text-white">Admin Panel</h1>
             <div className="flex items-center gap-3">
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const next = !notificationsOpen;
+                    setNotificationsOpen(next);
+                    if (next) fetchNotifications(true);
+                  }}
+                  className="relative p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                  aria-label="Notifications"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V4a2 2 0 10-4 0v1.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0a3 3 0 11-6 0m6 0H9" />
+                  </svg>
+                  {unreadCount > 0 && (
+                    <span className="absolute -right-1 -top-1 inline-flex min-h-5 min-w-5 items-center justify-center rounded-full bg-rose-500 px-1.5 text-[10px] font-bold text-white">
+                      {unreadCount > 99 ? '99+' : unreadCount}
+                    </span>
+                  )}
+                </button>
+
+                {notificationsOpen && (
+                  <div className="absolute right-0 z-50 mt-2 w-80 max-w-[90vw] overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800">
+                    <div className="flex items-center justify-between border-b border-gray-100 px-3 py-2 dark:border-gray-700">
+                      <p className="text-sm font-semibold text-gray-800 dark:text-white">Notifications</p>
+                      <button
+                        type="button"
+                        onClick={handleMarkAllRead}
+                        className="text-xs font-semibold text-indigo-600 hover:text-indigo-500 dark:text-indigo-300"
+                      >
+                        Mark all read
+                      </button>
+                    </div>
+
+                    <div className="max-h-80 overflow-y-auto">
+                      {notificationsLoading ? (
+                        <div className="p-3 text-xs text-gray-500 dark:text-gray-400">Loading notifications...</div>
+                      ) : notifications.length === 0 ? (
+                        <div className="p-3 text-xs text-gray-500 dark:text-gray-400">No notifications yet</div>
+                      ) : (
+                        notifications.map((item) => (
+                          <button
+                            key={item._id}
+                            type="button"
+                            onClick={() => {
+                              if (!item.readByAdmin) {
+                                handleMarkSingleRead(item._id);
+                              }
+
+                              if (item.type === 'order' && item.orderId) {
+                                navigate(`/admin/orders/${item.orderId}`);
+                                setNotificationsOpen(false);
+                              }
+                            }}
+                            className={`w-full border-b border-gray-100 px-3 py-2 text-left transition-colors dark:border-gray-700 ${
+                              item.readByAdmin
+                                ? 'bg-white hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700/40'
+                                : 'bg-indigo-50/60 hover:bg-indigo-50 dark:bg-indigo-900/20 dark:hover:bg-indigo-900/30'
+                            }`}
+                          >
+                            <p className="text-xs font-semibold text-gray-800 dark:text-gray-100">{item.title || 'Notification'}</p>
+                            <p className="mt-0.5 text-xs text-gray-600 dark:text-gray-300">{item.message || ''}</p>
+                            <p className="mt-1 text-[11px] text-gray-500 dark:text-gray-400">{formatNotificationTime(item.createdAt)}</p>
+                          </button>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+
               {/* Dark Mode Toggle */}
               <button
                 onClick={() => setDark(!dark)}
