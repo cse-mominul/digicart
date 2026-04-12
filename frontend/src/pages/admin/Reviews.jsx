@@ -2,10 +2,29 @@ import { useEffect, useMemo, useState } from 'react';
 import API from '../../api/axios';
 import toast from 'react-hot-toast';
 
+const itemsPerPage = 10;
+
+const getPaginationItems = (currentPage, totalPages) => {
+  if (totalPages <= 7) {
+    return Array.from({ length: totalPages }, (_, index) => index + 1);
+  }
+
+  if (currentPage <= 4) {
+    return [1, 2, 3, 4, 5, '...', totalPages];
+  }
+
+  if (currentPage >= totalPages - 3) {
+    return [1, '...', totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+  }
+
+  return [1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages];
+};
+
 const Reviews = () => {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
   const [editingReview, setEditingReview] = useState(null);
   const [editForm, setEditForm] = useState({ rating: 5, title: '', comment: '' });
   const [saving, setSaving] = useState(false);
@@ -37,6 +56,36 @@ const Reviews = () => {
       return reviewer.includes(q) || product.includes(q) || content.includes(q);
     });
   }, [reviews, search]);
+
+  const totalPages = useMemo(
+    () => Math.max(1, Math.ceil(filteredReviews.length / itemsPerPage)),
+    [filteredReviews.length]
+  );
+
+  const paginatedReviews = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return filteredReviews.slice(start, start + itemsPerPage);
+  }, [currentPage, filteredReviews]);
+
+  const paginationItems = useMemo(
+    () => getPaginationItems(currentPage, totalPages),
+    [currentPage, totalPages]
+  );
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
+
+  const handlePageChange = (page) => {
+    if (page < 1 || page > totalPages || page === currentPage) return;
+    setCurrentPage(page);
+  };
 
   const openEdit = (review) => {
     setEditingReview(review);
@@ -123,7 +172,7 @@ const Reviews = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredReviews.map((review) => (
+                {paginatedReviews.map((review) => (
                   <tr key={review._id} className="border-t dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
                     <td className="px-6 py-4">
                       <p className="font-medium text-gray-800 dark:text-white">{review?.user?.name || 'Unknown user'}</p>
@@ -174,6 +223,58 @@ const Reviews = () => {
               </tbody>
             </table>
           </div>
+
+          {filteredReviews.length > 0 && (
+            <div className="px-4 py-4 border-t border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row items-center justify-between gap-3">
+              <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                Page {currentPage} of {totalPages}
+              </p>
+
+              <div className="flex items-center justify-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="inline-flex items-center rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-700 dark:text-gray-200 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Previous
+                </button>
+
+                {paginationItems.map((item, index) => (
+                  typeof item === 'number' ? (
+                    <button
+                      key={item}
+                      type="button"
+                      onClick={() => handlePageChange(item)}
+                      className={`h-10 min-w-10 rounded-xl border px-3 text-sm font-medium transition-colors ${
+                        currentPage === item
+                          ? 'bg-pink-500 text-white border-pink-500'
+                          : 'bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800'
+                      }`}
+                    >
+                      {item}
+                    </button>
+                  ) : (
+                    <span
+                      key={`ellipsis-${index}`}
+                      className="inline-flex h-10 min-w-10 items-center justify-center text-sm text-gray-400"
+                    >
+                      {item}
+                    </span>
+                  )
+                ))}
+
+                <button
+                  type="button"
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="inline-flex items-center rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-700 dark:text-gray-200 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
