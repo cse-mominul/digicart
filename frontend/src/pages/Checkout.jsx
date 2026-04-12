@@ -8,14 +8,6 @@ import { showOrderSuccess } from '../utils/showOrderSuccess';
 import toast from 'react-hot-toast';
 import Swal from 'sweetalert2';
 
-const areaOptionsByCity = {
-  Dhaka: ['Dhanmondi', 'Mirpur', 'Gulshan', 'Uttara', 'Mohammadpur'],
-  Chattogram: ['Agrabad', 'Pahartali', 'Kotwali', 'Halishahar'],
-  Khulna: ['Sonadanga', 'Khalishpur', 'Daulatpur'],
-  Rajshahi: ['Boalia', 'Rajpara', 'Motihar'],
-  Sylhet: ['Zindabazar', 'Amberkhana', 'Shahjalal Upashahar'],
-};
-
 const shippingMethods = [
   { id: 'free', label: 'Free Shipping', cost: 0 },
   { id: 'inside-dhaka', label: 'Inside Dhaka ৳৬০', cost: 60 },
@@ -115,8 +107,6 @@ const Checkout = () => {
       });
     }
   };
-
-  const availableAreas = form.city ? areaOptionsByCity[form.city] || [] : [];
 
   const shippingCharge = useMemo(
     () => shippingMethods.find((method) => method.id === shippingMethod)?.cost || 0,
@@ -298,31 +288,25 @@ const Checkout = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">City *</label>
-              <select
+              <input
+                type="text"
                 value={form.city}
-                onChange={(e) => setForm({ ...form, city: e.target.value, area: '' })}
+                onChange={(e) => setForm({ ...form, city: e.target.value })}
+                placeholder="Enter city"
                 className="w-full border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
-              >
-                <option value="">Select City</option>
-                {Object.keys(areaOptionsByCity).map((city) => (
-                  <option key={city} value={city}>{city}</option>
-                ))}
-              </select>
+              />
               {errors.city && <p className="text-red-500 text-xs mt-1">{errors.city}</p>}
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Area *</label>
-              <select
+              <input
+                type="text"
                 value={form.area}
                 onChange={(e) => setForm({ ...form, area: e.target.value })}
+                placeholder="Enter area"
                 className="w-full border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
-              >
-                <option value="">Select Area</option>
-                {availableAreas.map((area) => (
-                  <option key={area} value={area}>{area}</option>
-                ))}
-              </select>
+              />
               {errors.area && <p className="text-red-500 text-xs mt-1">{errors.area}</p>}
             </div>
 
