@@ -739,7 +739,7 @@ const ProductDetails = () => {
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(37,99,235,0.08),_transparent_28%),radial-gradient(circle_at_right,_rgba(37,99,235,0.08),_transparent_24%),linear-gradient(180deg,#ffffff_0%,#f8fafc_42%,#eef2ff_100%)] pb-24 md:pb-10 dark:bg-[radial-gradient(circle_at_top,_rgba(37,99,235,0.12),_transparent_28%),radial-gradient(circle_at_right,_rgba(37,99,235,0.12),_transparent_24%),linear-gradient(180deg,#020617_0%,#0f172a_52%,#111827_100%)]">
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:py-8 lg:py-10">
+      <div className="mx-auto max-w-7xl px-4 py-4 sm:py-6 lg:py-8">
       <Link
         to="/"
         className="inline-flex items-center gap-2 mb-6 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-500"
@@ -747,13 +747,13 @@ const ProductDetails = () => {
         ← Back to Home
       </Link>
 
-      <section className="grid gap-8 lg:grid-cols-[1.08fr_0.92fr] lg:gap-10 items-start mb-10">
-        <div className="rounded-[22px] border border-white/70 bg-white/75 p-2.5 shadow-[0_30px_120px_rgba(15,23,42,0.10)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 sm:p-4">
-          <div className="mb-4 flex items-center justify-between">
-            <span className="inline-flex items-center rounded-full bg-blue-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-blue-600 dark:bg-blue-500/15 dark:text-blue-300">
+      <section className="grid gap-6 lg:grid-cols-[1.08fr_0.92fr] lg:gap-7 items-start mb-8">
+        <div className="rounded-[18px] border border-white/70 bg-white/75 p-2 shadow-[0_24px_80px_rgba(15,23,42,0.10)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 sm:p-3">
+          <div className="mb-3 flex items-center justify-between">
+            <span className="inline-flex items-center rounded-full bg-blue-500/10 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-blue-600 dark:bg-blue-500/15 dark:text-blue-300">
               Featured Product
             </span>
-            <span className="inline-flex items-center rounded-full bg-teal-500/10 px-3 py-1 text-xs font-semibold text-teal-700 dark:bg-teal-500/15 dark:text-teal-300">
+            <span className="inline-flex items-center rounded-full bg-blue-500/10 px-2.5 py-0.5 text-[11px] font-semibold text-blue-700 dark:bg-blue-500/15 dark:text-blue-300">
               {product.category}
             </span>
           </div>
@@ -765,7 +765,7 @@ const ProductDetails = () => {
                   key={`${image}-${index}`}
                   type="button"
                   onClick={() => setActiveImage(image)}
-                  className={`group relative h-14 w-14 shrink-0 overflow-hidden rounded-2xl border transition-all duration-200 xl:h-14 xl:w-14 ${
+                  className={`group relative h-12 w-12 shrink-0 overflow-hidden rounded-xl border transition-all duration-200 xl:h-12 xl:w-12 ${
                     activeImage === image
                       ? 'border-blue-500 ring-2 ring-blue-500/20'
                       : 'border-slate-200 bg-white hover:border-blue-300 dark:border-white/10 dark:bg-white/5'
@@ -783,18 +783,18 @@ const ProductDetails = () => {
               ))}
             </div>
 
-            <div className="order-1 rounded-[20px] border border-slate-200 bg-gradient-to-br from-[#fff8fb] via-white to-[#f8fbff] p-2 shadow-inner dark:border-white/10 dark:from-[#111827] dark:via-[#0f172a] dark:to-[#0b1220] xl:order-2">
-              <div className="relative overflow-hidden rounded-[18px] bg-[#f3e3da] shadow-[0_18px_50px_rgba(15,23,42,0.08)] dark:bg-[#111827]">
+            <div className="order-1 rounded-[16px] border border-slate-200 bg-gradient-to-br from-[#fff8fb] via-white to-[#f8fbff] p-1.5 shadow-inner dark:border-white/10 dark:from-[#111827] dark:via-[#0f172a] dark:to-[#0b1220] xl:order-2">
+              <div className="relative overflow-hidden rounded-[14px] bg-[#f3e3da] shadow-[0_14px_38px_rgba(15,23,42,0.08)] dark:bg-[#111827]">
                 <img
                   src={activeImage || product.image}
                   alt={product.name}
-                  className="h-[250px] w-full object-contain p-2.5 sm:h-[320px] lg:h-[420px] lg:p-5"
+                  className="h-[220px] w-full object-contain p-2 sm:h-[280px] sm:p-3 lg:h-[360px] lg:p-4"
                   onError={(e) => {
                     e.currentTarget.src = 'https://placehold.co/800x800?text=No+Image';
                   }}
                 />
 
-                <div className="pointer-events-none absolute left-4 top-4 rounded-full bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 shadow-sm backdrop-blur dark:bg-black/40 dark:text-white">
+                <div className="pointer-events-none absolute left-3 top-3 rounded-full bg-white/85 px-2.5 py-0.5 text-[11px] font-semibold text-slate-700 shadow-sm backdrop-blur dark:bg-black/40 dark:text-white">
                   {product.name}
                 </div>
               </div>
@@ -802,7 +802,7 @@ const ProductDetails = () => {
           </div>
         </div>
 
-        <div className="rounded-[22px] border border-white/70 bg-white/80 p-3.5 shadow-[0_30px_120px_rgba(15,23,42,0.10)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 sm:p-5 lg:sticky lg:top-24">
+        <div className="rounded-[18px] border border-white/70 bg-white/80 p-3 shadow-[0_24px_80px_rgba(15,23,42,0.10)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 sm:p-4 lg:sticky lg:top-24">
           <div className="flex items-start justify-between gap-3">
             <span className="inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-600 dark:bg-blue-500/15 dark:text-blue-300 mb-3">
             {product.category}
@@ -810,43 +810,43 @@ const ProductDetails = () => {
 
             <button
               type="button"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 transition-colors hover:border-blue-500 hover:text-blue-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-300"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 transition-colors hover:border-blue-500 hover:text-blue-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-300"
               aria-label="Wishlist"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
             </button>
           </div>
 
-          <h1 className="text-[1.65rem] font-bold leading-tight text-slate-900 dark:text-white sm:text-[1.5rem] lg:text-[1.65rem]">
+          <h1 className="text-[1.4rem] font-bold leading-tight text-slate-900 dark:text-white sm:text-[1.5rem] lg:text-[1.6rem]">
             {product.name}
           </h1>
 
-          <div className="mt-3.5 flex flex-wrap items-center gap-2.5">
-            <span className="text-2xl font-black text-blue-500 sm:text-[2.35rem]">{formatPrice(product.price)}</span>
-            <span className="text-base text-slate-400 line-through sm:text-lg">{formatPrice(oldPrice)}</span>
-            <span className="inline-flex rounded-full bg-yellow-400/20 px-3 py-1 text-xs font-bold text-yellow-700 dark:bg-yellow-400/15 dark:text-yellow-200">
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <span className="text-xl font-black text-blue-500 sm:text-2xl">{formatPrice(product.price)}</span>
+            <span className="text-sm text-slate-400 line-through sm:text-base">{formatPrice(oldPrice)}</span>
+            <span className="inline-flex rounded-full bg-yellow-400/20 px-2.5 py-0.5 text-[11px] font-bold text-yellow-700 dark:bg-yellow-400/15 dark:text-yellow-200">
               {discountLabel}
             </span>
           </div>
 
-          <div className="mt-4 flex items-center gap-2 text-sm">
+          <div className="mt-3 flex items-center gap-2 text-sm">
             <span className="flex items-center gap-0.5 text-amber-500">{renderStars(Math.round(displayRatingValue), 'h-4 w-4')}</span>
             <span className="text-slate-500 dark:text-slate-400">({displayReviewsLabel})</span>
           </div>
 
-          <div className="mt-5 border-t border-dashed border-slate-200 pt-5 dark:border-white/10">
-            <div className="mt-5 grid gap-3 sm:grid-cols-2">
+          <div className="mt-4 border-t border-dashed border-slate-200 pt-4 dark:border-white/10">
+            <div className="mt-4 grid gap-2.5 sm:grid-cols-2">
               <button
                 onClick={scrollToOrderForm}
-                className="w-full rounded-full bg-[#2563eb] py-3 font-semibold text-white shadow-[0_16px_40px_rgba(37,99,235,0.25)] transition-colors hover:bg-[#1d4ed8]"
+                className="w-full rounded-[12px] bg-[#2563eb] py-2.5 text-sm font-semibold text-white shadow-[0_12px_28px_rgba(37,99,235,0.25)] transition-colors hover:bg-[#1d4ed8]"
               >
                 Order Now
               </button>
               <button
                 onClick={scrollToProductDetailsSection}
-                className="w-full rounded-full border border-slate-200 bg-white py-3 font-semibold text-slate-700 transition-colors hover:border-teal-500 hover:text-teal-600 dark:border-white/10 dark:bg-white/5 dark:text-slate-100"
+                className="w-full rounded-[12px] border border-slate-200 bg-white py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:border-blue-500 hover:text-blue-600 dark:border-white/10 dark:bg-white/5 dark:text-slate-100"
               >
                 Learn More
               </button>
@@ -855,19 +855,19 @@ const ProductDetails = () => {
         </div>
       </section>
 
-      <section ref={productDetailsSectionRef} className="grid gap-6 lg:grid-cols-5 mb-10">
-        <div className="lg:col-span-3 rounded-[22px] border border-white/70 bg-white/80 p-4 shadow-[0_24px_80px_rgba(15,23,42,0.08)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5">
+      <section ref={productDetailsSectionRef} className="grid gap-5 lg:grid-cols-5 mb-8">
+        <div className="lg:col-span-3 rounded-[18px] border border-white/70 bg-white/80 p-3.5 shadow-[0_24px_80px_rgba(15,23,42,0.08)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Product Details</h2>
-              <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Desktop tab view with backend-driven specs</p>
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white">Product Details</h2>
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Desktop tab view with backend-driven specs</p>
             </div>
-            <span className="rounded-full bg-teal-500/10 px-3 py-1 text-xs font-semibold text-teal-700 dark:bg-teal-500/15 dark:text-teal-300">
+            <span className="rounded-full bg-blue-500/10 px-2.5 py-0.5 text-[11px] font-semibold text-blue-700 dark:bg-blue-500/15 dark:text-blue-300">
               Premium selection
             </span>
           </div>
 
-          <div className="mt-4 flex flex-wrap gap-2 rounded-full bg-slate-100 p-1 dark:bg-white/5">
+          <div className="mt-3 flex flex-wrap gap-1.5 rounded-full bg-slate-100 p-1 dark:bg-white/5">
             {[
               { key: 'description', label: 'Description' },
               { key: 'additionalInfo', label: 'Additional Info' },
@@ -877,7 +877,7 @@ const ProductDetails = () => {
                 key={tab.key}
                 type="button"
                 onClick={() => setActiveTab(tab.key)}
-                className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
+                className={`rounded-full px-3 py-1.5 text-xs font-semibold transition-colors ${
                   activeTab === tab.key
                     ? 'bg-white text-blue-500 shadow-sm dark:bg-slate-900 dark:text-blue-300'
                     : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
@@ -888,10 +888,10 @@ const ProductDetails = () => {
             ))}
           </div>
 
-          <div className="mt-5 rounded-[20px] border border-slate-200 bg-white p-4 dark:border-white/10 dark:bg-white/5">
+          <div className="mt-4 rounded-[16px] border border-slate-200 bg-white p-3.5 dark:border-white/10 dark:bg-white/5">
             {activeTab === 'description' && (
               <div className="space-y-4">
-                <p className="leading-7 text-slate-600 dark:text-slate-300 break-words [overflow-wrap:anywhere]">
+                <p className="text-sm leading-6 text-slate-600 dark:text-slate-300 break-words [overflow-wrap:anywhere]">
                   {product.description}
                 </p>
               </div>
@@ -903,7 +903,7 @@ const ProductDetails = () => {
                   {additionalInfoRows.map((item) => (
                     <div
                       key={`${item.label}-${item.value}`}
-                      className="grid gap-2 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm sm:grid-cols-[180px_1fr] dark:border-white/10 dark:bg-white/5"
+                      className="grid gap-1.5 rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-xs sm:grid-cols-[160px_1fr] dark:border-white/10 dark:bg-white/5"
                     >
                       <p className="font-semibold text-slate-800 dark:text-slate-100">{item.label}</p>
                       <p className="text-slate-600 dark:text-slate-300 break-words [overflow-wrap:anywhere]">{item.value}</p>
@@ -911,30 +911,30 @@ const ProductDetails = () => {
                   ))}
                 </div>
               ) : (
-                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-400">
+                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-400">
                   No additional information available for this product.
                 </div>
               )
             )}
 
             {activeTab === 'reviews' && (
-                <div className="space-y-6">
-                  <div className="grid gap-4 lg:grid-cols-[220px_1fr]">
-                    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-white/5">
-                      <div className="text-4xl font-black text-slate-900 dark:text-white">
+                <div className="space-y-5">
+                  <div className="grid gap-3 lg:grid-cols-[200px_1fr]">
+                    <div className="rounded-xl border border-slate-200 bg-slate-50 p-3.5 dark:border-white/10 dark:bg-white/5">
+                      <div className="text-3xl font-black text-slate-900 dark:text-white">
                         {reviewsState.totalReviews > 0 ? reviewsState.averageRating.toFixed(1) : '0.0'}
                       </div>
                       <div className="mt-2 flex items-center gap-1 text-amber-500">
                         {renderStars(Math.round(reviewsState.averageRating))}
                       </div>
-                      <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+                      <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
                         {reviewsState.totalReviews > 0
                           ? `${reviewsState.totalReviews} customer review${reviewsState.totalReviews === 1 ? '' : 's'}`
                           : 'No reviews yet'}
                       </p>
                     </div>
 
-                    <div className="rounded-2xl border border-blue-500/15 bg-blue-500/5 p-4 text-sm text-slate-600 dark:text-slate-300">
+                    <div className="rounded-xl border border-blue-500/15 bg-blue-500/5 p-3.5 text-xs text-slate-600 dark:text-slate-300">
                       <p className="font-semibold text-slate-900 dark:text-white">Share your experience</p>
                       <p className="mt-2 leading-6">
                         Reviews are available for customers who have placed an order for this product.
@@ -946,28 +946,28 @@ const ProductDetails = () => {
                   </div>
 
                   {reviewsLoading ? (
-                    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-400">
+                    <div className="rounded-xl border border-slate-200 bg-slate-50 p-3.5 text-xs text-slate-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-400">
                       Loading reviews...
                     </div>
                   ) : reviewsState.reviews.length > 0 ? (
-                    <div className="grid gap-4">
+                    <div className="grid gap-3">
                       {reviewsState.reviews.map((review) => (
-                        <div key={review._id} className="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-white/5">
+                        <div key={review._id} className="rounded-xl border border-slate-200 bg-slate-50 p-3.5 dark:border-white/10 dark:bg-white/5">
                           <div className="flex flex-wrap items-center justify-between gap-3">
                             <div>
                               <h3 className="font-semibold text-slate-900 dark:text-white">
                                 {review.user?.name || 'Verified buyer'}
                               </h3>
-                              <p className="text-xs text-slate-500 dark:text-slate-400">
+                              <p className="text-[11px] text-slate-500 dark:text-slate-400">
                                 {review.createdAt ? new Date(review.createdAt).toLocaleDateString() : ''}
                               </p>
                             </div>
-                            <div className="flex items-center gap-2 rounded-full bg-yellow-400/15 px-3 py-1 text-sm font-semibold text-yellow-700 dark:text-yellow-200">
+                            <div className="flex items-center gap-2 rounded-full bg-yellow-400/15 px-2.5 py-0.5 text-xs font-semibold text-yellow-700 dark:text-yellow-200">
                               <span>{Number(review.rating).toFixed(1)}</span>
                               <span className="flex items-center text-yellow-500">{renderStars(Math.round(review.rating), 'h-3.5 w-3.5')}</span>
                             </div>
                           </div>
-                          <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300 break-words [overflow-wrap:anywhere]">
+                          <p className="mt-2 text-sm leading-5 text-slate-600 dark:text-slate-300 break-words [overflow-wrap:anywhere]">
                             {review.comment}
                           </p>
                           {review.image ? (
@@ -984,16 +984,16 @@ const ProductDetails = () => {
                       ))}
                     </div>
                   ) : (
-                    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-400">
+                    <div className="rounded-xl border border-slate-200 bg-slate-50 p-3.5 text-xs text-slate-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-400">
                       This product does not have any reviews yet.
                     </div>
                   )}
 
-                  <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:border-white/10 dark:bg-white/5">
+                  <div className="rounded-xl border border-slate-200 bg-white p-3.5 dark:border-white/10 dark:bg-white/5">
                     <div className="flex flex-wrap items-center justify-between gap-3">
                       <div>
-                        <h3 className="text-lg font-bold text-slate-900 dark:text-white">Write a review</h3>
-                        <p className="text-sm text-slate-500 dark:text-slate-400">
+                        <h3 className="text-base font-bold text-slate-900 dark:text-white">Write a review</h3>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">
                           {user
                             ? reviewsState.canReview
                               ? 'Your review helps other customers decide.'
@@ -1002,19 +1002,19 @@ const ProductDetails = () => {
                         </p>
                       </div>
                       {reviewsState.currentUserReview ? (
-                        <span className="rounded-full bg-teal-500/10 px-3 py-1 text-xs font-semibold text-teal-700 dark:bg-teal-500/15 dark:text-teal-300">
+                        <span className="rounded-full bg-blue-500/10 px-2.5 py-0.5 text-[11px] font-semibold text-blue-700 dark:bg-blue-500/15 dark:text-blue-300">
                           Your review is saved
                         </span>
                       ) : null}
                     </div>
 
                     {!user ? (
-                      <div className="mt-4 rounded-2xl border border-blue-500/15 bg-blue-500/5 p-4 text-sm text-slate-600 dark:text-slate-300">
+                      <div className="mt-3 rounded-xl border border-blue-500/15 bg-blue-500/5 p-3.5 text-sm text-slate-600 dark:text-slate-300">
                         <p>Please log in to submit a product review.</p>
                         <button
                           type="button"
                           onClick={() => navigate('/login')}
-                          className="mt-3 rounded-full bg-[#2563eb] px-4 py-2 text-sm font-semibold text-white hover:bg-[#1d4ed8]"
+                          className="mt-3 rounded-[12px] bg-[#2563eb] px-3.5 py-2 text-xs font-semibold text-white hover:bg-[#1d4ed8]"
                         >
                           Go to Login
                         </button>
@@ -1067,13 +1067,13 @@ const ProductDetails = () => {
                         <button
                           type="submit"
                           disabled={submittingReview}
-                          className="rounded-full bg-[#2563eb] px-5 py-3 font-semibold text-white shadow-[0_16px_40px_rgba(37,99,235,0.22)] transition-colors hover:bg-[#1d4ed8] disabled:opacity-60"
+                          className="rounded-[12px] bg-[#2563eb] px-4 py-2.5 text-sm font-semibold text-white shadow-[0_12px_28px_rgba(37,99,235,0.22)] transition-colors hover:bg-[#1d4ed8] disabled:opacity-60"
                         >
                           {submittingReview ? 'Saving...' : reviewsState.currentUserReview ? 'Update Review' : 'Submit Review'}
                         </button>
                       </form>
                     ) : (
-                      <div className="mt-4 rounded-2xl border border-amber-400/20 bg-amber-400/10 p-4 text-sm text-amber-700 dark:text-amber-200">
+                      <div className="mt-3 rounded-xl border border-amber-400/20 bg-amber-400/10 p-3.5 text-xs text-amber-700 dark:text-amber-200">
                         You need to place an order for this product before leaving a review.
                       </div>
                     )}
@@ -1084,19 +1084,19 @@ const ProductDetails = () => {
 
         </div>
 
-        <aside ref={orderFormRef} className="lg:col-span-2 h-fit rounded-[22px] border border-white/70 bg-white/80 p-4 shadow-[0_24px_80px_rgba(15,23,42,0.08)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 lg:sticky lg:top-24">
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-1">Order Now</h2>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mb-5">Fill out the form and confirm your order instantly.</p>
+        <aside ref={orderFormRef} className="lg:col-span-2 h-fit rounded-[18px] border border-white/70 bg-white/80 p-3.5 shadow-[0_24px_80px_rgba(15,23,42,0.08)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 lg:sticky lg:top-24">
+          <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-1">Order Now</h2>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">Fill out the form and confirm your order instantly.</p>
 
-          <form onSubmit={handleConfirmOrder} className="space-y-4">
+          <form onSubmit={handleConfirmOrder} className="space-y-3.5">
             {user && (
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3.5 space-y-3 dark:border-white/10 dark:bg-white/5">
+              <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 space-y-2.5 dark:border-white/10 dark:bg-white/5">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Saved Address</label>
                   <select
                     value={selectedAddressId}
                     onChange={(event) => handleAddressSelect(event.target.value)}
-                    className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
+                    className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
                   >
                     {savedAddresses.map((addressItem) => (
                       <option key={addressItem.id} value={addressItem.id}>
@@ -1114,7 +1114,7 @@ const ProductDetails = () => {
                       <select
                         value={addressTypeToSave}
                         onChange={(event) => setAddressTypeToSave(event.target.value)}
-                        className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
+                        className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
                       >
                         <option value="Home">Home</option>
                         <option value="Office">Office</option>
@@ -1123,7 +1123,7 @@ const ProductDetails = () => {
                     <button
                       type="button"
                       onClick={handleSaveCurrentAddressType}
-                      className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:border-blue-400 hover:text-blue-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-100"
+                      className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-blue-400 hover:text-blue-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-100"
                     >
                       Save
                     </button>
@@ -1140,7 +1140,7 @@ const ProductDetails = () => {
                     type="text"
                     value={form.fullName}
                     onChange={(event) => setForm((prev) => ({ ...prev, fullName: event.target.value }))}
-                    className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
+                    className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
                     placeholder="Enter your full name"
                   />
                 </div>
@@ -1151,7 +1151,7 @@ const ProductDetails = () => {
                     type="text"
                     value={form.phone}
                     onChange={(event) => setForm((prev) => ({ ...prev, phone: event.target.value }))}
-                    className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
+                    className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
                     placeholder="Enter your phone number"
                   />
                 </div>
@@ -1162,14 +1162,14 @@ const ProductDetails = () => {
                     rows={4}
                     value={form.fullAddress}
                     onChange={(event) => setForm((prev) => ({ ...prev, fullAddress: event.target.value }))}
-                    className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
+                    className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
                     placeholder="House, road, area, city"
                   />
                 </div>
               </>
             )}
 
-            <div className="rounded-2xl border border-slate-200 bg-[#fff8fb] p-4 space-y-3 dark:border-white/10 dark:bg-white/5">
+            <div className="rounded-xl border border-slate-200 bg-[#fff8fb] p-3.5 space-y-2.5 dark:border-white/10 dark:bg-white/5">
               <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">Delivery Area</p>
 
               <label className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-3 py-2 cursor-pointer hover:border-blue-400/40 transition-colors dark:border-white/10 dark:bg-white/5">
@@ -1201,7 +1201,7 @@ const ProductDetails = () => {
               </label>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 space-y-3 dark:border-white/10 dark:bg-white/5">
+            <div className="rounded-xl border border-slate-200 bg-white p-3.5 space-y-2.5 dark:border-white/10 dark:bg-white/5">
               <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">Payment Method</p>
 
               {availablePaymentMethods.map((method) => (
@@ -1228,7 +1228,7 @@ const ProductDetails = () => {
               ))}
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 space-y-2 dark:border-white/10 dark:bg-white/5">
+            <div className="rounded-xl border border-slate-200 bg-white p-3.5 space-y-2 dark:border-white/10 dark:bg-white/5">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-slate-500 dark:text-slate-400">Product Price</span>
                 <span className="text-slate-700 dark:text-slate-200">{productPrice} BDT</span>
@@ -1246,7 +1246,7 @@ const ProductDetails = () => {
             <button
               type="submit"
               disabled={placingOrder}
-              className="w-full rounded-full bg-[#2563eb] py-3 font-semibold text-white shadow-[0_16px_40px_rgba(37,99,235,0.22)] transition-colors hover:bg-[#1d4ed8] disabled:opacity-60"
+              className="w-full rounded-[12px] bg-[#2563eb] py-2.5 text-sm font-semibold text-white shadow-[0_12px_28px_rgba(37,99,235,0.22)] transition-colors hover:bg-[#1d4ed8] disabled:opacity-60"
             >
               {placingOrder ? 'Confirming...' : 'Confirm Order'}
             </button>
@@ -1258,7 +1258,7 @@ const ProductDetails = () => {
         <button
           type="button"
           onClick={scrollToOrderForm}
-          className="w-full rounded-xl bg-blue-500 text-white py-3.5 font-semibold shadow-lg shadow-blue-500/30"
+          className="w-full rounded-[12px] bg-blue-500 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-500/30"
         >
           Order Now
         </button>

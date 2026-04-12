@@ -229,18 +229,18 @@ const Navbar = () => {
             </div>
 
             <div className="mt-3">
-              <div className="relative w-full" ref={searchRef}>
+              <div className="relative mx-auto w-[90%] max-w-sm" ref={searchRef}>
                 <input
                   type="text"
                   placeholder="Search for the Items"
                   value={searchQuery}
                   onChange={handleSearchChange}
                   onKeyPress={handleSearch}
-                  className="w-full bg-white dark:bg-gray-900 border border-[#2563eb]/40 dark:border-[#2563eb]/40 rounded-full py-3 pl-5 pr-14 text-lg text-gray-700 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#2563eb]/20"
+                  className="w-full bg-white dark:bg-gray-900 border border-[#2563eb]/40 dark:border-[#2563eb]/40 rounded-full py-2 pl-4 pr-12 text-base text-gray-700 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#2563eb]/20"
                 />
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-9 w-9 absolute right-4 top-1/2 -translate-y-1/2 text-[#2563eb]"
+                  className="h-7 w-7 absolute right-3 top-1/2 -translate-y-1/2 text-[#2563eb]"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -287,7 +287,7 @@ const Navbar = () => {
               )}
             </Link>
 
-            <div className="hidden sm:flex flex-1 max-w-3xl mx-auto">
+            <div className="hidden sm:flex flex-1 max-w-xl mx-auto">
               <div className="relative w-full" ref={searchRef}>
                 <input
                   type="text"
@@ -295,11 +295,11 @@ const Navbar = () => {
                   value={searchQuery}
                   onChange={handleSearchChange}
                   onKeyPress={handleSearch}
-                  className="w-full bg-white dark:bg-gray-900 border border-[#2563eb] rounded-full py-2 sm:py-2.5 pl-10 sm:pl-11 pr-3 sm:pr-4 text-xs sm:text-sm text-gray-800 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:outline-none focus:ring-0"
+                  className="w-full bg-white dark:bg-gray-900 border border-[#2563eb] rounded-full py-1.5 sm:py-2 pl-9 sm:pl-10 pr-3 sm:pr-4 text-xs text-gray-800 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:outline-none focus:ring-0"
                 />
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 sm:h-5 w-4 sm:w-5 absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                  className="h-4 w-4 absolute left-3 sm:left-3.5 top-1/2 -translate-y-1/2 text-gray-400"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
