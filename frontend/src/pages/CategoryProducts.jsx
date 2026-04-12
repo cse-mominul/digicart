@@ -28,6 +28,7 @@ const CategoryProducts = () => {
   const [priceLimit, setPriceLimit] = useState(0);
   const [onlyInStock, setOnlyInStock] = useState(false);
   const [selectedBrands, setSelectedBrands] = useState([]);
+  const [showAllBrands, setShowAllBrands] = useState(false);
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
   const normalizedSlug = (categorySlug || 'all').toLowerCase();
@@ -50,6 +51,10 @@ const CategoryProducts = () => {
       new Set(products.map((product) => getProductBrand(product)).filter(Boolean))
     ).sort((a, b) => a.localeCompare(b));
   }, [products]);
+
+  const visibleBrands = useMemo(() => {
+    return showAllBrands ? brands : brands.slice(0, 5);
+  }, [brands, showAllBrands]);
 
   const pageNumbers = useMemo(
     () => Array.from({ length: totalPages }, (_, index) => index + 1),
@@ -108,6 +113,7 @@ const CategoryProducts = () => {
     setOnlyInStock(false);
     setSelectedBrands([]);
     setPriceLimit(0);
+    setShowAllBrands(false);
   }, [categorySlug, searchTerm]);
 
   useEffect(() => {
@@ -219,7 +225,6 @@ const CategoryProducts = () => {
                         <p className="text-xl font-bold leading-none text-gray-900 dark:text-white">Price Range</p>
                         <p className="mt-1 text-xs font-medium text-gray-500 dark:text-gray-400">Up to {formatPrice(maxPrice)}</p>
                       </div>
-                      <span className="text-xs font-semibold text-gray-400">Reset</span>
                     </div>
 
                     <div className="price-wave-bg rounded-2xl px-1 pb-2 pt-9">
@@ -243,7 +248,6 @@ const CategoryProducts = () => {
                 <div className="mb-6 rounded-3xl border border-[#2563eb]/10 bg-gray-50 p-4">
                   <div className="mb-2 flex items-start justify-between gap-3">
                     <p className="text-2xl font-semibold text-gray-900 dark:text-white">Availability</p>
-                    <span className="text-xs font-semibold text-gray-400">Reset</span>
                   </div>
                   <label className="flex cursor-pointer items-center justify-between rounded-xl px-2 py-1.5 text-base text-gray-700 transition-colors hover:bg-white/80 dark:text-gray-200">
                     <div className="flex items-center gap-2.5">
@@ -264,10 +268,9 @@ const CategoryProducts = () => {
                 <div className="rounded-3xl border border-[#2563eb]/10 bg-gray-50 p-4">
                   <div className="mb-3 flex items-start justify-between gap-3">
                     <p className="text-2xl font-semibold text-gray-900 dark:text-white">Brand</p>
-                    <span className="text-xs font-semibold text-gray-400">Reset</span>
                   </div>
                   <div className="space-y-2 max-h-56 overflow-y-auto no-scrollbar pr-1">
-                    {brands.map((brand, index) => (
+                    {visibleBrands.map((brand, index) => (
                       <label
                         key={brand}
                         className="flex cursor-pointer items-center justify-between rounded-xl px-2 py-1.5 text-base text-gray-700 transition-colors hover:bg-white/80 dark:text-gray-200"
@@ -290,9 +293,10 @@ const CategoryProducts = () => {
                       <p className="text-sm text-gray-400 dark:text-gray-500">No brands available</p>
                     )}
                   </div>
-                  {brands.length > 0 && (
+                  {brands.length > 5 && !showAllBrands && (
                     <button
                       type="button"
+                      onClick={() => setShowAllBrands(true)}
                       className="mt-2 text-sm font-semibold text-[#2563eb]"
                     >
                       More Brand
@@ -324,7 +328,6 @@ const CategoryProducts = () => {
                   <p className="text-lg font-bold text-gray-900 dark:text-gray-100">Price Range</p>
                   <p className="mt-1 text-xs font-medium text-gray-500 dark:text-gray-400">The average price is {formatPrice(maxPrice)}</p>
                 </div>
-                <span className="text-xs font-semibold text-gray-400">Reset</span>
               </div>
 
               <div className="price-wave-bg rounded-2xl px-1 pb-2 pt-10">
@@ -347,7 +350,6 @@ const CategoryProducts = () => {
             <div className="mb-6 rounded-3xl border border-[#2563eb]/10 bg-gray-50 p-4">
               <div className="mb-2 flex items-start justify-between gap-3">
                 <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">Availability</p>
-                <span className="text-xs font-semibold text-gray-400">Reset</span>
               </div>
               <label className="flex cursor-pointer items-center justify-between rounded-xl px-2 py-1.5 text-sm text-gray-700 transition-colors hover:bg-white dark:text-gray-200">
                 <div className="flex items-center gap-2.5">
@@ -368,10 +370,9 @@ const CategoryProducts = () => {
             <div className="rounded-3xl border border-[#2563eb]/10 bg-gray-50 p-4">
               <div className="mb-2 flex items-start justify-between gap-3">
                 <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">Brand</p>
-                <span className="text-xs font-semibold text-gray-400">Reset</span>
               </div>
               <div className="space-y-1.5 max-h-56 overflow-y-auto no-scrollbar pr-1">
-                {brands.map((brand, index) => (
+                {visibleBrands.map((brand, index) => (
                   <label
                     key={brand}
                     className="flex cursor-pointer items-center justify-between rounded-xl px-2 py-1.5 text-sm text-gray-700 transition-colors hover:bg-white dark:text-gray-200"
@@ -394,9 +395,10 @@ const CategoryProducts = () => {
                   <p className="text-sm text-gray-400 dark:text-gray-500">No brands available</p>
                 )}
               </div>
-              {brands.length > 0 && (
+              {brands.length > 5 && !showAllBrands && (
                 <button
                   type="button"
+                  onClick={() => setShowAllBrands(true)}
                   className="mt-2 text-sm font-semibold text-[#2563eb]"
                 >
                   More Brand
