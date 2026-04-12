@@ -88,9 +88,12 @@ const ProductCard = ({ product }) => {
           </svg>
         </button>
         {stockCount === 0 && (
-          <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <span className="text-white font-bold text-sm">Out of Stock</span>
-          </div>
+          <span className="absolute top-1/2 left-1/2 z-20 -translate-x-1/2 -translate-y-1/2 bg-red-600 text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-lg border-2 border-white">
+            Out of Stock
+          </span>
+        )}
+        {stockCount === 0 && (
+          <div className="absolute inset-0 bg-black bg-opacity-40 z-10" />
         )}
       </div>
       <div className="p-4 pt-6">

@@ -306,6 +306,8 @@ const ProductDetails = () => {
   }, [product]);
 
   const productPrice = Number(product?.price) || 0;
+  const availableStockCount = Number(product?.countInStock ?? product?.stock ?? 0);
+  const isOutOfStock = !Number.isFinite(availableStockCount) || availableStockCount <= 0;
   const showDiscount = product?.showDiscount !== false;
   const configuredCompareAtPrice = Number(product?.compareAtPrice) || 0;
   const oldPrice = configuredCompareAtPrice > productPrice
@@ -858,6 +860,11 @@ const ProductDetails = () => {
             {showDiscount && (
               <span className="inline-flex rounded-full bg-yellow-400/20 px-2.5 py-0.5 text-[11px] font-bold text-yellow-700 dark:bg-yellow-400/15 dark:text-yellow-200">
                 {discountLabel}
+              </span>
+            )}
+            {isOutOfStock && (
+              <span className="inline-flex rounded-full bg-red-100 px-2.5 py-0.5 text-[11px] font-bold text-red-700 dark:bg-red-900/30 dark:text-red-300">
+                Out of Stock
               </span>
             )}
           </div>
