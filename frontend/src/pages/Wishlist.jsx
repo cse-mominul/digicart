@@ -10,7 +10,8 @@ const Wishlist = () => {
 
   const handleAddToCart = (product) => {
     addToCart(product);
-    toast.success(`${product.name} added to cart`);
+    removeFromWishlist(product._id);
+    toast.success(`${product.name} moved to cart`);
   };
 
   return (
