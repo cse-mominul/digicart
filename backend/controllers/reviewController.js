@@ -166,6 +166,28 @@ const getAllReviews = async (req, res) => {
   }
 };
 
+// @desc  Get single review details (admin only)
+// @route GET /api/admin/reviews/:id
+const getReviewByAdmin = async (req, res) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: 'Invalid review ID' });
+    }
+
+    const review = await Review.findById(req.params.id)
+      .populate('user', 'name email phone role createdAt lastLoginAt')
+      .populate('product', 'name image category brand price stock description');
+
+    if (!review) {
+      return res.status(404).json({ message: 'Review not found' });
+    }
+
+    res.json(review);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // @desc  Update a review (admin only)
 // @route PUT /api/admin/reviews/:id
 const updateReviewByAdmin = async (req, res) => {
@@ -255,6 +277,7 @@ module.exports = {
   createOrUpdateProductReview,
   deleteMyProductReview,
   getAllReviews,
+  getReviewByAdmin,
   updateReviewByAdmin,
   deleteReviewByAdmin,
 };

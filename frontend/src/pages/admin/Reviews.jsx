@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import API from '../../api/axios';
 import toast from 'react-hot-toast';
 
@@ -21,6 +22,7 @@ const getPaginationItems = (currentPage, totalPages) => {
 };
 
 const Reviews = () => {
+  const navigate = useNavigate();
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -196,6 +198,12 @@ const Reviews = () => {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => navigate(`/admin/reviews/${review._id}`)}
+                          className="rounded-md bg-sky-100 px-3 py-1 text-xs font-medium text-sky-700 hover:bg-sky-200 dark:bg-sky-900/40 dark:text-sky-300"
+                        >
+                          View
+                        </button>
                         <button
                           onClick={() => openEdit(review)}
                           className="rounded-md bg-indigo-100 px-3 py-1 text-xs font-medium text-indigo-700 hover:bg-indigo-200 dark:bg-indigo-900/40 dark:text-indigo-300"

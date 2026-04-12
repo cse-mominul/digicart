@@ -21,6 +21,7 @@ import ShippingDelays from './pages/admin/ShippingDelays';
 import PaymentFailures from './pages/admin/PaymentFailures';
 import RefundRequests from './pages/admin/RefundRequests';
 import Reviews from './pages/admin/Reviews';
+import ReviewDetails from './pages/admin/ReviewDetails';
 import Users from './pages/admin/Users';
 import CategoryManager from './pages/admin/CategoryManager';
 import Settings from './pages/admin/Settings';
@@ -169,6 +170,7 @@ function App() {
           <Route path="abandoned-carts" element={<AbandonedCarts />} />
           <Route path="abandoned-carts/:userId" element={<AbandonedCartDetails />} />
           <Route path="reviews" element={<Reviews />} />
+          <Route path="reviews/:id" element={<ReviewDetails />} />
           <Route path="customers" element={<Users />} />
           <Route path="users" element={<Navigate to="/admin/settings?tab=users" replace />} />
         </Route>
