@@ -128,7 +128,7 @@ const formatCompactNumber = (value) => {
   }).format(number);
 };
 
-const TopMetricCard = ({ title, value, trendText, trendUp, bgClass, onClick, clickable = false }) => (
+const TopMetricCard = ({ title, value, trendText, trendUp, bgClass, onClick, clickable = false, compact = false }) => (
   <div
     role={clickable ? 'button' : undefined}
     tabIndex={clickable ? 0 : undefined}
@@ -140,11 +140,11 @@ const TopMetricCard = ({ title, value, trendText, trendUp, bgClass, onClick, cli
         onClick?.();
       }
     }}
-    className={`rounded-xl p-3 shadow-sm ${bgClass} ${clickable ? 'cursor-pointer transition-transform hover:-translate-y-0.5' : ''}`}
+    className={`rounded-xl shadow-sm ${bgClass} ${compact ? 'p-2.5' : 'p-3'} ${clickable ? 'cursor-pointer transition-transform hover:-translate-y-0.5' : ''}`}
   >
-    <h3 className="text-base sm:text-lg font-medium text-slate-700">{title}</h3>
-    <div className="mt-2 flex items-end gap-1.5">
-      <div className="text-sm sm:text-base leading-none font-semibold text-slate-900">{value}</div>
+    <h3 className={`${compact ? 'text-sm sm:text-base' : 'text-base sm:text-lg'} font-medium text-slate-700`}>{title}</h3>
+    <div className={`${compact ? 'mt-1.5' : 'mt-2'} flex items-end gap-1.5`}>
+      <div className={`${compact ? 'text-xs sm:text-sm' : 'text-sm sm:text-base'} leading-none font-semibold text-slate-900`}>{value}</div>
       <span className={`mb-0.5 inline-flex items-center gap-1 rounded-full bg-white/90 px-2 py-0.5 text-[11px] sm:text-xs font-semibold ${trendUp ? 'text-teal-700' : 'text-rose-700'}`}>
         {trendText}
         <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -281,6 +281,7 @@ const Dashboard = () => {
                 trendText={card.trendText}
                 trendUp={card.trendUp}
                 bgClass={card.bgClass}
+                compact={card.title === 'Total Orders'}
                 clickable={card.title === 'Abandoned Carts' || card.title === 'Stock Products' || card.title === 'Total Customers' || card.title === 'Total Orders' || card.title === 'Shipping Delays' || card.title === 'Payment Failures' || card.title === 'Refund Requests'}
                 onClick={
                   card.title === 'Abandoned Carts'

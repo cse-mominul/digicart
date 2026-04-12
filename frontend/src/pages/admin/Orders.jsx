@@ -480,16 +480,16 @@ const Orders = () => {
         </button>
       </div>
 
-      <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {statCards.map((card) => (
-          <div key={card.key} className={`rounded-2xl p-4 ${card.bg}`}>
-            <div className="flex items-center gap-4">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-white/80">
-                {getStatIcon(card.key)}
+          <div key={card.key} className={`rounded-xl p-3 ${card.bg}`}>
+            <div className="flex items-center gap-3">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/80">
+                <span className="scale-90">{getStatIcon(card.key)}</span>
               </div>
               <div>
-                <p className="text-[1.75rem] leading-none font-black text-slate-900">{card.value}</p>
-                <p className="mt-1 text-xl font-semibold tracking-tight text-slate-700">{card.label}</p>
+                <p className="text-2xl leading-none font-black text-slate-900">{card.value}</p>
+                <p className="mt-1 text-sm font-semibold tracking-tight text-slate-700">{card.label}</p>
               </div>
             </div>
           </div>
