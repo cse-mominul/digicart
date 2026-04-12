@@ -2,6 +2,16 @@ import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../../api/axios';
 import { formatPrice } from '../../utils/formatPrice';
+import {
+  ResponsiveContainer,
+  ComposedChart,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Bar,
+  Line,
+} from 'recharts';
 
 const statusColors = {
   Pending: 'bg-yellow-100 text-yellow-800',
@@ -201,16 +211,16 @@ const Dashboard = () => {
     return buildSixMonthSeries(orders);
   }, [orders, chartRange]);
 
+  const chartData = useMemo(
+    () => chartSeries.map((item) => ({
+      ...item,
+      revenue: Number(item.revenue) || 0,
+      orders: Number(item.orders) || 0,
+    })),
+    [chartSeries]
+  );
+
   const selectedPoint = chartSeries[selectedPointIndex] || null;
-  const maxRevenue = Math.max(...chartSeries.map((item) => item.revenue), 1);
-  const maxOrders = Math.max(...chartSeries.map((item) => item.orders), 1);
-  const linePoints = chartSeries
-    .map((item, index) => {
-      const x = 60 + (index * (620 / Math.max(1, chartSeries.length - 1)));
-      const y = 170 - ((item.revenue / maxRevenue) * 120);
-      return `${x},${y}`;
-    })
-    .join(' ');
 
   useEffect(() => {
     setSelectedPointIndex(chartSeries.length ? chartSeries.length - 1 : null);
@@ -347,75 +357,42 @@ const Dashboard = () => {
 
               <div className="overflow-x-auto">
                 <div className="min-w-[700px]">
-                  <svg viewBox="0 0 700 230" className="h-[230px] w-full">
-                    {[0, 1, 2, 3].map((step) => {
-                      const y = 50 + (step * 40);
-                      return (
-                        <line
-                          key={`grid-${step}`}
-                          x1="50"
-                          y1={y}
-                          x2="680"
-                          y2={y}
-                          stroke="currentColor"
-                          className="text-gray-200 dark:text-gray-700"
+                  <div className="h-[230px] w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <ComposedChart
+                        data={chartData}
+                        margin={{ top: 12, right: 12, left: 0, bottom: 8 }}
+                        onClick={(state) => {
+                          if (typeof state?.activeTooltipIndex === 'number') {
+                            setSelectedPointIndex(state.activeTooltipIndex);
+                          }
+                        }}
+                      >
+                        <CartesianGrid strokeDasharray="3 6" stroke="#e5e7eb" />
+                        <XAxis dataKey="label" tick={{ fill: '#6b7280', fontSize: 10 }} />
+                        <YAxis yAxisId="left" tick={{ fill: '#6b7280', fontSize: 10 }} />
+                        <YAxis yAxisId="right" orientation="right" tick={{ fill: '#6b7280', fontSize: 10 }} />
+                        <Tooltip
+                          formatter={(value, name) => {
+                            if (name === 'revenue') return [formatPrice(Number(value) || 0), 'Revenue'];
+                            return [Number(value) || 0, 'Orders'];
+                          }}
+                          labelFormatter={(label) => `Period: ${label}`}
+                          contentStyle={{ borderRadius: 12, border: '1px solid #e5e7eb' }}
                         />
-                      );
-                    })}
-
-                    {chartSeries.map((item, index) => {
-                      const x = 60 + (index * (620 / Math.max(1, chartSeries.length - 1)));
-                      const barHeight = (item.orders / maxOrders) * 80;
-                      const isSelected = selectedPointIndex === index;
-                      return (
-                        <g
-                          key={item.key}
-                          onClick={() => setSelectedPointIndex(index)}
-                          className="cursor-pointer"
-                        >
-                          <rect
-                            x={x - 12}
-                            y={180 - barHeight}
-                            width="24"
-                            height={barHeight}
-                            rx="6"
-                            className={isSelected ? 'fill-emerald-500' : 'fill-emerald-500/70'}
-                          />
-                          <text
-                            x={x}
-                            y="212"
-                            textAnchor="middle"
-                            className="fill-gray-500 text-[10px] dark:fill-gray-400"
-                          >
-                            {item.label}
-                          </text>
-                        </g>
-                      );
-                    })}
-
-                    <polyline
-                      fill="none"
-                      points={linePoints}
-                      stroke="currentColor"
-                      strokeWidth="3"
-                      className="text-indigo-500"
-                    />
-
-                    {chartSeries.map((item, index) => {
-                      const x = 60 + (index * (620 / Math.max(1, chartSeries.length - 1)));
-                      const y = 170 - ((item.revenue / maxRevenue) * 120);
-                      const isSelected = selectedPointIndex === index;
-                      return (
-                        <circle
-                          key={`dot-${item.key}`}
-                          cx={x}
-                          cy={y}
-                          r={isSelected ? '6' : '4.5'}
-                          className={isSelected ? 'fill-indigo-600' : 'fill-indigo-500'}
+                        <Bar yAxisId="right" dataKey="orders" fill="#10b981" radius={[6, 6, 0, 0]} barSize={22} />
+                        <Line
+                          yAxisId="left"
+                          type="monotone"
+                          dataKey="revenue"
+                          stroke="#6366f1"
+                          strokeWidth={3}
+                          dot={{ r: 3 }}
+                          activeDot={{ r: 6 }}
                         />
-                      );
-                    })}
-                  </svg>
+                      </ComposedChart>
+                    </ResponsiveContainer>
+                  </div>
                 </div>
               </div>
             </div>
