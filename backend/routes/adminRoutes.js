@@ -8,6 +8,7 @@ const {
 } = require('../controllers/reviewController');
 const {
 	getAbandonedCartInsights,
+	getAbandonedCartDetailsByAdmin,
 	resolveAbandonedCartByAdmin,
 	deleteAbandonedCartByAdmin,
 } = require('../controllers/analyticsController');
@@ -22,6 +23,7 @@ router.get('/reviews', protect, requireAdmin, getAllReviews);
 router.put('/reviews/:id', protect, requireAdmin, updateReviewByAdmin);
 router.delete('/reviews/:id', protect, requireAdmin, deleteReviewByAdmin);
 router.get('/abandoned-carts', protect, requireAdmin, getAbandonedCartInsights);
+router.get('/abandoned-carts/:userId', protect, requireAdmin, getAbandonedCartDetailsByAdmin);
 router.put('/abandoned-carts/:userId', protect, requireAdmin, resolveAbandonedCartByAdmin);
 router.delete('/abandoned-carts/:userId', protect, requireAdmin, deleteAbandonedCartByAdmin);
 

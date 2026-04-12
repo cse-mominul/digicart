@@ -151,6 +151,105 @@ const getAbandonedCartInsights = async (req, res) => {
   }
 };
 
+// @desc  Get abandoned cart details by user (admin)
+// @route GET /api/admin/abandoned-carts/:userId
+const getAbandonedCartDetailsByAdmin = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: 'Invalid user id' });
+    }
+
+    const [engagement, user, orders] = await Promise.all([
+      UserEngagement.findOne({ user: userId }).lean(),
+      User.findById(userId).select('name email phone role createdAt lastLoginAt').lean(),
+      Order.find({ user: userId }).select('items.product createdAt').lean(),
+    ]);
+
+    if (!engagement) {
+      return res.status(404).json({ message: 'Abandoned cart entry not found' });
+    }
+
+    const cartIds = (engagement.cartProductIds || []).map((id) => String(id));
+    const wishlistIds = (engagement.wishlistProductIds || []).map((id) => String(id));
+
+    const purchasedIds = new Set();
+    (orders || []).forEach((order) => {
+      (order.items || []).forEach((item) => {
+        if (item?.product) {
+          purchasedIds.add(String(item.product));
+        }
+      });
+    });
+
+    const trackedIds = new Set([...cartIds, ...wishlistIds]);
+    const unresolvedIds = Array.from(trackedIds).filter((id) => !purchasedIds.has(id));
+
+    const allProductIds = Array.from(new Set([...trackedIds, ...purchasedIds]));
+    const products = await Product.find({ _id: { $in: allProductIds } })
+      .select('name image category brand price stock')
+      .lean();
+
+    const productMap = new Map(products.map((product) => [String(product._id), product]));
+
+    const mapProducts = (ids) => ids
+      .map((id) => {
+        const product = productMap.get(String(id));
+        if (!product) return null;
+
+        return {
+          _id: String(product._id),
+          name: product.name,
+          image: product.image,
+          category: product.category,
+          brand: product.brand,
+          price: product.price,
+          stock: product.stock,
+        };
+      })
+      .filter(Boolean);
+
+    const purchasedProductIds = Array.from(purchasedIds);
+
+    return res.json({
+      user: user
+        ? {
+          _id: String(user._id),
+          name: user.name,
+          email: user.email,
+          phone: user.phone,
+          role: user.role,
+          createdAt: user.createdAt,
+          lastLoginAt: user.lastLoginAt,
+        }
+        : {
+          _id: String(userId),
+          name: 'Unknown User',
+          email: '',
+          phone: '',
+          role: 'user',
+          createdAt: null,
+          lastLoginAt: null,
+        },
+      insight: {
+        cartCount: cartIds.length,
+        wishlistCount: wishlistIds.length,
+        purchasedCount: purchasedProductIds.length,
+        unresolvedCount: unresolvedIds.length,
+        lastActiveAt: engagement.lastActiveAt || engagement.updatedAt,
+        updatedAt: engagement.updatedAt,
+        createdAt: engagement.createdAt,
+      },
+      cartProducts: mapProducts(cartIds),
+      wishlistProducts: mapProducts(wishlistIds),
+      unpurchasedProducts: mapProducts(unresolvedIds),
+      purchasedProducts: mapProducts(purchasedProductIds),
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 // @desc  Resolve abandoned cart entry (admin)
 // @route PUT /api/admin/abandoned-carts/:userId
 const resolveAbandonedCartByAdmin = async (req, res) => {
@@ -198,6 +297,7 @@ const deleteAbandonedCartByAdmin = async (req, res) => {
 
 module.exports = {
   getAbandonedCartInsights,
+  getAbandonedCartDetailsByAdmin,
   resolveAbandonedCartByAdmin,
   deleteAbandonedCartByAdmin,
 };

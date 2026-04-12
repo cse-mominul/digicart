@@ -16,6 +16,7 @@ import CouponVoucher from './pages/admin/CouponVoucher';
 import Orders from './pages/admin/Orders';
 import OrderDetails from './pages/admin/OrderDetails';
 import AbandonedCarts from './pages/admin/AbandonedCarts';
+import AbandonedCartDetails from './pages/admin/AbandonedCartDetails';
 import ShippingDelays from './pages/admin/ShippingDelays';
 import PaymentFailures from './pages/admin/PaymentFailures';
 import RefundRequests from './pages/admin/RefundRequests';
@@ -166,6 +167,7 @@ function App() {
           <Route path="payment-failures" element={<PaymentFailures />} />
           <Route path="refund-requests" element={<RefundRequests />} />
           <Route path="abandoned-carts" element={<AbandonedCarts />} />
+          <Route path="abandoned-carts/:userId" element={<AbandonedCartDetails />} />
           <Route path="reviews" element={<Reviews />} />
           <Route path="customers" element={<Users />} />
           <Route path="users" element={<Navigate to="/admin/settings?tab=users" replace />} />
