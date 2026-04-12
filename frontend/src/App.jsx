@@ -44,6 +44,40 @@ const UserLayout = ({ children }) => (
 
 function App() {
   useEffect(() => {
+    const initializeFacebookPixel = (pixelId) => {
+      const id = String(pixelId || '').trim();
+      if (!id || typeof window === 'undefined' || typeof document === 'undefined') {
+        return;
+      }
+
+      if (window.fbq) {
+        window.fbq('init', id);
+        window.fbq('track', 'PageView');
+        return;
+      }
+
+      ((f, b, e, v, n, t, s) => {
+        if (f.fbq) return;
+        n = f.fbq = function () {
+          // eslint-disable-next-line prefer-rest-params
+          n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
+        };
+        if (!f._fbq) f._fbq = n;
+        n.push = n;
+        n.loaded = true;
+        n.version = '2.0';
+        n.queue = [];
+        t = b.createElement(e);
+        t.async = true;
+        t.src = v;
+        s = b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t, s);
+      })(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+
+      window.fbq('init', id);
+      window.fbq('track', 'PageView');
+    };
+
     const applySiteBranding = async () => {
       try {
         const { data } = await API.get('/settings');
@@ -60,6 +94,10 @@ function App() {
             document.head.appendChild(favicon);
           }
           favicon.setAttribute('href', data.faviconUrl);
+        }
+
+        if (data?.facebookPixelEnabled && data?.facebookPixelId) {
+          initializeFacebookPixel(data.facebookPixelId);
         }
       } catch (error) {
         console.error('Failed to apply site branding:', error);

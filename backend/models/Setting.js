@@ -82,6 +82,15 @@ const settingSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    facebookPixelId: {
+      type: String,
+      default: '',
+      trim: true,
+    },
+    facebookPixelEnabled: {
+      type: Boolean,
+      default: false,
+    },
     paymentMethods: {
       type: mongoose.Schema.Types.Mixed,
       default: {

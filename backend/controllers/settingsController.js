@@ -40,6 +40,8 @@ const ensureDefaultSettings = async () => {
       footerCopyrightText: '© 2026 DigiCart. All rights reserved.',
       siteDescription: 'DigiCart helps modern shoppers discover top-rated products at honest prices, fast delivery, and smooth checkout experiences.',
       siteWebsiteUrl: 'www.digicart.com',
+      facebookPixelId: '',
+      facebookPixelEnabled: false,
       couponCode: DEFAULT_COUPON_CODE,
       couponDiscountPercent: DEFAULT_COUPON_DISCOUNT_PERCENT,
       couponActive: true,
@@ -80,6 +82,8 @@ const updateSettings = async (req, res) => {
     footerCopyrightText,
     siteDescription,
     siteWebsiteUrl,
+    facebookPixelId,
+    facebookPixelEnabled,
     couponCode,
     couponDiscountPercent,
     couponActive,
@@ -146,6 +150,13 @@ const updateSettings = async (req, res) => {
       typeof siteWebsiteUrl === 'string' && siteWebsiteUrl.trim()
         ? siteWebsiteUrl.trim()
         : existingSettings.siteWebsiteUrl || 'www.digicart.com';
+    const resolvedFacebookPixelId =
+      typeof facebookPixelId === 'string'
+        ? facebookPixelId.trim()
+        : String(existingSettings.facebookPixelId || '').trim();
+    const resolvedFacebookPixelEnabled = typeof facebookPixelEnabled === 'boolean'
+      ? facebookPixelEnabled
+      : Boolean(existingSettings.facebookPixelEnabled);
     const resolvedCouponCode =
       typeof couponCode === 'string'
         ? couponCode.trim().toUpperCase()
@@ -197,6 +208,8 @@ const updateSettings = async (req, res) => {
         footerCopyrightText: resolvedFooterCopyrightText,
         siteDescription: resolvedSiteDescription,
         siteWebsiteUrl: resolvedSiteWebsiteUrl,
+        facebookPixelId: resolvedFacebookPixelId,
+        facebookPixelEnabled: resolvedFacebookPixelEnabled,
         couponCode: resolvedCouponCode,
         couponDiscountPercent: resolvedCouponDiscountPercent,
         couponActive: resolvedCouponActive,
