@@ -192,11 +192,8 @@ const UserAccount = () => {
       const fetchPayments = async () => {
         setPaymentsLoading(true);
         try {
-          const { data } = await API.get('/orders/myorders');
-          const paymentsData = Array.isArray(data)
-            ? data.filter((order) => order.paymentMethod)
-            : [];
-          setPayments(paymentsData);
+          const { data } = await API.get('/orders/my-payments');
+          setPayments(Array.isArray(data) ? data : []);
         } catch {
           toast.error('Failed to load payments');
         } finally {

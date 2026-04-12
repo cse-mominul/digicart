@@ -145,6 +145,14 @@ function App() {
           }
         />
         <Route
+          path="/account/payments"
+          element={
+            <ProtectedRoute>
+              <UserLayout><UserAccount /></UserLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/account/wishlist"
           element={
             <ProtectedRoute>

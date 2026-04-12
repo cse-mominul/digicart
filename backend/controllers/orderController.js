@@ -97,6 +97,19 @@ const getMyOrders = async (req, res) => {
   }
 };
 
+// @desc  Get logged-in user's payments
+// @route GET /api/orders/my-payments
+const getMyPayments = async (req, res) => {
+  try {
+    const payments = await Order.find({ user: req.user._id, paymentMethod: { $exists: true, $ne: '' } })
+      .select('totalAmount paymentMethod paymentTrxId paymentSenderNumber paymentStatus paymentVerificationStatus paymentSubmittedAt createdAt')
+      .sort({ createdAt: -1 });
+    res.json(payments);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // @desc  Get all orders (admin only)
 // @route GET /api/orders
 const getAllOrders = async (req, res) => {
