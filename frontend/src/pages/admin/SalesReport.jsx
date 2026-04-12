@@ -4,6 +4,18 @@ import { formatPrice } from '../../utils/formatPrice';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
+const getStartOfDayMs = (dateInput) => {
+  const date = new Date(dateInput);
+  if (Number.isNaN(date.getTime())) return NaN;
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0).getTime();
+};
+
+const getEndOfDayMs = (dateInput) => {
+  const date = new Date(dateInput);
+  if (Number.isNaN(date.getTime())) return NaN;
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59, 999).getTime();
+};
+
 const compactNumber = (value) => {
   const safe = Number(value) || 0;
   return new Intl.NumberFormat('en-US', {
@@ -28,6 +40,8 @@ const SalesReport = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [summaryRange, setSummaryRange] = useState('monthly');
+  const [customFromDate, setCustomFromDate] = useState('');
+  const [customToDate, setCustomToDate] = useState('');
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -47,14 +61,30 @@ const SalesReport = () => {
 
   const rangeFilteredOrders = useMemo(() => {
     const nowMs = Date.now();
-    const days = summaryRange === 'weekly' ? 7 : 30;
-    const rangeStartMs = nowMs - (days * DAY_MS);
+    let rangeStartMs = nowMs - (30 * DAY_MS);
+    let rangeEndMs = nowMs;
+
+    if (summaryRange === 'weekly') {
+      rangeStartMs = nowMs - (7 * DAY_MS);
+    }
+
+    if (summaryRange === 'custom') {
+      const fromMs = getStartOfDayMs(customFromDate);
+      const toMs = getEndOfDayMs(customToDate);
+
+      if (!Number.isFinite(fromMs) || !Number.isFinite(toMs) || fromMs > toMs) {
+        return [];
+      }
+
+      rangeStartMs = fromMs;
+      rangeEndMs = toMs;
+    }
 
     return orders.filter((order) => {
       const createdAtMs = new Date(order?.createdAt).getTime();
-      return Number.isFinite(createdAtMs) && createdAtMs >= rangeStartMs && createdAtMs <= nowMs;
+      return Number.isFinite(createdAtMs) && createdAtMs >= rangeStartMs && createdAtMs <= rangeEndMs;
     });
-  }, [orders, summaryRange]);
+  }, [orders, summaryRange, customFromDate, customToDate]);
 
   const metrics = useMemo(() => {
     const totalOrders = rangeFilteredOrders.length;
@@ -237,6 +267,17 @@ const SalesReport = () => {
             >
               Monthly
             </button>
+            <button
+              type="button"
+              onClick={() => setSummaryRange('custom')}
+              className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
+                summaryRange === 'custom'
+                  ? 'bg-indigo-600 text-white'
+                  : 'text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white'
+              }`}
+            >
+              Custom
+            </button>
           </div>
 
           <button
@@ -249,8 +290,40 @@ const SalesReport = () => {
       </div>
 
       <p className="mb-3 text-xs font-medium text-gray-500 dark:text-gray-400">
-        Showing summary for {summaryRange === 'weekly' ? 'last 7 days' : 'last 30 days'}
+        Showing summary for {
+          summaryRange === 'weekly'
+            ? 'last 7 days'
+            : summaryRange === 'custom'
+              ? 'selected custom range'
+              : 'last 30 days'
+        }
       </p>
+
+      {summaryRange === 'custom' && (
+        <div className="mb-3 flex flex-wrap items-end gap-2">
+          <div>
+            <label className="mb-1 block text-xs font-semibold text-gray-600 dark:text-gray-300">From</label>
+            <input
+              type="date"
+              value={customFromDate}
+              onChange={(event) => setCustomFromDate(event.target.value)}
+              className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs text-gray-700 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-xs font-semibold text-gray-600 dark:text-gray-300">To</label>
+            <input
+              type="date"
+              value={customToDate}
+              onChange={(event) => setCustomToDate(event.target.value)}
+              className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs text-gray-700 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+            />
+          </div>
+          {customFromDate && customToDate && getStartOfDayMs(customFromDate) > getEndOfDayMs(customToDate) ? (
+            <p className="text-xs font-semibold text-red-500">From date cannot be after To date</p>
+          ) : null}
+        </div>
+      )}
 
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
         {summaryCards.map((card) => (
