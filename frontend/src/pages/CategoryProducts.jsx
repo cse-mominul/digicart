@@ -196,9 +196,9 @@ const CategoryProducts = () => {
               className="absolute inset-0 bg-black/45"
             />
 
-            <aside className="absolute right-0 top-0 h-full w-[88%] max-w-sm overflow-y-auto border-l border-gray-200 bg-white shadow-xl dark:border-gray-700 dark:bg-gray-900">
+            <aside className="absolute right-0 top-0 h-full w-[80%] max-w-[320px] overflow-y-auto border-l border-gray-200 bg-white shadow-xl dark:border-gray-700 dark:bg-gray-900">
               <div className="flex items-center justify-between border-b border-gray-200 px-4 py-3 dark:border-gray-700">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">All Product Filter</h2>
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">All Product Filter</h2>
                 <button
                   type="button"
                   onClick={() => setMobileFilterOpen(false)}
@@ -213,7 +213,7 @@ const CategoryProducts = () => {
 
               <div className="px-4 py-4">
                 <div className="mb-6 border-b border-gray-200 pb-5 dark:border-gray-700">
-                  <p className="text-[28px] font-bold leading-none text-gray-900 dark:text-white">Price Range</p>
+                  <p className="text-2xl font-bold leading-none text-gray-900 dark:text-white">Price Range</p>
                   <input
                     type="range"
                     min={0}
@@ -234,8 +234,8 @@ const CategoryProducts = () => {
                 </div>
 
                 <div className="mb-6 border-b border-gray-200 pb-5 dark:border-gray-700">
-                  <p className="mb-3 text-3xl font-semibold text-gray-900 dark:text-white">Availability</p>
-                  <label className="inline-flex items-center gap-2 text-lg text-gray-800 dark:text-gray-200 cursor-pointer">
+                  <p className="mb-3 text-2xl font-semibold text-gray-900 dark:text-white">Availability</p>
+                  <label className="inline-flex items-center gap-2 text-base text-gray-800 dark:text-gray-200 cursor-pointer">
                     <input
                       type="checkbox"
                       checked={onlyInStock}
@@ -247,12 +247,12 @@ const CategoryProducts = () => {
                 </div>
 
                 <div>
-                  <p className="mb-3 text-3xl font-semibold text-gray-900 dark:text-white">Brand</p>
+                  <p className="mb-3 text-2xl font-semibold text-gray-900 dark:text-white">Brand</p>
                   <div className="space-y-3 max-h-56 overflow-y-auto no-scrollbar pr-1">
                     {brands.map((brand) => (
                       <label
                         key={brand}
-                        className="flex items-center gap-2 text-lg text-gray-800 dark:text-gray-200 cursor-pointer"
+                        className="flex items-center gap-2 text-base text-gray-800 dark:text-gray-200 cursor-pointer"
                       >
                         <input
                           type="checkbox"
@@ -274,7 +274,7 @@ const CategoryProducts = () => {
                 <button
                   type="button"
                   onClick={() => setMobileFilterOpen(false)}
-                  className="w-full rounded-xl bg-orange-600 py-3 text-sm font-semibold text-white transition-colors hover:bg-orange-500"
+                  className="w-full rounded-xl bg-orange-600 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-orange-500"
                 >
                   Show {filteredProducts.length} Products
                 </button>

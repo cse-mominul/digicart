@@ -7,6 +7,12 @@ import { showOrderSuccess } from '../utils/showOrderSuccess';
 import { useAuth } from '../context/AuthContext';
 
 const ADDRESS_STORAGE_KEY = 'digicart_saved_addresses';
+const BKASH_NUMBER = '017XXXXXXXX';
+const paymentMethods = [
+  { id: 'cod', label: 'Cash on Delivery' },
+  { id: 'bkash', label: 'bKash' },
+  { id: 'nogod', label: 'Nagad' },
+];
 
 const ProductDetails = () => {
   const navigate = useNavigate();
@@ -37,6 +43,11 @@ const ProductDetails = () => {
     insideDhakaCharge: 80,
     outsideDhakaCharge: 120,
   });
+  const [paymentMethod, setPaymentMethod] = useState('cod');
+  const [bkashModalOpen, setBkashModalOpen] = useState(false);
+  const [bkashOrder, setBkashOrder] = useState(null);
+  const [bkashTrxId, setBkashTrxId] = useState('');
+  const [submittingBkashTrx, setSubmittingBkashTrx] = useState(false);
   const [form, setForm] = useState({
     fullName: '',
     phone: '',
@@ -406,7 +417,7 @@ const ProductDetails = () => {
 
     setPlacingOrder(true);
     try {
-      await API.post('/orders', {
+      const { data } = await API.post('/orders', {
         items: [
           {
             product: product._id,
@@ -425,6 +436,7 @@ const ProductDetails = () => {
           postalCode: '',
           country: 'Bangladesh',
         },
+        paymentMethod,
         customer: {
           name: payload.fullName,
           phone: payload.phone,
@@ -432,6 +444,17 @@ const ProductDetails = () => {
         },
       });
       setForm({ fullName: '', phone: '', fullAddress: '' });
+
+      if (paymentMethod === 'bkash' && data?._id) {
+        setBkashOrder({
+          orderId: data._id,
+          totalAmount: Number(data?.totalAmount) || grandTotal,
+        });
+        setBkashTrxId('');
+        setBkashModalOpen(true);
+        return;
+      }
+
       await showOrderSuccess(navigate);
     } catch (error) {
       if (error.response?.status === 401) {
@@ -443,6 +466,44 @@ const ProductDetails = () => {
       toast.error(error.response?.data?.message || 'Failed to place order');
     } finally {
       setPlacingOrder(false);
+    }
+  };
+
+  const handleCopyBkashNumber = async () => {
+    try {
+      await navigator.clipboard.writeText(BKASH_NUMBER);
+      toast.success('bKash number copied');
+    } catch {
+      toast.error('Failed to copy number');
+    }
+  };
+
+  const handleSubmitBkashTrx = async (event) => {
+    event.preventDefault();
+
+    if (!bkashOrder?.orderId) {
+      toast.error('Order not found for transaction submission');
+      return;
+    }
+
+    if (!bkashTrxId.trim()) {
+      toast.error('Please enter transaction ID');
+      return;
+    }
+
+    setSubmittingBkashTrx(true);
+    try {
+      const { data } = await API.put(`/orders/${bkashOrder.orderId}/transaction`, {
+        trxId: bkashTrxId.trim(),
+      });
+
+      toast.success(data?.message || 'Transaction submitted');
+      setBkashModalOpen(false);
+      await showOrderSuccess(navigate);
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to submit transaction');
+    } finally {
+      setSubmittingBkashTrx(false);
     }
   };
 
@@ -942,6 +1003,28 @@ const ProductDetails = () => {
               </label>
             </div>
 
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 space-y-3 dark:border-white/10 dark:bg-white/5">
+              <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">Payment Method</p>
+
+              {paymentMethods.map((method) => (
+                <label
+                  key={method.id}
+                  className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-3 py-2 cursor-pointer hover:border-pink-400/40 transition-colors dark:border-white/10 dark:bg-white/5"
+                >
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      checked={paymentMethod === method.id}
+                      onChange={() => setPaymentMethod(method.id)}
+                      className="accent-pink-500"
+                    />
+                    <span className="text-sm text-slate-700 dark:text-slate-200">{method.label}</span>
+                  </div>
+                </label>
+              ))}
+            </div>
+
             <div className="rounded-2xl border border-slate-200 bg-white p-4 space-y-2 dark:border-white/10 dark:bg-white/5">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-slate-500 dark:text-slate-400">Product Price</span>
@@ -977,6 +1060,72 @@ const ProductDetails = () => {
           Order Now
         </button>
       </div>
+
+      {bkashModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+          <div className="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-5 shadow-xl dark:border-gray-700 dark:bg-gray-900">
+            <div className="mb-4 flex items-start justify-between gap-3">
+              <div>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white">bKash Payment</h3>
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Copy the number and submit TrxID to complete order.</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setBkashModalOpen(false)}
+                className="rounded-md bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200"
+              >
+                Close
+              </button>
+            </div>
+
+            <div className="rounded-xl border border-pink-200 bg-pink-50 p-3 dark:border-pink-900/30 dark:bg-pink-900/10">
+              <p className="text-[11px] uppercase tracking-wide text-pink-700 dark:text-pink-300">bKash Number</p>
+              <div className="mt-2 flex items-center justify-between gap-2">
+                <p className="text-base font-black text-pink-700 dark:text-pink-300">{BKASH_NUMBER}</p>
+                <button
+                  type="button"
+                  onClick={handleCopyBkashNumber}
+                  className="rounded-md bg-pink-600 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-pink-700"
+                >
+                  Copy
+                </button>
+              </div>
+            </div>
+
+            <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
+              <div className="rounded-lg border border-gray-200 bg-gray-50 p-2.5 dark:border-gray-700 dark:bg-gray-800">
+                <p className="text-gray-500 dark:text-gray-400">Order ID</p>
+                <p className="mt-1 font-mono font-semibold text-gray-800 dark:text-gray-100 break-all">{bkashOrder?.orderId || 'N/A'}</p>
+              </div>
+              <div className="rounded-lg border border-gray-200 bg-gray-50 p-2.5 dark:border-gray-700 dark:bg-gray-800">
+                <p className="text-gray-500 dark:text-gray-400">Amount</p>
+                <p className="mt-1 font-bold text-indigo-600 dark:text-indigo-300">{formatPrice(Number(bkashOrder?.totalAmount) || 0)}</p>
+              </div>
+            </div>
+
+            <form onSubmit={handleSubmitBkashTrx} className="mt-4 space-y-3">
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Transaction ID (TrxID)</label>
+                <input
+                  type="text"
+                  value={bkashTrxId}
+                  onChange={(event) => setBkashTrxId(event.target.value)}
+                  placeholder="Enter your bKash TrxID"
+                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-pink-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={submittingBkashTrx}
+                className="w-full rounded-lg bg-emerald-600 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-60"
+              >
+                {submittingBkashTrx ? 'Submitting...' : 'Submit TrxID'}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
       </div>
     </div>
   );

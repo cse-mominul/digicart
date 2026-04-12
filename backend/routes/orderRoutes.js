@@ -5,6 +5,8 @@ const {
   getMyOrders,
   getAllOrders,
   getOrderById,
+  getOrderPaymentInfo,
+  submitOrderTransaction,
   updateOrderStatus,
   updateOrderPayment,
   deleteOrder,
@@ -15,6 +17,8 @@ const requireAdmin = require('../middleware/requireAdmin');
 // User routes
 router.post('/', optionalProtect, createOrder);
 router.get('/myorders', protect, getMyOrders);
+router.get('/:id/payment-info', optionalProtect, getOrderPaymentInfo);
+router.put('/:id/transaction', optionalProtect, submitOrderTransaction);
 
 // Admin routes
 router.get('/', protect, requireAdmin, getAllOrders);

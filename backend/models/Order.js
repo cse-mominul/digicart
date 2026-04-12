@@ -32,6 +32,20 @@ const orderSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    paymentMethod: {
+      type: String,
+      enum: ['cod', 'bkash', 'nogod', 'card'],
+      default: 'cod',
+    },
+    paymentTrxId: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    paymentSubmittedAt: {
+      type: Date,
+      default: null,
+    },
     shippingAddress: {
       address: { type: String },
       city: { type: String },

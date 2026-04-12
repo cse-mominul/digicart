@@ -4,7 +4,7 @@ const { createNotification } = require('../utils/notificationService');
 // @desc  Create new order
 // @route POST /api/orders
 const createOrder = async (req, res) => {
-  const { items, totalAmount, shippingAddress, customer, appliedCoupon } = req.body;
+  const { items, totalAmount, shippingAddress, customer, appliedCoupon, paymentMethod } = req.body;
 
   if (!items || items.length === 0) {
     return res.status(400).json({ message: 'No order items provided' });
@@ -23,6 +23,12 @@ const createOrder = async (req, res) => {
     return res.status(400).json({ message: 'Customer name is required for guest checkout' });
   }
 
+  const normalizedPaymentMethod = String(paymentMethod || 'cod').trim().toLowerCase();
+  const allowedPaymentMethods = ['cod', 'bkash', 'nogod', 'card'];
+  if (!allowedPaymentMethods.includes(normalizedPaymentMethod)) {
+    return res.status(400).json({ message: 'Invalid payment method' });
+  }
+
   try {
     const order = await Order.create({
       user: req.user?._id || null,
@@ -33,6 +39,7 @@ const createOrder = async (req, res) => {
         phone: effectivePhone,
       },
       appliedCoupon: String(appliedCoupon || '').trim().toUpperCase(),
+      paymentMethod: normalizedPaymentMethod,
       customer: {
         name: customerName || String(req.user?.name || '').trim(),
         phone: effectivePhone,
@@ -202,11 +209,61 @@ const deleteOrder = async (req, res) => {
   }
 };
 
+// @desc  Get order payment info (public for immediate payment step)
+// @route GET /api/orders/:id/payment-info
+const getOrderPaymentInfo = async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id).select('_id totalAmount paymentMethod paymentTrxId paymentSubmittedAt status createdAt');
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    return res.json(order);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc  Submit transaction id for mobile payment
+// @route PUT /api/orders/:id/transaction
+const submitOrderTransaction = async (req, res) => {
+  const trxId = String(req.body?.trxId || '').trim();
+  if (!trxId) {
+    return res.status(400).json({ message: 'Transaction ID is required' });
+  }
+
+  try {
+    const order = await Order.findById(req.params.id);
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    if (!['bkash', 'nogod'].includes(String(order.paymentMethod || '').toLowerCase())) {
+      return res.status(400).json({ message: 'Transaction submission is only available for mobile payment orders' });
+    }
+
+    order.paymentTrxId = trxId;
+    order.paymentSubmittedAt = new Date();
+    await order.save();
+
+    return res.json({
+      message: 'Transaction ID submitted successfully',
+      orderId: order._id,
+      paymentTrxId: order.paymentTrxId,
+      paymentSubmittedAt: order.paymentSubmittedAt,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   createOrder,
   getMyOrders,
   getAllOrders,
   getOrderById,
+  getOrderPaymentInfo,
+  submitOrderTransaction,
   updateOrderStatus,
   updateOrderPayment,
   deleteOrder,
