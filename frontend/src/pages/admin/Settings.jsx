@@ -817,15 +817,15 @@ const Settings = () => {
               </div>
 
               <div className="overflow-x-auto rounded-2xl border border-gray-700 bg-gray-800/50">
-                <table className="w-full min-w-[920px] text-sm">
+                <table className="w-full min-w-[820px] text-xs">
                   <thead className="bg-gray-800 text-gray-300">
                     <tr>
-                      <th className="px-4 py-3 text-left font-semibold">Method</th>
-                      <th className="px-4 py-3 text-left font-semibold">Type</th>
-                      <th className="px-4 py-3 text-left font-semibold">Status</th>
-                      <th className="px-4 py-3 text-left font-semibold">Number</th>
-                      <th className="px-4 py-3 text-left font-semibold">Note</th>
-                      <th className="px-4 py-3 text-left font-semibold">Action</th>
+                      <th className="px-3 py-2 text-left font-semibold">Method</th>
+                      <th className="px-3 py-2 text-left font-semibold">Type</th>
+                      <th className="px-3 py-2 text-left font-semibold">Status</th>
+                      <th className="px-3 py-2 text-left font-semibold">Number</th>
+                      <th className="px-3 py-2 text-left font-semibold">Note</th>
+                      <th className="px-3 py-2 text-left font-semibold">Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -838,19 +838,19 @@ const Settings = () => {
                       const methodData = paymentMethods[method.key] || {};
                       return (
                         <tr key={method.key} className="border-t border-gray-700 hover:bg-gray-800/70 transition-colors">
-                          <td className="px-4 py-4 align-top">
-                            <div className="flex items-center gap-3">
-                              <div className={`h-10 w-10 rounded-xl bg-${method.accent}-500/15 flex items-center justify-center text-${method.accent}-300 font-bold`}>
+                          <td className="px-3 py-2.5 align-top">
+                            <div className="flex items-center gap-2.5">
+                              <div className={`h-8 w-8 rounded-lg bg-${method.accent}-500/15 flex items-center justify-center text-${method.accent}-300 font-bold`}>
                                 {method.label.slice(0, 1)}
                               </div>
                               <div>
-                                <p className="font-semibold text-gray-100">{method.label}</p>
+                                <p className="text-sm font-semibold text-gray-100">{method.label}</p>
                                 <p className="text-xs text-gray-400">{method.key}</p>
                               </div>
                             </div>
                           </td>
-                          <td className="px-4 py-4 align-top text-gray-300">{method.type}</td>
-                          <td className="px-4 py-4 align-top">
+                          <td className="px-3 py-2.5 align-top text-gray-300">{method.type}</td>
+                          <td className="px-3 py-2.5 align-top">
                             <label className="inline-flex items-center gap-2 cursor-pointer">
                               <input
                                 type="checkbox"
@@ -858,42 +858,42 @@ const Settings = () => {
                                 onChange={() => handleTogglePaymentMethod(method.key)}
                                 className="h-4 w-4 rounded border-gray-600 accent-pink-500"
                               />
-                              <span className="text-sm text-gray-300">
+                              <span className="text-xs text-gray-300">
                                 {methodData.enabled ? 'Enabled' : 'Disabled'}
                               </span>
                             </label>
                           </td>
-                          <td className="px-4 py-4 align-top">
+                          <td className="px-3 py-2.5 align-top">
                             {method.key === 'bkash' || method.key === 'nogod' ? (
                               <input
                                 type="text"
                                 placeholder="01XXXXXXXXX"
                                 value={methodData.number || ''}
                                 onChange={(e) => handleUpdatePaymentNumber(method.key, e.target.value)}
-                                className="w-full rounded-lg border border-gray-700 bg-gray-700 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                                className="w-full rounded-md border border-gray-700 bg-gray-700 text-white px-2.5 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-pink-500"
                               />
                             ) : (
                               <span className="text-gray-500">No number required</span>
                             )}
                           </td>
-                          <td className="px-4 py-4 align-top">
+                          <td className="px-3 py-2.5 align-top">
                             {method.key === 'bkash' || method.key === 'nogod' ? (
                               <textarea
                                 rows="2"
                                 placeholder="e.g., Send Money / Cash Out"
                                 value={methodData.note || ''}
                                 onChange={(e) => handleUpdatePaymentNote(method.key, e.target.value)}
-                                className="w-full rounded-lg border border-gray-700 bg-gray-700 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500 resize-none"
+                                className="w-full rounded-md border border-gray-700 bg-gray-700 text-white px-2.5 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-pink-500 resize-none"
                               />
                             ) : (
                               <span className="text-gray-500">No note required</span>
                             )}
                           </td>
-                          <td className="px-4 py-4 align-top">
+                          <td className="px-3 py-2.5 align-top">
                             <button
                               type="button"
                               onClick={() => handleResetPaymentMethod(method.key)}
-                              className="rounded-lg bg-gray-700 px-3 py-2 text-xs font-medium text-gray-100 hover:bg-gray-600 transition-colors"
+                              className="rounded-md bg-gray-700 px-2.5 py-1.5 text-xs font-medium text-gray-100 hover:bg-gray-600 transition-colors"
                             >
                               Reset
                             </button>
@@ -906,21 +906,21 @@ const Settings = () => {
                       .filter(([key]) => !['bkash', 'nogod', 'cod', 'card'].includes(key))
                       .map(([key, method]) => (
                         <tr key={key} className="border-t border-gray-700 hover:bg-gray-800/70 transition-colors">
-                          <td className="px-4 py-4 align-top">
-                            <div className="flex items-center gap-3">
-                              <div className="h-10 w-10 rounded-xl bg-blue-500/15 flex items-center justify-center text-blue-300 font-bold">
+                          <td className="px-3 py-2.5 align-top">
+                            <div className="flex items-center gap-2.5">
+                              <div className="h-8 w-8 rounded-lg bg-blue-500/15 flex items-center justify-center text-blue-300 font-bold">
                                 {String(key).slice(0, 1).toUpperCase()}
                               </div>
                               <div>
-                                <p className="font-semibold text-gray-100 capitalize">{key}</p>
+                                <p className="text-sm font-semibold text-gray-100 capitalize">{key}</p>
                                 <p className="text-xs text-gray-400">Custom</p>
                               </div>
                             </div>
                           </td>
-                          <td className="px-4 py-4 align-top text-gray-300 capitalize">
+                          <td className="px-3 py-2.5 align-top text-gray-300 capitalize">
                             {method?.type || 'other'}
                           </td>
-                          <td className="px-4 py-4 align-top">
+                          <td className="px-3 py-2.5 align-top">
                             <label className="inline-flex items-center gap-2 cursor-pointer">
                               <input
                                 type="checkbox"
@@ -928,42 +928,42 @@ const Settings = () => {
                                 onChange={() => handleTogglePaymentMethod(key)}
                                 className="h-4 w-4 rounded border-gray-600 accent-pink-500"
                               />
-                              <span className="text-sm text-gray-300">
+                              <span className="text-xs text-gray-300">
                                 {method?.enabled ? 'Enabled' : 'Disabled'}
                               </span>
                             </label>
                           </td>
-                          <td className="px-4 py-4 align-top">
+                          <td className="px-3 py-2.5 align-top">
                             {method?.type === 'mobile_banking' ? (
                               <input
                                 type="text"
                                 placeholder="01XXXXXXXXX"
                                 value={method?.number || ''}
                                 onChange={(e) => handleUpdatePaymentNumber(key, e.target.value)}
-                                className="w-full rounded-lg border border-gray-700 bg-gray-700 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                                className="w-full rounded-md border border-gray-700 bg-gray-700 text-white px-2.5 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-pink-500"
                               />
                             ) : (
                               <span className="text-gray-500">No number required</span>
                             )}
                           </td>
-                          <td className="px-4 py-4 align-top">
+                          <td className="px-3 py-2.5 align-top">
                             {method?.type === 'mobile_banking' ? (
                               <textarea
                                 rows="2"
                                 placeholder="e.g., Send Money / Cash Out"
                                 value={method?.note || ''}
                                 onChange={(e) => handleUpdatePaymentNote(key, e.target.value)}
-                                className="w-full rounded-lg border border-gray-700 bg-gray-700 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500 resize-none"
+                                className="w-full rounded-md border border-gray-700 bg-gray-700 text-white px-2.5 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-pink-500 resize-none"
                               />
                             ) : (
                               <span className="text-gray-500">No note required</span>
                             )}
                           </td>
-                          <td className="px-4 py-4 align-top">
+                          <td className="px-3 py-2.5 align-top">
                             <button
                               type="button"
                               onClick={() => handleDeleteCustomPaymentMethod(key)}
-                              className="rounded-lg bg-red-600 px-3 py-2 text-xs font-medium text-white hover:bg-red-700 transition-colors"
+                              className="rounded-md bg-red-600 px-2.5 py-1.5 text-xs font-medium text-white hover:bg-red-700 transition-colors"
                             >
                               Delete
                             </button>
