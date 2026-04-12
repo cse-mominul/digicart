@@ -641,6 +641,27 @@ const ProductDetails = () => {
               </div>
             )}
 
+            {activeTab === 'additionalInfo' && (
+              additionalInfoRows.length > 0 ? (
+                <div className="space-y-3">
+                  {additionalInfoRows.map((item) => (
+                    <div
+                      key={`${item.label}-${item.value}`}
+                      className="grid gap-2 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm sm:grid-cols-[180px_1fr] dark:border-white/10 dark:bg-white/5"
+                    >
+                      <p className="font-semibold text-slate-800 dark:text-slate-100">{item.label}</p>
+                      <p className="text-slate-600 dark:text-slate-300 break-words [overflow-wrap:anywhere]">{item.value}</p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-400">
+                  No additional information available for this product.
+                </div>
+              )
+            )}
+
+            {activeTab === 'reviews' && (
                 <div className="space-y-6">
                   <div className="grid gap-4 lg:grid-cols-[220px_1fr]">
                     <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-white/5">
@@ -802,6 +823,7 @@ const ProductDetails = () => {
                     )}
                   </div>
                 </div>
+            )}
           </div>
 
         </div>

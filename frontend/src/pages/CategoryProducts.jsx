@@ -11,14 +11,8 @@ const toTitleFromSlug = (slug = '') =>
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
     .join(' ');
 
-const inferBrand = (product) => {
-  if (product?.brand && typeof product.brand === 'string' && product.brand.trim()) {
-    return product.brand.trim();
-  }
-
-  const fallback = product?.name?.trim()?.split(' ')?.[0];
-  return fallback || 'Other';
-};
+const getProductBrand = (product) =>
+  typeof product?.brand === 'string' ? product.brand.trim() : '';
 
 const CategoryProducts = () => {
   const { categorySlug } = useParams();
@@ -51,9 +45,9 @@ const CategoryProducts = () => {
   }, [products]);
 
   const brands = useMemo(() => {
-    return Array.from(new Set(products.map((product) => inferBrand(product)))).sort((a, b) =>
-      a.localeCompare(b)
-    );
+    return Array.from(
+      new Set(products.map((product) => getProductBrand(product)).filter(Boolean))
+    ).sort((a, b) => a.localeCompare(b));
   }, [products]);
 
   const pageNumbers = useMemo(
@@ -126,7 +120,7 @@ const CategoryProducts = () => {
     }
 
     if (selectedBrands.length > 0) {
-      next = next.filter((product) => selectedBrands.includes(inferBrand(product)));
+      next = next.filter((product) => selectedBrands.includes(getProductBrand(product)));
     }
 
     if ((priceLimit === 0 || next.length === 0) && products.length > 0) {

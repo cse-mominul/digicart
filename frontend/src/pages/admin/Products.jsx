@@ -5,6 +5,7 @@ import { formatPrice } from '../../utils/formatPrice';
 
 const emptyForm = {
   name: '',
+  brand: '',
   description: '',
   price: '',
   compareAtPrice: '',
@@ -197,6 +198,7 @@ const Products = () => {
   const openEdit = (product) => {
     setForm({
       name: product.name,
+      brand: product.brand || '',
       description: product.description,
       price: product.price,
       compareAtPrice: product.compareAtPrice ?? '',
@@ -494,6 +496,7 @@ const Products = () => {
                   <th className="px-6 py-3">Product ID</th>
                   <th className="px-6 py-3">Image</th>
                   <th className="px-6 py-3">Name</th>
+                  <th className="px-6 py-3">Brand</th>
                   <th className="px-6 py-3">Category</th>
                   <th className="px-6 py-3">Price</th>
                   <th className="px-6 py-3">Stock</th>
@@ -517,6 +520,7 @@ const Products = () => {
                     <td className="px-6 py-4 font-medium text-gray-800 dark:text-white max-w-[200px] truncate">
                       {product.name}
                     </td>
+                    <td className="px-6 py-4 text-gray-500 dark:text-gray-400">{product.brand || '-'}</td>
                     <td className="px-6 py-4 text-gray-500 dark:text-gray-400">{product.category}</td>
                     <td className="px-6 py-4 font-semibold text-indigo-600">
                       {formatPrice(product.price)}
@@ -546,7 +550,7 @@ const Products = () => {
                 ))}
                 {displayedProducts.length === 0 && (
                   <tr>
-                    <td colSpan={7} className="text-center py-10 text-gray-400">
+                    <td colSpan={8} className="text-center py-10 text-gray-400">
                       {searchQuery || selectedCategory !== 'all' || selectedStatus !== 'all' || selectedStockRange !== 'all' || selectedDateRange !== 'all'
                         ? 'No products found for this filter.'
                         : 'No products found. Add your first product!'}
@@ -628,6 +632,7 @@ const Products = () => {
             <form onSubmit={handleSubmit} className="space-y-4">
               {[
                 { key: 'name', label: 'Product Name', type: 'text' },
+                { key: 'brand', label: 'Brand Name', type: 'text' },
               ].map(({ key, label, type }) => (
                 <div key={key}>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
