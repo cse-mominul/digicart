@@ -48,6 +48,11 @@ const ProductDetails = () => {
   const [bkashTrxId, setBkashTrxId] = useState('');
   const [bkashSenderNumber, setBkashSenderNumber] = useState('');
   const [submittingBkashTrx, setSubmittingBkashTrx] = useState(false);
+  const [nogodModalOpen, setNogodModalOpen] = useState(false);
+  const [nogodOrder, setNogodOrder] = useState(null);
+  const [nogodTrxId, setNogodTrxId] = useState('');
+  const [nogodSenderNumber, setNogodSenderNumber] = useState('');
+  const [submittingNogodTrx, setSubmittingNogodTrx] = useState(false);
   const [paymentSettings, setPaymentSettings] = useState({
     bkash: { enabled: true, number: '' },
     nogod: { enabled: true, number: '' },
@@ -477,6 +482,17 @@ const ProductDetails = () => {
         return;
       }
 
+      if (paymentMethod === 'nogod' && data?._id) {
+        setNogodOrder({
+          orderId: data._id,
+          totalAmount: Number(data?.totalAmount) || grandTotal,
+        });
+        setNogodTrxId('');
+        setNogodSenderNumber('');
+        setNogodModalOpen(true);
+        return;
+      }
+
       await showOrderSuccess(navigate);
     } catch (error) {
       if (error.response?.status === 401) {
@@ -500,6 +516,20 @@ const ProductDetails = () => {
     try {
       await navigator.clipboard.writeText(bkashNumber);
       toast.success('bKash number copied');
+    } catch {
+      toast.error('Failed to copy number');
+    }
+  };
+
+  const handleCopyNogodNumber = async () => {
+    const nogodNumber = paymentSettings?.nogod?.number || '';
+    if (!nogodNumber.trim()) {
+      toast.error('Nagad number not configured');
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(nogodNumber);
+      toast.success('Nagad number copied');
     } catch {
       toast.error('Failed to copy number');
     }
@@ -537,6 +567,41 @@ const ProductDetails = () => {
       toast.error(error.response?.data?.message || 'Failed to submit transaction');
     } finally {
       setSubmittingBkashTrx(false);
+    }
+  };
+
+  const handleSubmitNogodTrx = async (event) => {
+    event.preventDefault();
+
+    if (!nogodOrder?.orderId) {
+      toast.error('Order not found for transaction submission');
+      return;
+    }
+
+    if (!nogodTrxId.trim()) {
+      toast.error('Please enter transaction ID');
+      return;
+    }
+
+    if (!nogodSenderNumber.trim()) {
+      toast.error('Please enter sender number');
+      return;
+    }
+
+    setSubmittingNogodTrx(true);
+    try {
+      const { data } = await API.put(`/orders/${nogodOrder.orderId}/transaction`, {
+        trxId: nogodTrxId.trim(),
+        senderNumber: nogodSenderNumber.trim(),
+      });
+
+      toast.success(data?.message || 'Transaction submitted');
+      setNogodModalOpen(false);
+      await showOrderSuccess(navigate);
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to submit transaction');
+    } finally {
+      setSubmittingNogodTrx(false);
     }
   };
 
@@ -1166,6 +1231,84 @@ const ProductDetails = () => {
                 className="w-full rounded-lg bg-emerald-600 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-60"
               >
                 {submittingBkashTrx ? 'Submitting...' : 'Submit TrxID'}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {nogodModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+          <div className="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-5 shadow-xl dark:border-gray-700 dark:bg-gray-900">
+            <div className="mb-4 flex items-start justify-between gap-3">
+              <div>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white">Nagad Payment</h3>
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Copy the number and submit TrxID to complete order.</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setNogodModalOpen(false)}
+                className="rounded-md bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200"
+              >
+                Close
+              </button>
+            </div>
+
+            <div className="rounded-xl border border-orange-200 bg-orange-50 p-3 dark:border-orange-900/30 dark:bg-orange-900/10">
+              <p className="text-[11px] uppercase tracking-wide text-orange-700 dark:text-orange-300">Nagad Number</p>
+              <div className="mt-2 flex items-center justify-between gap-2">
+                <p className="text-base font-black text-orange-700 dark:text-orange-300">{paymentSettings?.nogod?.number || 'N/A'}</p>
+                <button
+                  type="button"
+                  onClick={handleCopyNogodNumber}
+                  className="rounded-md bg-orange-600 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-orange-700 disabled:opacity-60"
+                  disabled={!paymentSettings?.nogod?.number?.trim()}
+                >
+                  Copy
+                </button>
+              </div>
+            </div>
+
+            <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
+              <div className="rounded-lg border border-gray-200 bg-gray-50 p-2.5 dark:border-gray-700 dark:bg-gray-800">
+                <p className="text-gray-500 dark:text-gray-400">Order ID</p>
+                <p className="mt-1 font-mono font-semibold text-gray-800 dark:text-gray-100 break-all">{nogodOrder?.orderId || 'N/A'}</p>
+              </div>
+              <div className="rounded-lg border border-gray-200 bg-gray-50 p-2.5 dark:border-gray-700 dark:bg-gray-800">
+                <p className="text-gray-500 dark:text-gray-400">Amount</p>
+                <p className="mt-1 font-bold text-indigo-600 dark:text-indigo-300">{formatPrice(Number(nogodOrder?.totalAmount) || 0)}</p>
+              </div>
+            </div>
+
+            <form onSubmit={handleSubmitNogodTrx} className="mt-4 space-y-3">
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Sender Number</label>
+                <input
+                  type="text"
+                  value={nogodSenderNumber}
+                  onChange={(event) => setNogodSenderNumber(event.target.value)}
+                  placeholder="Enter number used to send money"
+                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-orange-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+                />
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Transaction ID (TrxID)</label>
+                <input
+                  type="text"
+                  value={nogodTrxId}
+                  onChange={(event) => setNogodTrxId(event.target.value)}
+                  placeholder="Enter your Nagad TrxID"
+                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-orange-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={submittingNogodTrx}
+                className="w-full rounded-lg bg-emerald-600 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-60"
+              >
+                {submittingNogodTrx ? 'Submitting...' : 'Submit TrxID'}
               </button>
             </form>
           </div>
