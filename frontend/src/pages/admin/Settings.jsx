@@ -137,7 +137,20 @@ const Settings = () => {
       return;
     }
 
-    if (!window.confirm('Are you sure you want to delete this admin user?')) return;
+    const confirmation = await Swal.fire({
+      title: 'Delete admin user?',
+      text: 'This action cannot be undone.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Delete',
+      cancelButtonText: 'Cancel',
+    });
+
+    if (!confirmation.isConfirmed) {
+      return;
+    }
 
     setDeletingCustomerId(id);
     try {
