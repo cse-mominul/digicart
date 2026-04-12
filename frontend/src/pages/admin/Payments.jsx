@@ -25,7 +25,6 @@ const Payments = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterMethod, setFilterMethod] = useState('All');
   const [filterTransactionStatus, setFilterTransactionStatus] = useState('All');
-  const [updatingStatusId, setUpdatingStatusId] = useState('');
 
   useEffect(() => {
     fetchOrders();
@@ -142,24 +141,107 @@ const Payments = () => {
     });
   };
 
-  const handleUpdateTransactionStatus = async (orderId, nextStatus) => {
-    const order = orders.find((item) => item._id === orderId);
-    const currentStatus = String(order?.paymentVerificationStatus || '').trim() || 'Pending';
 
-    if (currentStatus === nextStatus) {
+
+  const handleViewTransaction = (order) => {
+    const customerName = order.user?.name || order.customer?.name || 'N/A';
+    const customerEmail = order.user?.email || order.customer?.email || 'N/A';
+    const transactionStatus = String(order.paymentVerificationStatus || '').trim() || 'Pending';
+
+    Swal.fire({
+      title: 'Transaction Details',
+      text: `Order ID: ${String(order._id).slice(-8).toUpperCase()}\nCustomer: ${customerName}\nEmail: ${customerEmail}\nAmount: ${formatPrice(order.totalAmount || 0)}\nMethod: ${String(order.paymentMethod || '').toUpperCase()}\nTrxID: ${order.paymentTrxId || 'N/A'}\nSender: ${order.paymentSenderNumber || 'N/A'}\nStatus: ${transactionStatus}`,
+      confirmButtonColor: '#ec4899',
+    });
+  };
+
+  const handleEditTransaction = async (order) => {
+    const currentStatus = String(order.paymentVerificationStatus || '').trim() || 'Pending';
+
+    const result = await Swal.fire({
+      title: 'Edit Transaction',
+      html: `
+        <input id="swal-trx-id" class="swal2-input" placeholder="Transaction ID" />
+        <input id="swal-sender-number" class="swal2-input" placeholder="Sender Number" />
+        <select id="swal-transaction-status" class="swal2-input">
+          <option value="Pending">Pending</option>
+          <option value="Success">Success</option>
+        </select>
+      `,
+      focusConfirm: false,
+      showCancelButton: true,
+      confirmButtonText: 'Save',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#ec4899',
+      cancelButtonColor: '#6b7280',
+      didOpen: () => {
+        const trxInput = document.getElementById('swal-trx-id');
+        const senderInput = document.getElementById('swal-sender-number');
+        const statusInput = document.getElementById('swal-transaction-status');
+        if (trxInput) trxInput.value = String(order.paymentTrxId || '');
+        if (senderInput) senderInput.value = String(order.paymentSenderNumber || '');
+        if (statusInput) statusInput.value = currentStatus;
+      },
+      preConfirm: () => {
+        const trxId = document.getElementById('swal-trx-id')?.value?.trim();
+        const senderNumber = document.getElementById('swal-sender-number')?.value?.trim();
+        const status = document.getElementById('swal-transaction-status')?.value?.trim() || 'Pending';
+
+        if (!trxId) {
+          Swal.showValidationMessage('Transaction ID is required');
+          return null;
+        }
+
+        if (!senderNumber) {
+          Swal.showValidationMessage('Sender number is required');
+          return null;
+        }
+
+        return { trxId, senderNumber, status };
+      },
+    });
+
+    if (!result.isConfirmed || !result.value) {
       return;
     }
 
+    try {
+      const { data } = await API.put(`/orders/${order._id}/transaction-details`, {
+        trxId: result.value.trxId,
+        senderNumber: result.value.senderNumber,
+        status: result.value.status,
+      });
+
+      setOrders((prev) => prev.map((item) => {
+        if (item._id !== order._id) return item;
+
+        return {
+          ...item,
+          paymentTrxId: data?.paymentTrxId || item.paymentTrxId,
+          paymentSenderNumber: data?.paymentSenderNumber || item.paymentSenderNumber,
+          paymentSubmittedAt: data?.paymentSubmittedAt || item.paymentSubmittedAt,
+          paymentVerificationStatus: data?.paymentVerificationStatus || 'Pending',
+          paymentStatus: data?.paymentStatus || item.paymentStatus,
+          amountPaid: typeof data?.amountPaid === 'number' ? data.amountPaid : item.amountPaid,
+          isPaid: typeof data?.isPaid === 'boolean' ? data.isPaid : item.isPaid,
+        };
+      }));
+
+      toast.success('Transaction updated successfully');
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to update transaction');
+    }
+  };
+
+  const handleDeleteTransaction = async (order) => {
     const confirmation = await Swal.fire({
-      title: `Set transaction status to ${nextStatus}?`,
-      text: nextStatus === 'Success'
-        ? 'This will confirm the submitted payment and mark payment as paid.'
-        : 'This will keep this payment in pending verification state.',
-      icon: 'question',
+      title: 'Delete transaction?',
+      text: 'This will remove the transaction details from this order.',
+      icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#ec4899',
+      confirmButtonColor: '#ef4444',
       cancelButtonColor: '#6b7280',
-      confirmButtonText: 'Update',
+      confirmButtonText: 'Delete',
       cancelButtonText: 'Cancel',
     });
 
@@ -167,27 +249,12 @@ const Payments = () => {
       return;
     }
 
-    setUpdatingStatusId(orderId);
     try {
-      const { data } = await API.put(`/orders/${orderId}/transaction-status`, { status: nextStatus });
-
-      setOrders((prev) => prev.map((item) => {
-        if (item._id !== orderId) return item;
-
-        return {
-          ...item,
-          paymentVerificationStatus: data?.paymentVerificationStatus || nextStatus,
-          paymentStatus: data?.paymentStatus || item.paymentStatus,
-          amountPaid: typeof data?.amountPaid === 'number' ? data.amountPaid : item.amountPaid,
-          isPaid: typeof data?.isPaid === 'boolean' ? data.isPaid : item.isPaid,
-        };
-      }));
-
-      toast.success('Transaction status updated');
+      await API.delete(`/orders/${order._id}/transaction`);
+      setOrders((prev) => prev.filter((item) => item._id !== order._id));
+      toast.success('Transaction deleted successfully');
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to update transaction status');
-    } finally {
-      setUpdatingStatusId('');
+      toast.error(error.response?.data?.message || 'Failed to delete transaction');
     }
   };
 
@@ -407,50 +474,36 @@ const Payments = () => {
                       {createdDate}
                     </td>
                     <td className="px-2.5 py-2 text-xs">
-                      <div className="flex items-center gap-1.5">
-                        <span
-                          className={`px-2 py-0.5 rounded-full text-[11px] font-semibold ${
-                            transactionStatusColors[transactionStatus] ||
-                            'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
-                          }`}
-                        >
-                          {transactionStatus}
-                        </span>
-                        <select
-                          value={transactionStatus}
-                          onChange={(e) => handleUpdateTransactionStatus(order._id, e.target.value)}
-                          disabled={updatingStatusId === order._id}
-                          className="px-1.5 py-0.5 text-[11px] border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500 disabled:opacity-60"
-                        >
-                          <option value="Pending">Pending</option>
-                          <option value="Success">Success</option>
-                        </select>
-                      </div>
+                      <span
+                        className={`inline-flex px-2 py-0.5 rounded-full text-[11px] font-semibold ${
+                          transactionStatusColors[transactionStatus] ||
+                          'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
+                        }`}
+                      >
+                        {transactionStatus}
+                      </span>
                     </td>
                     <td className="px-2.5 py-2 text-xs text-center">
-                      <button
-                        onClick={() => handleCopyToClipboard(
-                          `Order: ${order._id}\nCustomer: ${customerName}\nAmount: ${formatPrice(order.totalAmount || 0)}\nPayment: ${order.paymentMethod}\nTrxID: ${order.paymentTrxId}\nSender: ${order.paymentSenderNumber}`,
-                          'Payment Details'
-                        )}
-                        className="inline-flex items-center gap-1 text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 font-medium text-[11px]"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-3.5 w-3.5"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
+                      <div className="flex items-center justify-center gap-2">
+                        <button
+                          onClick={() => handleViewTransaction(order)}
+                          className="text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 font-medium text-[11px]"
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
-                        </svg>
-                        Details
-                      </button>
+                          View
+                        </button>
+                        <button
+                          onClick={() => handleEditTransaction(order)}
+                          className="text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 font-medium text-[11px]"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteTransaction(order)}
+                          className="text-rose-600 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-300 font-medium text-[11px]"
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );

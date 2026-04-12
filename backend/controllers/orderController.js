@@ -316,6 +316,10 @@ const updateOrderTransactionStatus = async (req, res) => {
       order.paymentStatus = 'Paid';
       order.amountPaid = totalAmount;
       order.isPaid = true;
+    } else {
+      order.paymentStatus = 'Unpaid';
+      order.amountPaid = 0;
+      order.isPaid = false;
     }
 
     await order.save();
@@ -333,6 +337,93 @@ const updateOrderTransactionStatus = async (req, res) => {
   }
 };
 
+// @desc  Edit payment transaction details (admin only)
+// @route PUT /api/orders/:id/transaction-details
+const updateOrderTransactionDetails = async (req, res) => {
+  const trxId = String(req.body?.trxId || '').trim();
+  const senderNumber = String(req.body?.senderNumber || '').trim();
+  const status = String(req.body?.status || 'Pending').trim();
+  const validStatuses = ['Pending', 'Success'];
+
+  if (!trxId) {
+    return res.status(400).json({ message: 'Transaction ID is required' });
+  }
+
+  if (!senderNumber) {
+    return res.status(400).json({ message: 'Sender number is required' });
+  }
+
+  if (!validStatuses.includes(status)) {
+    return res.status(400).json({ message: 'Invalid transaction status value' });
+  }
+
+  try {
+    const order = await Order.findById(req.params.id);
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    order.paymentTrxId = trxId;
+    order.paymentSenderNumber = senderNumber;
+    order.paymentSubmittedAt = new Date();
+    order.paymentVerificationStatus = status;
+
+    if (status === 'Success') {
+      const totalAmount = Number(order.totalAmount) || 0;
+      order.paymentStatus = 'Paid';
+      order.amountPaid = totalAmount;
+      order.isPaid = true;
+    } else {
+      order.paymentStatus = 'Unpaid';
+      order.amountPaid = 0;
+      order.isPaid = false;
+    }
+
+    await order.save();
+
+    return res.json({
+      message: 'Transaction details updated successfully',
+      orderId: order._id,
+      paymentTrxId: order.paymentTrxId,
+      paymentSenderNumber: order.paymentSenderNumber,
+      paymentSubmittedAt: order.paymentSubmittedAt,
+      paymentVerificationStatus: order.paymentVerificationStatus,
+      paymentStatus: order.paymentStatus,
+      amountPaid: order.amountPaid,
+      isPaid: order.isPaid,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc  Delete payment transaction details (admin only)
+// @route DELETE /api/orders/:id/transaction
+const deleteOrderTransaction = async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    order.paymentTrxId = '';
+    order.paymentSenderNumber = '';
+    order.paymentSubmittedAt = null;
+    order.paymentVerificationStatus = '';
+    order.paymentStatus = 'Unpaid';
+    order.amountPaid = 0;
+    order.isPaid = false;
+    await order.save();
+
+    return res.json({
+      message: 'Transaction deleted successfully',
+      orderId: order._id,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   createOrder,
   getMyOrders,
@@ -341,6 +432,8 @@ module.exports = {
   getOrderPaymentInfo,
   submitOrderTransaction,
   updateOrderTransactionStatus,
+  updateOrderTransactionDetails,
+  deleteOrderTransaction,
   updateOrderStatus,
   updateOrderPayment,
   deleteOrder,

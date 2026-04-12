@@ -8,6 +8,8 @@ const {
   getOrderPaymentInfo,
   submitOrderTransaction,
   updateOrderTransactionStatus,
+  updateOrderTransactionDetails,
+  deleteOrderTransaction,
   updateOrderStatus,
   updateOrderPayment,
   deleteOrder,
@@ -27,6 +29,8 @@ router.get('/:id', protect, requireAdmin, getOrderById);
 router.put('/:id/status', protect, requireAdmin, updateOrderStatus);
 router.put('/:id/payment', protect, requireAdmin, updateOrderPayment);
 router.put('/:id/transaction-status', protect, requireAdmin, updateOrderTransactionStatus);
+router.put('/:id/transaction-details', protect, requireAdmin, updateOrderTransactionDetails);
+router.delete('/:id/transaction', protect, requireAdmin, deleteOrderTransaction);
 router.delete('/:id', protect, requireAdmin, deleteOrder);
 
 module.exports = router;
