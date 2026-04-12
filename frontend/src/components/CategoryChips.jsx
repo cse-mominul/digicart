@@ -1,4 +1,4 @@
-const CategoryChips = ({ categories = [], activeCategory, onChange }) => {
+﻿const CategoryChips = ({ categories = [], activeCategory, onChange }) => {
   const dynamicCategories = Array.from(
     new Set(
       categories
@@ -11,8 +11,8 @@ const CategoryChips = ({ categories = [], activeCategory, onChange }) => {
     const name = category.toLowerCase();
     if (name !== 'offers') return '';
     return activeCategory === category
-      ? 'bg-pink-600 text-white'
-      : 'bg-pink-500 text-white';
+      ? 'bg-blue-600 text-white'
+      : 'bg-blue-500 text-white';
   };
 
   return (
@@ -21,7 +21,7 @@ const CategoryChips = ({ categories = [], activeCategory, onChange }) => {
         <button
           onClick={() => onChange('All')}
           className={`text-sm font-medium transition-colors rounded-full px-0 py-1 bg-transparent ${
-            activeCategory === 'All' ? 'text-[#ff3366]' : 'text-gray-700 dark:text-gray-300 hover:text-[#ff3366]'
+            activeCategory === 'All' ? 'text-[#2563eb]' : 'text-gray-700 dark:text-gray-300 hover:text-[#2563eb]'
           }`}
         >
           All
@@ -34,7 +34,7 @@ const CategoryChips = ({ categories = [], activeCategory, onChange }) => {
             className={`text-sm font-medium transition-colors rounded-full ${
               specialPillClass(category)
                 ? `px-3 py-1 ${specialPillClass(category)}`
-                : `px-0 py-1 bg-transparent ${activeCategory === category ? 'text-[#ff3366]' : 'text-gray-700 dark:text-gray-300 hover:text-[#ff3366]'}`
+                : `px-0 py-1 bg-transparent ${activeCategory === category ? 'text-[#2563eb]' : 'text-gray-700 dark:text-gray-300 hover:text-[#2563eb]'}`
             }`}
           >
             {category}
@@ -46,3 +46,4 @@ const CategoryChips = ({ categories = [], activeCategory, onChange }) => {
 };
 
 export default CategoryChips;
+

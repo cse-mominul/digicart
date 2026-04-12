@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+﻿import { useEffect, useMemo, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import API from '../api/axios';
 import ProductCard from '../components/ProductCard';
@@ -178,7 +178,7 @@ const CategoryProducts = () => {
           <button
             type="button"
             onClick={() => setMobileFilterOpen(true)}
-            className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-800"
+            className="inline-flex items-center gap-2 rounded-[14px] border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-800"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4h18M6 12h12m-9 8h6" />
@@ -202,7 +202,7 @@ const CategoryProducts = () => {
                 <button
                   type="button"
                   onClick={() => setMobileFilterOpen(false)}
-                  className="rounded-md p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+                  className="rounded-[12px] p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
                   aria-label="Close"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -213,7 +213,7 @@ const CategoryProducts = () => {
 
               <div className="px-4 py-4">
                 <div className="mb-6 border-b border-gray-200 pb-5 dark:border-gray-700">
-                  <div className="rounded-3xl border border-[#ff3366]/10 bg-gray-50 p-4">
+                  <div className="rounded-3xl border border-[#2563eb]/10 bg-gray-50 p-4">
                     <div className="mb-3 flex items-start justify-between gap-3">
                       <div>
                         <p className="text-xl font-bold leading-none text-gray-900 dark:text-white">Price Range</p>
@@ -253,27 +253,43 @@ const CategoryProducts = () => {
                   </label>
                 </div>
 
-                <div>
-                  <p className="mb-3 text-2xl font-semibold text-gray-900 dark:text-white">Brand</p>
-                  <div className="space-y-3 max-h-56 overflow-y-auto no-scrollbar pr-1">
-                    {brands.map((brand) => (
+                <div className="rounded-3xl border border-[#2563eb]/10 bg-gray-50 p-4">
+                  <div className="mb-3 flex items-start justify-between gap-3">
+                    <p className="text-2xl font-semibold text-gray-900 dark:text-white">Brand</p>
+                    <span className="text-xs font-semibold text-gray-400">Reset</span>
+                  </div>
+                  <div className="space-y-2 max-h-56 overflow-y-auto no-scrollbar pr-1">
+                    {brands.map((brand, index) => (
                       <label
                         key={brand}
-                        className="flex items-center gap-2 text-base text-gray-800 dark:text-gray-200 cursor-pointer"
+                        className="flex cursor-pointer items-center justify-between rounded-xl px-2 py-1.5 text-base text-gray-700 transition-colors hover:bg-white/80 dark:text-gray-200"
                       >
+                        <div className="flex items-center gap-2.5">
+                          <span className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold ${index % 5 === 0 ? 'bg-gray-200 text-gray-700' : index % 5 === 1 ? 'bg-sky-100 text-sky-600' : index % 5 === 2 ? 'bg-slate-200 text-slate-600' : index % 5 === 3 ? 'bg-zinc-200 text-zinc-700' : 'bg-orange-100 text-orange-600'}`}>
+                            {brand?.charAt(0)?.toUpperCase() || 'B'}
+                          </span>
+                          <span>{brand}</span>
+                        </div>
                         <input
                           type="checkbox"
                           checked={selectedBrands.includes(brand)}
                           onChange={() => toggleBrand(brand)}
-                          className="h-5 w-5 rounded border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white focus:ring-gray-400"
+                          className="brand-checkbox h-6 w-6"
                         />
-                        {brand}
                       </label>
                     ))}
                     {brands.length === 0 && (
                       <p className="text-sm text-gray-400 dark:text-gray-500">No brands available</p>
                     )}
                   </div>
+                  {brands.length > 0 && (
+                    <button
+                      type="button"
+                      className="mt-2 text-sm font-semibold text-[#2563eb]"
+                    >
+                      More Brand
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -281,7 +297,7 @@ const CategoryProducts = () => {
                 <button
                   type="button"
                   onClick={() => setMobileFilterOpen(false)}
-                  className="w-full rounded-xl bg-orange-600 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-orange-500"
+                  className="w-full rounded-[14px] bg-orange-600 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-orange-500"
                 >
                   Show {filteredProducts.length} Products
                 </button>
@@ -294,7 +310,7 @@ const CategoryProducts = () => {
           <div className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-2xl p-5 lg:sticky lg:top-5 lg:h-[calc(100vh-2.5rem)] lg:overflow-y-auto no-scrollbar">
             <h2 className="text-base font-semibold text-gray-900 dark:text-white mb-5">Filters</h2>
 
-            <div className="mb-6 rounded-3xl border border-[#ff3366]/10 bg-gray-50 p-4">
+            <div className="mb-6 rounded-3xl border border-[#2563eb]/10 bg-gray-50 p-4">
               <div className="mb-3 flex items-start justify-between gap-3">
                 <div>
                   <p className="text-lg font-bold text-gray-900 dark:text-gray-100">Price Range</p>
@@ -333,27 +349,43 @@ const CategoryProducts = () => {
               </label>
             </div>
 
-            <div>
-              <p className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Brand</p>
-              <div className="space-y-2 max-h-48 overflow-y-auto no-scrollbar pr-1">
-                {brands.map((brand) => (
+            <div className="rounded-3xl border border-[#2563eb]/10 bg-gray-50 p-4">
+              <div className="mb-2 flex items-start justify-between gap-3">
+                <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">Brand</p>
+                <span className="text-xs font-semibold text-gray-400">Reset</span>
+              </div>
+              <div className="space-y-1.5 max-h-56 overflow-y-auto no-scrollbar pr-1">
+                {brands.map((brand, index) => (
                   <label
                     key={brand}
-                    className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300 cursor-pointer"
+                    className="flex cursor-pointer items-center justify-between rounded-xl px-2 py-1.5 text-sm text-gray-700 transition-colors hover:bg-white dark:text-gray-200"
                   >
+                    <div className="flex items-center gap-2.5">
+                      <span className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold ${index % 5 === 0 ? 'bg-gray-200 text-gray-700' : index % 5 === 1 ? 'bg-sky-100 text-sky-600' : index % 5 === 2 ? 'bg-slate-200 text-slate-600' : index % 5 === 3 ? 'bg-zinc-200 text-zinc-700' : 'bg-orange-100 text-orange-600'}`}>
+                        {brand?.charAt(0)?.toUpperCase() || 'B'}
+                      </span>
+                      <span>{brand}</span>
+                    </div>
                     <input
                       type="checkbox"
                       checked={selectedBrands.includes(brand)}
                       onChange={() => toggleBrand(brand)}
-                      className="rounded border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white focus:ring-gray-400"
+                      className="brand-checkbox h-6 w-6"
                     />
-                    {brand}
                   </label>
                 ))}
                 {brands.length === 0 && (
                   <p className="text-sm text-gray-400 dark:text-gray-500">No brands available</p>
                 )}
               </div>
+              {brands.length > 0 && (
+                <button
+                  type="button"
+                  className="mt-2 text-sm font-semibold text-[#2563eb]"
+                >
+                  More Brand
+                </button>
+              )}
             </div>
           </div>
         </aside>
@@ -389,7 +421,7 @@ const CategoryProducts = () => {
                       type="button"
                       onClick={() => handlePageChange(currentPage - 1)}
                       disabled={currentPage === 1}
-                      className="inline-flex items-center gap-1 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-700 dark:text-gray-200 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="inline-flex items-center gap-1 rounded-[14px] border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-700 dark:text-gray-200 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -402,9 +434,9 @@ const CategoryProducts = () => {
                         key={page}
                         type="button"
                         onClick={() => handlePageChange(page)}
-                        className={`h-10 min-w-10 rounded-xl border px-3 text-sm font-medium transition-colors ${
+                        className={`h-10 min-w-10 rounded-[14px] border px-3 text-sm font-medium transition-colors ${
                           currentPage === page
-                            ? 'bg-pink-500 text-white border-pink-500'
+                            ? 'bg-blue-500 text-white border-blue-500'
                             : 'bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800'
                         }`}
                       >
@@ -416,7 +448,7 @@ const CategoryProducts = () => {
                       type="button"
                       onClick={() => handlePageChange(currentPage + 1)}
                       disabled={currentPage === totalPages}
-                      className="inline-flex items-center gap-1 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-700 dark:text-gray-200 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="inline-flex items-center gap-1 rounded-[14px] border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-700 dark:text-gray-200 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Next
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

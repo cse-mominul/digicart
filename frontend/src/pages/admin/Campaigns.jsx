@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import API from '../../api/axios';
 import toast from 'react-hot-toast';
 
@@ -125,7 +125,7 @@ const Campaigns = () => {
         </div>
         <button
           onClick={() => setShowModal(true)}
-          className="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors"
         >
           + New Campaign
         </button>
@@ -133,7 +133,7 @@ const Campaigns = () => {
 
       {loading ? (
         <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
         </div>
       ) : campaigns.length === 0 ? (
         <div className="text-center py-12 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800">
@@ -216,7 +216,7 @@ const Campaigns = () => {
                   name="title"
                   value={formData.title}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   required
                 />
               </div>
@@ -230,7 +230,7 @@ const Campaigns = () => {
                   value={formData.subtitle}
                   onChange={handleChange}
                   rows="2"
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent resize-none"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                   required
                 />
               </div>
@@ -246,7 +246,7 @@ const Campaigns = () => {
                     value={formData.desktopImage}
                     onChange={handleChange}
                     placeholder="https://example.com/desktop-banner.jpg"
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     required
                   />
                   {formData.desktopImage && (
@@ -270,7 +270,7 @@ const Campaigns = () => {
                     value={formData.mobileImage}
                     onChange={handleChange}
                     placeholder="https://example.com/mobile-banner.jpg"
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     required
                   />
                   {formData.mobileImage && (
@@ -295,7 +295,7 @@ const Campaigns = () => {
                   value={formData.image}
                   onChange={handleChange}
                   placeholder="Optional fallback image URL"
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
                 <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                   This is kept as a fallback for older banner data.
@@ -309,7 +309,7 @@ const Campaigns = () => {
                   name="isActive"
                   checked={formData.isActive}
                   onChange={handleChange}
-                  className="w-4 h-4 border-gray-300 rounded focus:ring-2 focus:ring-pink-500 cursor-pointer"
+                  className="w-4 h-4 border-gray-300 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer"
                 />
                 <label htmlFor="isActive" className="text-sm text-gray-700 dark:text-gray-300 cursor-pointer">
                   Active (will show on homepage)
@@ -326,7 +326,7 @@ const Campaigns = () => {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                  className="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors"
                 >
                   {editingId ? 'Update' : 'Create'}
                 </button>
@@ -340,3 +340,4 @@ const Campaigns = () => {
 };
 
 export default Campaigns;
+

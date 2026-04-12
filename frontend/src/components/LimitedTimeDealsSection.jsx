@@ -93,27 +93,27 @@ const LimitedTimeDealsSection = ({ products = [], loading = false }) => {
     <section className="mb-8 sm:mb-10 overflow-hidden rounded-lg sm:rounded-[24px] md:rounded-[30px] border border-slate-200 bg-white p-2.5 sm:p-3 md:p-5 shadow-[0_18px_50px_rgba(15,23,42,0.08)] dark:border-slate-800 dark:bg-[#0f172a]">
       <div className="grid gap-3 sm:gap-4 lg:grid-cols-[280px_1fr] xl:grid-cols-[320px_1fr]">
         <div className="rounded-lg sm:rounded-[24px] bg-[linear-gradient(160deg,#f8fafc_0%,#ecfeff_100%)] p-3 sm:p-4 md:p-5 dark:bg-[linear-gradient(160deg,#111827_0%,#0b1222_100%)]">
-          <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.2em] text-[#ff3366]">Limited Time Offer</p>
+          <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.2em] text-[#2563eb]">Limited Time Offer</p>
           <h3 className="mt-1.5 sm:mt-2 text-lg sm:text-2xl md:text-3xl font-semibold leading-tight text-slate-900 dark:text-white">Hot Deals This Week</h3>
           <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
             Weekly deals are back with fresh offers. Grab your favorites before the timer ends.
           </p>
 
           <div className="mt-3 sm:mt-5 grid grid-cols-2 gap-1.5 sm:gap-2 sm:grid-cols-4">
-            <div className="rounded-lg sm:rounded-xl border border-[#ff3366]/20 bg-white px-1.5 sm:px-2 py-1.5 sm:py-2 text-center dark:bg-slate-900">
-              <p className="text-sm sm:text-lg font-bold text-[#ff3366]">{days}</p>
+            <div className="rounded-lg sm:rounded-xl border border-[#2563eb]/20 bg-white px-1.5 sm:px-2 py-1.5 sm:py-2 text-center dark:bg-slate-900">
+              <p className="text-sm sm:text-lg font-bold text-[#2563eb]">{days}</p>
               <p className="text-[7px] sm:text-[10px] uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">Days</p>
             </div>
-            <div className="rounded-lg sm:rounded-xl border border-[#ff3366]/20 bg-white px-1.5 sm:px-2 py-1.5 sm:py-2 text-center dark:bg-slate-900">
-              <p className="text-sm sm:text-lg font-bold text-[#ff3366]">{hours}</p>
+            <div className="rounded-lg sm:rounded-xl border border-[#2563eb]/20 bg-white px-1.5 sm:px-2 py-1.5 sm:py-2 text-center dark:bg-slate-900">
+              <p className="text-sm sm:text-lg font-bold text-[#2563eb]">{hours}</p>
               <p className="text-[7px] sm:text-[10px] uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">Hours</p>
             </div>
-            <div className="rounded-lg sm:rounded-xl border border-[#ff3366]/20 bg-white px-1.5 sm:px-2 py-1.5 sm:py-2 text-center dark:bg-slate-900">
-              <p className="text-sm sm:text-lg font-bold text-[#ff3366]">{minutes}</p>
+            <div className="rounded-lg sm:rounded-xl border border-[#2563eb]/20 bg-white px-1.5 sm:px-2 py-1.5 sm:py-2 text-center dark:bg-slate-900">
+              <p className="text-sm sm:text-lg font-bold text-[#2563eb]">{minutes}</p>
               <p className="text-[7px] sm:text-[10px] uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">Min</p>
             </div>
-            <div className="rounded-lg sm:rounded-xl border border-[#ff3366]/20 bg-white px-1.5 sm:px-2 py-1.5 sm:py-2 text-center dark:bg-slate-900">
-              <p className="text-sm sm:text-lg font-bold text-[#ff3366]">{seconds}</p>
+            <div className="rounded-lg sm:rounded-xl border border-[#2563eb]/20 bg-white px-1.5 sm:px-2 py-1.5 sm:py-2 text-center dark:bg-slate-900">
+              <p className="text-sm sm:text-lg font-bold text-[#2563eb]">{seconds}</p>
               <p className="text-[7px] sm:text-[10px] uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">Sec</p>
             </div>
           </div>
@@ -121,7 +121,7 @@ const LimitedTimeDealsSection = ({ products = [], loading = false }) => {
           <button
             type="button"
             onClick={() => navigate('/products')}
-            className="mt-3 sm:mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#0f8f84] px-3 sm:px-4 py-1.5 sm:py-2 text-[11px] sm:text-xs font-semibold text-white transition-colors hover:bg-[#117b72] active:scale-95 sm:w-auto"
+            className="mt-3 sm:mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#2563eb] px-3 sm:px-4 py-1.5 sm:py-2 text-[11px] sm:text-xs font-semibold text-white transition-colors hover:bg-[#1d4ed8] active:scale-95 sm:w-auto"
           >
             View All Products
             <span className="inline-flex h-4 sm:h-5 w-4 sm:w-5 items-center justify-center rounded-full bg-white/20 text-sm">↗</span>
@@ -157,7 +157,7 @@ const LimitedTimeDealsSection = ({ products = [], loading = false }) => {
                   onClick={() => navigate(`/product/${product._id}`)}
                 >
                   <div className="relative">
-                    <span className="absolute left-1 sm:left-1.5 top-1 sm:top-1.5 z-10 rounded bg-[#ff3366] px-1 sm:px-1.5 py-0.5 text-[7px] sm:text-[9px] font-bold uppercase text-white">
+                    <span className="absolute left-1 sm:left-1.5 top-1 sm:top-1.5 z-10 rounded bg-yellow-400 px-1 sm:px-1.5 py-0.5 text-[7px] sm:text-[9px] font-bold uppercase text-slate-900">
                       {discountLabel}
                     </span>
                     <div className="flex aspect-square sm:h-28 items-center justify-center rounded-lg sm:rounded-xl bg-slate-50 p-1.5 sm:p-2 dark:bg-slate-900">
@@ -177,12 +177,12 @@ const LimitedTimeDealsSection = ({ products = [], loading = false }) => {
                     <h4 className="mt-1 min-h-[34px] line-clamp-2 text-[11px] font-medium leading-4 text-slate-800 sm:text-[12px] dark:text-slate-100">
                       {product.name}
                     </h4>
-                    <div className="mt-1 flex items-center gap-1 text-[#0f8f84]">
+                    <div className="mt-1 flex items-center gap-1 text-amber-500">
                       {[...Array(5)].map((_, index) => (
                         <svg
                           key={index}
                           xmlns="http://www.w3.org/2000/svg"
-                          className={`h-3 w-3 ${index < filledStars ? 'text-[#0f8f84]' : 'text-slate-300 dark:text-slate-600'}`}
+                          className={`h-3 w-3 ${index < filledStars ? 'text-amber-500' : 'text-slate-300 dark:text-slate-600'}`}
                           viewBox="0 0 24 24"
                           fill="currentColor"
                         >
@@ -206,8 +206,8 @@ const LimitedTimeDealsSection = ({ products = [], loading = false }) => {
                         }}
                         className={`inline-flex h-7 w-7 items-center justify-center rounded-full border transition-colors ${
                           inWishlist
-                            ? 'border-[#ff3366] bg-[#ff3366] text-white'
-                            : 'border-slate-200 text-slate-500 hover:border-[#ff3366] hover:text-[#ff3366] dark:border-slate-700 dark:text-slate-300'
+                            ? 'border-[#2563eb] bg-[#2563eb] text-white'
+                            : 'border-slate-200 text-slate-500 hover:border-[#2563eb] hover:text-[#2563eb] dark:border-slate-700 dark:text-slate-300'
                         }`}
                         aria-label="Toggle wishlist"
                       >
@@ -222,7 +222,7 @@ const LimitedTimeDealsSection = ({ products = [], loading = false }) => {
                           event.stopPropagation();
                           handleAddToCart(product);
                         }}
-                        className="inline-flex min-w-0 flex-1 items-center justify-center gap-1 rounded-full bg-[#0f8f84] px-2 py-1.5 text-[10px] font-semibold text-white transition-colors hover:bg-[#117b72] sm:text-[11px]"
+                        className="inline-flex min-w-0 flex-1 items-center justify-center gap-1 rounded-full bg-[#2563eb] px-2 py-1.5 text-[10px] font-semibold text-white transition-colors hover:bg-[#1d4ed8] sm:text-[11px]"
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14l-1 12H6L5 8zm2-3a3 3 0 016 0v1H7V5z" />
@@ -237,12 +237,12 @@ const LimitedTimeDealsSection = ({ products = [], loading = false }) => {
           </div>
 
           <div className="flex flex-col gap-2 border-t border-slate-200 pt-3 sm:flex-row sm:items-center sm:justify-between dark:border-slate-700">
-            <div className="h-0.5 w-full rounded-full bg-[#0f8f84] sm:w-20" />
+            <div className="h-0.5 w-full rounded-full bg-[#2563eb] sm:w-20" />
             <div className="flex justify-between gap-2 sm:justify-end">
               <button
                 type="button"
                 onClick={() => scrollTrack('left')}
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 text-slate-600 transition-colors hover:border-[#ff3366] hover:text-[#ff3366] sm:h-8 sm:w-8 dark:border-slate-700 dark:text-slate-200"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 text-slate-600 transition-colors hover:border-[#2563eb] hover:text-[#2563eb] sm:h-8 sm:w-8 dark:border-slate-700 dark:text-slate-200"
                 aria-label="Scroll left"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -252,7 +252,7 @@ const LimitedTimeDealsSection = ({ products = [], loading = false }) => {
               <button
                 type="button"
                 onClick={() => scrollTrack('right')}
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 text-slate-600 transition-colors hover:border-[#ff3366] hover:text-[#ff3366] sm:h-8 sm:w-8 dark:border-slate-700 dark:text-slate-200"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 text-slate-600 transition-colors hover:border-[#2563eb] hover:text-[#2563eb] sm:h-8 sm:w-8 dark:border-slate-700 dark:text-slate-200"
                 aria-label="Scroll right"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -268,3 +268,4 @@ const LimitedTimeDealsSection = ({ products = [], loading = false }) => {
 };
 
 export default LimitedTimeDealsSection;
+

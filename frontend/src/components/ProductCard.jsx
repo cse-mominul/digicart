@@ -1,4 +1,4 @@
-import { useCart } from '../context/CartContext';
+﻿import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
@@ -43,7 +43,7 @@ const ProductCard = ({ product }) => {
       onClick={() => navigate(`/product/${product._id}`)}
     >
       <div className="relative overflow-hidden">
-        <span className="absolute top-3 left-3 z-10 bg-pink-500 text-white text-xs font-semibold px-2.5 py-1 rounded-full">
+        <span className="absolute top-3 left-3 z-10 bg-yellow-400 text-slate-900 text-xs font-semibold px-2.5 py-1 rounded-full">
           {discountLabel}
         </span>
         <img
@@ -62,8 +62,8 @@ const ProductCard = ({ product }) => {
           }}
           className={`absolute top-3 right-3 z-10 w-9 h-9 rounded-full border flex items-center justify-center transition-colors ${
             inWishlist
-              ? 'bg-pink-500 border-pink-500 text-white'
-              : 'bg-white/95 dark:bg-gray-900/95 border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-300 hover:text-pink-500'
+              ? 'bg-blue-500 border-blue-500 text-white'
+              : 'bg-white/95 dark:bg-gray-900/95 border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-300 hover:text-blue-500'
           }`}
           aria-label="Add to wishlist"
         >
@@ -77,7 +77,7 @@ const ProductCard = ({ product }) => {
             handleAddToCart();
           }}
           disabled={stockCount === 0}
-          className="absolute right-3 -bottom-5 bg-gray-900 dark:bg-pink-500 text-white w-10 h-10 rounded-full shadow-lg flex items-center justify-center hover:scale-105 transition disabled:opacity-50 disabled:cursor-not-allowed"
+          className="absolute right-3 -bottom-5 bg-gray-900 dark:bg-blue-500 text-white w-10 h-10 rounded-full shadow-lg flex items-center justify-center hover:scale-105 transition disabled:opacity-50 disabled:cursor-not-allowed"
           aria-label="Add to bag"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -98,7 +98,7 @@ const ProductCard = ({ product }) => {
           {product.description}
         </p>
         <div className="mt-3 flex items-center gap-2">
-          <span className="text-pink-600 dark:text-pink-400 font-bold text-lg">{formatPrice(price)}</span>
+          <span className="text-blue-600 dark:text-blue-400 font-bold text-lg">{formatPrice(price)}</span>
           <span className="text-gray-400 line-through text-sm">{formatPrice(oldPrice)}</span>
         </div>
         <div className="mt-2 flex items-center gap-1 text-amber-500">
@@ -121,7 +121,7 @@ const ProductCard = ({ product }) => {
             handleAddToCart();
           }}
           disabled={stockCount === 0}
-          className="mt-3 w-full rounded-xl bg-gray-900 dark:bg-pink-500 text-white py-2.5 text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+          className="mt-3 w-full rounded-xl bg-gray-900 dark:bg-blue-500 text-white py-2.5 text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Add to Cart
         </button>
@@ -131,3 +131,4 @@ const ProductCard = ({ product }) => {
 };
 
 export default ProductCard;
+

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+﻿import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import API from '../api/axios';
 import { useCart } from '../context/CartContext';
@@ -25,9 +25,9 @@ const defaultPaymentMethodLabels = {
 
 const paymentMethodThemes = {
   bkash: {
-    card: 'border-pink-200 bg-pink-50 dark:border-pink-900/30 dark:bg-pink-900/10',
-    text: 'text-pink-700 dark:text-pink-300',
-    button: 'bg-pink-600 hover:bg-pink-700',
+    card: 'border-blue-200 bg-blue-50 dark:border-blue-900/30 dark:bg-blue-900/10',
+    text: 'text-blue-700 dark:text-blue-300',
+    button: 'bg-blue-600 hover:bg-blue-700',
   },
   nogod: {
     card: 'border-orange-200 bg-orange-50 dark:border-orange-900/30 dark:bg-orange-900/10',
@@ -387,7 +387,7 @@ const Checkout = () => {
           <p className="text-gray-500 dark:text-gray-400 mb-6">Your cart is empty. Add products before checkout.</p>
           <Link
             to="/"
-            className="inline-flex items-center justify-center bg-pink-500 text-white px-5 py-2.5 rounded-xl font-semibold hover:bg-pink-600 transition-colors"
+            className="inline-flex items-center justify-center bg-blue-500 text-white px-5 py-2.5 rounded-xl font-semibold hover:bg-blue-600 transition-colors"
           >
             Continue Shopping
           </Link>
@@ -430,8 +430,8 @@ const Checkout = () => {
                     }}
                     className={`px-4 py-2 rounded-lg font-medium transition-all ${
                       selectedAddressId === addr.id
-                        ? 'bg-pink-500 text-white border-2 border-pink-600'
-                        : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-2 border-gray-200 dark:border-gray-700 hover:border-pink-300 dark:hover:border-pink-600'
+                        ? 'bg-blue-500 text-white border-2 border-blue-600'
+                        : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-2 border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600'
                     }`}
                   >
                     {addr.label || 'Unnamed'}
@@ -448,7 +448,7 @@ const Checkout = () => {
                 type="text"
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
-                className="w-full border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                className="w-full border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
             </div>
@@ -459,7 +459,7 @@ const Checkout = () => {
                 type="text"
                 value={form.phone}
                 onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                className="w-full border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                className="w-full border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
             </div>
@@ -471,7 +471,7 @@ const Checkout = () => {
                 value={form.city}
                 onChange={(e) => setForm({ ...form, city: e.target.value })}
                 placeholder="Enter city"
-                className="w-full border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                className="w-full border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               {errors.city && <p className="text-red-500 text-xs mt-1">{errors.city}</p>}
             </div>
@@ -483,7 +483,7 @@ const Checkout = () => {
                 value={form.area}
                 onChange={(e) => setForm({ ...form, area: e.target.value })}
                 placeholder="Enter area"
-                className="w-full border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                className="w-full border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               {errors.area && <p className="text-red-500 text-xs mt-1">{errors.area}</p>}
             </div>
@@ -494,7 +494,7 @@ const Checkout = () => {
                 rows={3}
                 value={form.address}
                 onChange={(e) => setForm({ ...form, address: e.target.value })}
-                className="w-full border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                className="w-full border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               {errors.address && <p className="text-red-500 text-xs mt-1">{errors.address}</p>}
             </div>
@@ -505,7 +505,7 @@ const Checkout = () => {
                 type="email"
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className="w-full border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                className="w-full border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
@@ -515,7 +515,7 @@ const Checkout = () => {
                 type="text"
                 value={form.orderNote}
                 onChange={(e) => setForm({ ...form, orderNote: e.target.value })}
-                className="w-full border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                className="w-full border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
@@ -532,7 +532,7 @@ const Checkout = () => {
                 placeholder="Enter code"
                 value={couponCode}
                 onChange={(e) => setCouponCode(e.target.value)}
-                className="flex-1 border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                className="flex-1 border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <button
                 type="button"
@@ -560,7 +560,7 @@ const Checkout = () => {
                       name="shippingMethod"
                       checked={shippingMethod === method.id}
                       onChange={() => setShippingMethod(method.id)}
-                      className="accent-pink-500"
+                      className="accent-blue-500"
                     />
                     <span className="text-sm text-gray-700 dark:text-gray-300">{method.label}</span>
                   </div>
@@ -580,7 +580,7 @@ const Checkout = () => {
                     name="paymentMethod"
                     checked={paymentMethod === method.id}
                     onChange={() => setPaymentMethod(method.id)}
-                    className="accent-pink-500"
+                    className="accent-blue-500"
                   />
                   <div>
                     <span className="block text-sm text-gray-700 dark:text-gray-300">{method.label}</span>
@@ -608,7 +608,7 @@ const Checkout = () => {
             </div>
             <div className="flex justify-between pt-2 border-t border-gray-200 dark:border-gray-700">
               <span className="font-semibold text-gray-900 dark:text-white">Final Total Amount</span>
-              <span className="font-bold text-xl text-pink-600 dark:text-pink-400">{formatPrice(finalTotal)}</span>
+              <span className="font-bold text-xl text-blue-600 dark:text-blue-400">{formatPrice(finalTotal)}</span>
             </div>
           </div>
 
@@ -616,7 +616,7 @@ const Checkout = () => {
             type="button"
             onClick={handleSubmit}
             disabled={placingOrder}
-            className="w-full bg-pink-500 text-white py-3.5 rounded-xl font-bold tracking-wide hover:bg-pink-600 transition-colors disabled:opacity-60"
+            className="w-full bg-blue-500 text-white py-3.5 rounded-xl font-bold tracking-wide hover:bg-blue-600 transition-colors disabled:opacity-60"
           >
             {placingOrder ? 'PLACING ORDER...' : 'PLACE ORDER'}
           </button>
@@ -715,3 +715,5 @@ const Checkout = () => {
 };
 
 export default Checkout;
+
+

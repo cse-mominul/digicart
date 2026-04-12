@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import API from '../api/axios';
 
@@ -120,7 +120,7 @@ const Footer = () => {
       <button
         type="button"
         onClick={handleScrollToTop}
-        className="absolute left-1/2 top-0 flex h-10 sm:h-11 w-10 sm:w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-[#ff3366]/40 bg-[#ff3366] text-white shadow-lg transition-colors hover:bg-[#ff1f58] active:scale-90"
+        className="absolute left-1/2 top-0 flex h-10 sm:h-11 w-10 sm:w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-[#2563eb]/40 bg-[#2563eb] text-white shadow-lg transition-colors hover:bg-[#1d4ed8] active:scale-90"
         aria-label="Scroll to top"
       >
         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 sm:h-5 w-4 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -140,7 +140,7 @@ const Footer = () => {
                 />
               ) : null}
               <div className="min-w-0">
-                <p className="text-sm sm:text-lg font-semibold leading-none text-[#ff3366] truncate">{siteBranding.siteTitle}</p>
+                <p className="text-sm sm:text-lg font-semibold leading-none text-[#2563eb] truncate">{siteBranding.siteTitle}</p>
                 <p className="text-[9px] sm:text-[11px] uppercase tracking-[0.12em] text-gray-400">{siteBranding.siteSlogan}</p>
               </div>
             </div>
@@ -229,3 +229,4 @@ const Footer = () => {
 };
 
 export default Footer;
+

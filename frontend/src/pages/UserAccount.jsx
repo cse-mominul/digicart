@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+﻿import { useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import Swal from 'sweetalert2';
@@ -743,7 +743,7 @@ const UserAccount = () => {
                     type="text"
                     value={profileForm.name}
                     onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })}
-                    className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:ring-2 focus:ring-pink-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                    className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                   />
                 </div>
                 <div>
@@ -752,7 +752,7 @@ const UserAccount = () => {
                     type="email"
                     value={profileForm.email}
                     onChange={(e) => setProfileForm({ ...profileForm, email: e.target.value })}
-                    className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:ring-2 focus:ring-pink-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                    className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                   />
                 </div>
                 <div>
@@ -761,7 +761,7 @@ const UserAccount = () => {
                     type="text"
                     value={profileForm.phone}
                     onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
-                    className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:ring-2 focus:ring-pink-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                    className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                     placeholder="Enter your phone number"
                   />
                 </div>
@@ -773,12 +773,12 @@ const UserAccount = () => {
                       value={profileForm.currentPassword}
                       onChange={(e) => setProfileForm({ ...profileForm, currentPassword: e.target.value })}
                       placeholder="Enter current password"
-                      className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 pr-16 text-gray-900 outline-none focus:ring-2 focus:ring-pink-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                      className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 pr-16 text-gray-900 outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                     />
                     <button
                       type="button"
                       onClick={() => setShowCurrentPassword((prev) => !prev)}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 rounded px-2 py-1 text-xs font-medium text-pink-600 hover:bg-pink-50 dark:text-pink-300 dark:hover:bg-gray-700"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 rounded px-2 py-1 text-xs font-medium text-blue-600 hover:bg-blue-50 dark:text-blue-300 dark:hover:bg-gray-700"
                       aria-label={showCurrentPassword ? 'Hide current password' : 'Show current password'}
                     >
                       {showCurrentPassword ? 'Hide' : 'Show'}
@@ -793,12 +793,12 @@ const UserAccount = () => {
                       value={profileForm.newPassword}
                       onChange={(e) => setProfileForm({ ...profileForm, newPassword: e.target.value })}
                       placeholder="Enter new password"
-                      className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 pr-16 text-gray-900 outline-none focus:ring-2 focus:ring-pink-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                      className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 pr-16 text-gray-900 outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                     />
                     <button
                       type="button"
                       onClick={() => setShowNewPassword((prev) => !prev)}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 rounded px-2 py-1 text-xs font-medium text-pink-600 hover:bg-pink-50 dark:text-pink-300 dark:hover:bg-gray-700"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 rounded px-2 py-1 text-xs font-medium text-blue-600 hover:bg-blue-50 dark:text-blue-300 dark:hover:bg-gray-700"
                       aria-label={showNewPassword ? 'Hide new password' : 'Show new password'}
                     >
                       {showNewPassword ? 'Hide' : 'Show'}
@@ -808,7 +808,7 @@ const UserAccount = () => {
                 <button
                   type="submit"
                   disabled={profileSaving}
-                  className="rounded-xl bg-[#ff3366] px-5 py-2.5 font-semibold text-white transition-colors hover:bg-[#ff1f58]"
+                  className="rounded-xl bg-[#2563eb] px-5 py-2.5 font-semibold text-white transition-colors hover:bg-[#1d4ed8]"
                 >
                   {profileSaving ? 'Saving...' : 'Save Changes'}
                 </button>
@@ -950,7 +950,7 @@ const UserAccount = () => {
                         type="button"
                         onClick={() => setOrdersPage((prev) => Math.max(1, prev - 1))}
                         disabled={ordersPage === 1}
-                        className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:border-pink-400 hover:text-pink-600 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
+                        className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:border-blue-400 hover:text-blue-600 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
                       >
                         Prev
                       </button>
@@ -967,8 +967,8 @@ const UserAccount = () => {
                             onClick={() => setOrdersPage(item)}
                             className={`rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors ${
                               ordersPage === item
-                                ? 'bg-pink-500 text-white'
-                                : 'border border-gray-300 bg-white text-gray-700 hover:border-pink-400 hover:text-pink-600 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200'
+                                ? 'bg-blue-500 text-white'
+                                : 'border border-gray-300 bg-white text-gray-700 hover:border-blue-400 hover:text-blue-600 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200'
                             }`}
                           >
                             {item}
@@ -980,7 +980,7 @@ const UserAccount = () => {
                         type="button"
                         onClick={() => setOrdersPage((prev) => Math.min(totalOrdersPages, prev + 1))}
                         disabled={ordersPage === totalOrdersPages}
-                        className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:border-pink-400 hover:text-pink-600 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
+                        className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:border-blue-400 hover:text-blue-600 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
                       >
                         Next
                       </button>
@@ -999,12 +999,12 @@ const UserAccount = () => {
                   <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">Your saved products are displayed here in the same card layout as Addresses.</p>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="rounded-full bg-pink-50 px-4 py-2 text-sm font-semibold text-[#ff3366] dark:bg-gray-800 dark:text-pink-300">
+                  <span className="rounded-full bg-blue-50 px-4 py-2 text-sm font-semibold text-[#2563eb] dark:bg-gray-800 dark:text-blue-300">
                     {wishlistItems.length} item(s)
                   </span>
                   <Link
                     to="/products"
-                    className="inline-flex items-center justify-center rounded-full bg-[#ff3366] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-pink-500/20 transition-colors hover:bg-[#ff1f58]"
+                    className="inline-flex items-center justify-center rounded-full bg-[#2563eb] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-500/20 transition-colors hover:bg-[#1d4ed8]"
                   >
                     Continue Shopping
                   </Link>
@@ -1024,7 +1024,7 @@ const UserAccount = () => {
                     <article key={item._id} className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-900">
                       <div className="flex items-start justify-between gap-3 border-b border-gray-100 pb-4 dark:border-gray-800">
                         <div className="flex items-center gap-3">
-                          <span className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-pink-50 dark:bg-gray-800">
+                          <span className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-blue-50 dark:bg-gray-800">
                             <img
                               src={item.image}
                               alt={item.name}
@@ -1043,14 +1043,14 @@ const UserAccount = () => {
                         <button
                           type="button"
                           onClick={() => removeFromWishlist(item._id)}
-                          className="rounded-full border border-gray-200 bg-white px-3 py-2 text-xs font-medium text-gray-700 transition-colors hover:border-[#ff3366] hover:text-[#ff3366] dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
+                          className="rounded-full border border-gray-200 bg-white px-3 py-2 text-xs font-medium text-gray-700 transition-colors hover:border-[#2563eb] hover:text-[#2563eb] dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
                         >
                           Remove
                         </button>
                       </div>
 
                       <div className="space-y-2 py-4 text-sm leading-7 text-gray-600 dark:text-gray-300">
-                        <p className="font-semibold text-[#ff3366]">{formatPrice(item.price)}</p>
+                        <p className="font-semibold text-[#2563eb]">{formatPrice(item.price)}</p>
                         <p className="line-clamp-3">Stored in your wishlist for quick access later.</p>
                       </div>
 
@@ -1058,7 +1058,7 @@ const UserAccount = () => {
                         <button
                           type="button"
                           onClick={() => handleAddToCart(item)}
-                          className="text-sm font-medium text-[#ff3366] transition-colors hover:text-[#ff1f58]"
+                          className="text-sm font-medium text-[#2563eb] transition-colors hover:text-[#1d4ed8]"
                         >
                           Add to Cart
                         </button>
@@ -1085,7 +1085,7 @@ const UserAccount = () => {
                       type="button"
                       onClick={() => setWishlistPage((prev) => Math.max(1, prev - 1))}
                       disabled={wishlistPage === 1}
-                      className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:border-[#ff3366] hover:text-[#ff3366] disabled:cursor-not-allowed disabled:opacity-40 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
+                      className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:border-[#2563eb] hover:text-[#2563eb] disabled:cursor-not-allowed disabled:opacity-40 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
                     >
                       Prev
                     </button>
@@ -1102,8 +1102,8 @@ const UserAccount = () => {
                             onClick={() => setWishlistPage(page)}
                             className={`h-10 min-w-[40px] rounded-xl px-3 text-sm font-semibold transition-colors ${
                               wishlistPage === page
-                                ? 'bg-[#ff3366] text-white shadow-md shadow-pink-500/20'
-                                : 'border border-gray-200 bg-white text-gray-700 hover:border-[#ff3366] hover:text-[#ff3366] dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200'
+                                ? 'bg-[#2563eb] text-white shadow-md shadow-blue-500/20'
+                                : 'border border-gray-200 bg-white text-gray-700 hover:border-[#2563eb] hover:text-[#2563eb] dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200'
                             }`}
                           >
                             {page}
@@ -1115,7 +1115,7 @@ const UserAccount = () => {
                       type="button"
                       onClick={() => setWishlistPage((prev) => Math.min(totalWishlistPages, prev + 1))}
                       disabled={wishlistPage === totalWishlistPages}
-                      className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:border-[#ff3366] hover:text-[#ff3366] disabled:cursor-not-allowed disabled:opacity-40 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
+                      className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:border-[#2563eb] hover:text-[#2563eb] disabled:cursor-not-allowed disabled:opacity-40 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
                     >
                       Next
                     </button>
@@ -1132,7 +1132,7 @@ const UserAccount = () => {
                   <h1 className="text-2xl font-semibold text-gray-900 dark:text-white sm:text-3xl">My Payments</h1>
                   <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">All your payment transactions are listed here.</p>
                 </div>
-                <span className="rounded-full bg-pink-50 px-4 py-2 text-sm font-semibold text-[#ff3366] dark:bg-gray-800 dark:text-pink-300">
+                <span className="rounded-full bg-blue-50 px-4 py-2 text-sm font-semibold text-[#2563eb] dark:bg-gray-800 dark:text-blue-300">
                   {payments.length} transaction(s)
                 </span>
               </div>
@@ -1186,13 +1186,13 @@ const UserAccount = () => {
                               className="cursor-pointer hover:bg-gray-50 focus:bg-gray-50 focus:outline-none dark:hover:bg-gray-800/50 dark:focus:bg-gray-800/50"
                             >
                               <td className="px-4 py-3 font-mono text-xs text-gray-700 dark:text-gray-300">
-                                <span className="font-semibold text-[#ff3366]">
+                                <span className="font-semibold text-[#2563eb]">
                                   #{String(payment._id || '').slice(-8).toUpperCase()}
                                 </span>
                               </td>
                               <td className="px-4 py-3 font-semibold text-gray-900 dark:text-gray-100">{formatPrice(payment.totalAmount)}</td>
                               <td className="px-4 py-3 text-gray-700 dark:text-gray-300">
-                                <span className="inline-flex rounded-full bg-pink-50 px-3 py-1 text-xs font-semibold text-[#ff3366] dark:bg-gray-800 dark:text-pink-300">
+                                <span className="inline-flex rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-[#2563eb] dark:bg-gray-800 dark:text-blue-300">
                                   {paymentMethod}
                                 </span>
                               </td>
@@ -1225,7 +1225,7 @@ const UserAccount = () => {
                           type="button"
                           onClick={() => setPaymentsPage((prev) => Math.max(1, prev - 1))}
                           disabled={paymentsPage === 1}
-                          className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:border-pink-400 hover:text-pink-600 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
+                          className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:border-blue-400 hover:text-blue-600 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
                         >
                           Prev
                         </button>
@@ -1233,7 +1233,7 @@ const UserAccount = () => {
                           type="button"
                           onClick={() => setPaymentsPage((prev) => Math.min(Math.ceil(payments.length / PAYMENTS_ITEMS_PER_PAGE), prev + 1))}
                           disabled={paymentsPage === Math.ceil(payments.length / PAYMENTS_ITEMS_PER_PAGE)}
-                          className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:border-pink-400 hover:text-pink-600 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
+                          className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:border-blue-400 hover:text-blue-600 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
                         >
                           Next
                         </button>
@@ -1252,7 +1252,7 @@ const UserAccount = () => {
                   <h1 className="text-2xl font-semibold text-gray-900 dark:text-white sm:text-3xl">My Reviews</h1>
                   <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">All reviews you have submitted are listed here.</p>
                 </div>
-                <span className="rounded-full bg-pink-50 px-4 py-2 text-sm font-semibold text-[#ff3366] dark:bg-gray-800 dark:text-pink-300">
+                <span className="rounded-full bg-blue-50 px-4 py-2 text-sm font-semibold text-[#2563eb] dark:bg-gray-800 dark:text-blue-300">
                   {myReviews.length} review(s)
                 </span>
               </div>
@@ -1302,7 +1302,7 @@ const UserAccount = () => {
                                         event.currentTarget.src = 'https://placehold.co/64x64?text=?';
                                       }}
                                     />
-                                    <p className="font-semibold text-gray-900 transition-colors group-hover:text-[#ff3366] dark:text-white dark:group-hover:text-pink-300">
+                                    <p className="font-semibold text-gray-900 transition-colors group-hover:text-[#2563eb] dark:text-white dark:group-hover:text-blue-300">
                                       {review?.product?.name || 'Product'}
                                     </p>
                                   </Link>
@@ -1382,7 +1382,7 @@ const UserAccount = () => {
                         type="button"
                         onClick={() => setMyReviewsPage((prev) => Math.max(1, prev - 1))}
                         disabled={myReviewsPage === 1}
-                        className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:border-[#ff3366] hover:text-[#ff3366] disabled:cursor-not-allowed disabled:opacity-40 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
+                        className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:border-[#2563eb] hover:text-[#2563eb] disabled:cursor-not-allowed disabled:opacity-40 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
                       >
                         Prev
                       </button>
@@ -1399,8 +1399,8 @@ const UserAccount = () => {
                               onClick={() => setMyReviewsPage(page)}
                               className={`h-10 min-w-[40px] rounded-xl px-3 text-sm font-semibold transition-colors ${
                                 myReviewsPage === page
-                                  ? 'bg-[#ff3366] text-white shadow-md shadow-pink-500/20'
-                                  : 'border border-gray-200 bg-white text-gray-700 hover:border-[#ff3366] hover:text-[#ff3366] dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200'
+                                  ? 'bg-[#2563eb] text-white shadow-md shadow-blue-500/20'
+                                  : 'border border-gray-200 bg-white text-gray-700 hover:border-[#2563eb] hover:text-[#2563eb] dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200'
                               }`}
                             >
                               {page}
@@ -1412,7 +1412,7 @@ const UserAccount = () => {
                         type="button"
                         onClick={() => setMyReviewsPage((prev) => Math.min(totalMyReviewsPages, prev + 1))}
                         disabled={myReviewsPage === totalMyReviewsPages}
-                        className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:border-[#ff3366] hover:text-[#ff3366] disabled:cursor-not-allowed disabled:opacity-40 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
+                        className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:border-[#2563eb] hover:text-[#2563eb] disabled:cursor-not-allowed disabled:opacity-40 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
                       >
                         Next
                       </button>
@@ -1433,7 +1433,7 @@ const UserAccount = () => {
                 <button
                   type="button"
                   onClick={openAddAddress}
-                  className="inline-flex items-center justify-center rounded-full bg-[#ff3366] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-pink-500/20 transition-colors hover:bg-[#ff1f58]"
+                  className="inline-flex items-center justify-center rounded-full bg-[#2563eb] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-500/20 transition-colors hover:bg-[#1d4ed8]"
                 >
                   Add New Address
                 </button>
@@ -1452,7 +1452,7 @@ const UserAccount = () => {
                     <article key={item.id} className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-900">
                       <div className="flex items-start justify-between gap-3 border-b border-gray-100 pb-4 dark:border-gray-800">
                         <div className="flex items-center gap-3">
-                          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-pink-50 text-[#ff3366] dark:bg-gray-800">
+                          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50 text-[#2563eb] dark:bg-gray-800">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.9} d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z" />
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.9} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -1467,7 +1467,7 @@ const UserAccount = () => {
                         <button
                           type="button"
                           onClick={() => openEditAddress(item)}
-                          className="rounded-full border border-gray-200 bg-white px-3 py-2 text-xs font-medium text-gray-700 transition-colors hover:border-[#ff3366] hover:text-[#ff3366] dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
+                          className="rounded-full border border-gray-200 bg-white px-3 py-2 text-xs font-medium text-gray-700 transition-colors hover:border-[#2563eb] hover:text-[#2563eb] dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
                         >
                           Change
                         </button>
@@ -1483,7 +1483,7 @@ const UserAccount = () => {
                         <button
                           type="button"
                           onClick={() => openEditAddress(item)}
-                          className="text-sm font-medium text-[#ff3366] transition-colors hover:text-[#ff1f58]"
+                          className="text-sm font-medium text-[#2563eb] transition-colors hover:text-[#1d4ed8]"
                         >
                           Edit Address
                         </button>
@@ -1529,7 +1529,7 @@ const UserAccount = () => {
                 <select
                   value={addressForm.label}
                   onChange={(e) => setAddressForm({ ...addressForm, label: e.target.value })}
-                  className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-[#ff3366] focus:ring-2 focus:ring-[#ff3366]/15 dark:border-gray-700 dark:bg-gray-800 dark:text-white appearance-none cursor-pointer"
+                  className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]/15 dark:border-gray-700 dark:bg-gray-800 dark:text-white appearance-none cursor-pointer"
                   style={{
                     backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'%3e%3cpath d='M6 9l6 6 6-6'%3e%3c/path%3e%3c/svg%3e")`,
                     backgroundRepeat: 'no-repeat',
@@ -1550,21 +1550,21 @@ const UserAccount = () => {
                   placeholder="Phone"
                   value={addressForm.phone}
                   onChange={(e) => setAddressForm({ ...addressForm, phone: e.target.value })}
-                  className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-[#ff3366] focus:ring-2 focus:ring-[#ff3366]/15 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                  className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]/15 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                 />
                 <input
                   type="text"
                   placeholder="City"
                   value={addressForm.city}
                   onChange={(e) => setAddressForm({ ...addressForm, city: e.target.value })}
-                  className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-[#ff3366] focus:ring-2 focus:ring-[#ff3366]/15 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                  className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]/15 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                 />
                 <input
                   type="text"
                   placeholder="Area"
                   value={addressForm.area}
                   onChange={(e) => setAddressForm({ ...addressForm, area: e.target.value })}
-                  className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-[#ff3366] focus:ring-2 focus:ring-[#ff3366]/15 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                  className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]/15 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                 />
               </div>
 
@@ -1573,7 +1573,7 @@ const UserAccount = () => {
                 placeholder="Full Address"
                 value={addressForm.address}
                 onChange={(e) => setAddressForm({ ...addressForm, address: e.target.value })}
-                className="min-h-[170px] w-full rounded-[24px] border border-gray-200 bg-white px-4 py-3 text-sm leading-7 text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-[#ff3366] focus:ring-2 focus:ring-[#ff3366]/15 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                className="min-h-[170px] w-full rounded-[24px] border border-gray-200 bg-white px-4 py-3 text-sm leading-7 text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]/15 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
               />
 
               <div className="flex flex-col gap-3 border-t border-gray-100 pt-5 sm:flex-row sm:justify-end dark:border-gray-800">
@@ -1586,7 +1586,7 @@ const UserAccount = () => {
                 </button>
                 <button
                   type="submit"
-                  className="rounded-full bg-[#ff3366] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-pink-500/20 transition-colors hover:bg-[#ff1f58]"
+                  className="rounded-full bg-[#2563eb] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-500/20 transition-colors hover:bg-[#1d4ed8]"
                 >
                   {editingAddressId ? 'Save Changes' : 'Save Address'}
                 </button>
@@ -1624,7 +1624,7 @@ const UserAccount = () => {
                 <select
                   value={reviewDraft.rating}
                   onChange={(event) => setReviewDraft((prev) => ({ ...prev, rating: Number(event.target.value) }))}
-                  className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-pink-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                  className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                 >
                   {[5, 4, 3, 2, 1].map((value) => (
                     <option key={value} value={value}>{value} Star{value > 1 ? 's' : ''}</option>
@@ -1638,7 +1638,7 @@ const UserAccount = () => {
                   rows={4}
                   value={reviewDraft.comment}
                   onChange={(event) => setReviewDraft((prev) => ({ ...prev, comment: event.target.value }))}
-                  className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-pink-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                  className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                 />
               </div>
 
@@ -1648,7 +1648,7 @@ const UserAccount = () => {
                   type="file"
                   accept="image/*"
                   onChange={handleReviewDraftImageChange}
-                  className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-pink-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                  className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                 />
                 {reviewDraft.image ? (
                   <img
@@ -1664,7 +1664,7 @@ const UserAccount = () => {
                   type="button"
                   disabled={reviewActionLoading}
                   onClick={() => handleUpdateReview(editingReview)}
-                  className="rounded-full bg-[#ff3366] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#ff1f58] disabled:opacity-50"
+                  className="rounded-full bg-[#2563eb] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#1d4ed8] disabled:opacity-50"
                 >
                   {reviewActionLoading ? 'Saving...' : 'Update'}
                 </button>
@@ -1786,7 +1786,7 @@ const UserAccount = () => {
                 <button
                   type="button"
                   onClick={() => setSelectedOrder(null)}
-                  className="rounded-full bg-[#ff3366] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-pink-500/20 transition-colors hover:bg-[#ff1f58]"
+                  className="rounded-full bg-[#2563eb] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-500/20 transition-colors hover:bg-[#1d4ed8]"
                 >
                   Close
                 </button>
@@ -1800,3 +1800,4 @@ const UserAccount = () => {
 };
 
 export default UserAccount;
+

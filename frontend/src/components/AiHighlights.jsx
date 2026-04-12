@@ -1,4 +1,4 @@
-const highlights = [
+﻿const highlights = [
   {
     title: 'Smart Picks',
     description: 'AI-shaped recommendations based on what shoppers actually explore.',
@@ -63,7 +63,7 @@ const AiHighlights = () => {
           key={item.title}
           className="group flex w-full flex-col items-center rounded-2xl border border-gray-200 bg-white p-6 text-center shadow-[0_0_0_1px_rgba(17,24,39,0.02)] transition-transform duration-200 hover:-translate-y-1 dark:border-white/10 dark:bg-[#101319]/90 sm:items-start sm:rounded-3xl sm:p-5 sm:text-left"
         >
-          <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-pink-50 text-[#ff3366] transition-transform duration-300 group-hover:-translate-y-0.5 dark:bg-[#ff3366]/10 dark:text-[#ff6b8d] sm:mb-4 sm:h-14 sm:w-14 sm:rounded-2xl">
+          <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-[#2563eb] transition-transform duration-300 group-hover:-translate-y-0.5 dark:bg-[#2563eb]/10 dark:text-[#60a5fa] sm:mb-4 sm:h-14 sm:w-14 sm:rounded-2xl">
             <Icon type={item.icon} />
           </div>
           <h3 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white sm:text-lg">

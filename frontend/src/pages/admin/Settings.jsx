@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import API from '../../api/axios';
 import toast from 'react-hot-toast';
@@ -683,7 +683,7 @@ const Settings = () => {
               onClick={() => updateActiveTab('delivery')}
               className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
                 activeTab === 'delivery'
-                  ? 'bg-pink-500 text-white'
+                  ? 'bg-blue-500 text-white'
                   : 'text-gray-300 hover:text-white'
               }`}
             >
@@ -694,7 +694,7 @@ const Settings = () => {
               onClick={() => updateActiveTab('company')}
               className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
                 activeTab === 'company'
-                  ? 'bg-pink-500 text-white'
+                  ? 'bg-blue-500 text-white'
                   : 'text-gray-300 hover:text-white'
               }`}
             >
@@ -705,7 +705,7 @@ const Settings = () => {
               onClick={() => updateActiveTab('site')}
               className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
                 activeTab === 'site'
-                  ? 'bg-pink-500 text-white'
+                  ? 'bg-blue-500 text-white'
                   : 'text-gray-300 hover:text-white'
               }`}
             >
@@ -716,7 +716,7 @@ const Settings = () => {
               onClick={() => updateActiveTab('pixel')}
               className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
                 activeTab === 'pixel'
-                  ? 'bg-pink-500 text-white'
+                  ? 'bg-blue-500 text-white'
                   : 'text-gray-300 hover:text-white'
               }`}
             >
@@ -727,7 +727,7 @@ const Settings = () => {
               onClick={() => updateActiveTab('whatsapp')}
               className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
                 activeTab === 'whatsapp'
-                  ? 'bg-pink-500 text-white'
+                  ? 'bg-blue-500 text-white'
                   : 'text-gray-300 hover:text-white'
               }`}
             >
@@ -738,7 +738,7 @@ const Settings = () => {
               onClick={() => updateActiveTab('users')}
               className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
                 activeTab === 'users'
-                  ? 'bg-pink-500 text-white'
+                  ? 'bg-blue-500 text-white'
                   : 'text-gray-300 hover:text-white'
               }`}
             >
@@ -749,7 +749,7 @@ const Settings = () => {
               onClick={() => updateActiveTab('payment')}
               className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
                 activeTab === 'payment'
-                  ? 'bg-pink-500 text-white'
+                  ? 'bg-blue-500 text-white'
                   : 'text-gray-300 hover:text-white'
               }`}
             >
@@ -771,7 +771,7 @@ const Settings = () => {
                     onChange={(event) =>
                       setSettingsForm((prev) => ({ ...prev, insideDhakaCharge: event.target.value }))
                     }
-                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
@@ -784,7 +784,7 @@ const Settings = () => {
                     onChange={(event) =>
                       setSettingsForm((prev) => ({ ...prev, outsideDhakaCharge: event.target.value }))
                     }
-                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -792,7 +792,7 @@ const Settings = () => {
               <button
                 type="submit"
                 disabled={savingSettings}
-                className="w-full md:w-auto rounded-xl bg-pink-500 text-white px-6 py-2.5 font-semibold hover:bg-pink-600 transition-colors disabled:opacity-60"
+                className="w-full md:w-auto rounded-xl bg-blue-500 text-white px-6 py-2.5 font-semibold hover:bg-blue-600 transition-colors disabled:opacity-60"
               >
                 {savingSettings ? 'Saving...' : 'Save Delivery Settings'}
               </button>
@@ -810,7 +810,7 @@ const Settings = () => {
                     onChange={(event) =>
                       setSettingsForm((prev) => ({ ...prev, contactAddress: event.target.value }))
                     }
-                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
@@ -822,7 +822,7 @@ const Settings = () => {
                     onChange={(event) =>
                       setSettingsForm((prev) => ({ ...prev, contactPhone: event.target.value }))
                     }
-                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
@@ -834,7 +834,7 @@ const Settings = () => {
                     onChange={(event) =>
                       setSettingsForm((prev) => ({ ...prev, supportEmail: event.target.value }))
                     }
-                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
@@ -846,7 +846,7 @@ const Settings = () => {
                     onChange={(event) =>
                       setSettingsForm((prev) => ({ ...prev, salesEmail: event.target.value }))
                     }
-                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -854,7 +854,7 @@ const Settings = () => {
               <button
                 type="submit"
                 disabled={savingSettings}
-                className="w-full md:w-auto rounded-xl bg-pink-500 text-white px-6 py-2.5 font-semibold hover:bg-pink-600 transition-colors disabled:opacity-60"
+                className="w-full md:w-auto rounded-xl bg-blue-500 text-white px-6 py-2.5 font-semibold hover:bg-blue-600 transition-colors disabled:opacity-60"
               >
                 {savingSettings ? 'Saving...' : 'Save Company Settings'}
               </button>
@@ -872,7 +872,7 @@ const Settings = () => {
                     onChange={(event) =>
                       setSettingsForm((prev) => ({ ...prev, siteTitle: event.target.value }))
                     }
-                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
@@ -885,7 +885,7 @@ const Settings = () => {
                       setSettingsForm((prev) => ({ ...prev, siteSlogan: event.target.value }))
                     }
                     placeholder="Your brand tagline"
-                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
@@ -898,7 +898,7 @@ const Settings = () => {
                       setSettingsForm((prev) => ({ ...prev, footerCopyrightText: event.target.value }))
                     }
                     placeholder="© 2026 DigiCart. All rights reserved."
-                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
@@ -911,7 +911,7 @@ const Settings = () => {
                       setSettingsForm((prev) => ({ ...prev, siteDescription: event.target.value }))
                     }
                     placeholder="Short brand description shown in footer"
-                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink-500 resize-none"
+                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                   />
                 </div>
 
@@ -924,7 +924,7 @@ const Settings = () => {
                       setSettingsForm((prev) => ({ ...prev, siteWebsiteUrl: event.target.value }))
                     }
                     placeholder="www.digicart.com"
-                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
@@ -937,7 +937,7 @@ const Settings = () => {
                       setSettingsForm((prev) => ({ ...prev, siteLogoUrl: event.target.value }))
                     }
                     placeholder="https://example.com/logo.png"
-                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
@@ -950,7 +950,7 @@ const Settings = () => {
                       setSettingsForm((prev) => ({ ...prev, faviconUrl: event.target.value }))
                     }
                     placeholder="https://example.com/favicon.ico"
-                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
@@ -959,7 +959,7 @@ const Settings = () => {
               <button
                 type="submit"
                 disabled={savingSettings}
-                className="w-full md:w-auto rounded-xl bg-pink-500 text-white px-6 py-2.5 font-semibold hover:bg-pink-600 transition-colors disabled:opacity-60"
+                className="w-full md:w-auto rounded-xl bg-blue-500 text-white px-6 py-2.5 font-semibold hover:bg-blue-600 transition-colors disabled:opacity-60"
               >
                 {savingSettings ? 'Saving...' : 'Save Site Settings'}
               </button>
@@ -976,7 +976,7 @@ const Settings = () => {
                     onChange={(event) =>
                       setSettingsForm((prev) => ({ ...prev, facebookPixelEnabled: event.target.checked }))
                     }
-                    className="h-4 w-4 rounded border-gray-600 accent-pink-500"
+                    className="h-4 w-4 rounded border-gray-600 accent-blue-500"
                   />
                   <span className="text-sm font-medium text-gray-200">Enable Facebook Pixel</span>
                 </label>
@@ -990,7 +990,7 @@ const Settings = () => {
                       setSettingsForm((prev) => ({ ...prev, facebookPixelId: event.target.value }))
                     }
                     placeholder="e.g., 123456789012345"
-                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <p className="mt-2 text-xs text-gray-400">
                     Add only the numeric Pixel ID from Meta Events Manager.
@@ -1001,7 +1001,7 @@ const Settings = () => {
               <button
                 type="submit"
                 disabled={savingSettings}
-                className="w-full md:w-auto rounded-xl bg-pink-500 text-white px-6 py-2.5 font-semibold hover:bg-pink-600 transition-colors disabled:opacity-60"
+                className="w-full md:w-auto rounded-xl bg-blue-500 text-white px-6 py-2.5 font-semibold hover:bg-blue-600 transition-colors disabled:opacity-60"
               >
                 {savingSettings ? 'Saving...' : 'Save Facebook Pixel Settings'}
               </button>
@@ -1018,7 +1018,7 @@ const Settings = () => {
                     onChange={(event) =>
                       setSettingsForm((prev) => ({ ...prev, whatsappChatEnabled: event.target.checked }))
                     }
-                    className="h-4 w-4 rounded border-gray-600 accent-pink-500"
+                    className="h-4 w-4 rounded border-gray-600 accent-blue-500"
                   />
                   <span className="text-sm font-medium text-gray-200">Enable Floating WhatsApp Chat Button</span>
                 </label>
@@ -1032,7 +1032,7 @@ const Settings = () => {
                       setSettingsForm((prev) => ({ ...prev, whatsappNumber: event.target.value }))
                     }
                     placeholder="e.g., +8801700123456"
-                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <p className="mt-2 text-xs text-gray-400">Use country code format (e.g., +880...).</p>
                 </div>
@@ -1046,7 +1046,7 @@ const Settings = () => {
                       setSettingsForm((prev) => ({ ...prev, whatsappDefaultMessage: event.target.value }))
                     }
                     placeholder="Hello, I need help with my order."
-                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink-500 resize-none"
+                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                   />
                 </div>
               </div>
@@ -1054,7 +1054,7 @@ const Settings = () => {
               <button
                 type="submit"
                 disabled={savingSettings}
-                className="w-full md:w-auto rounded-xl bg-pink-500 text-white px-6 py-2.5 font-semibold hover:bg-pink-600 transition-colors disabled:opacity-60"
+                className="w-full md:w-auto rounded-xl bg-blue-500 text-white px-6 py-2.5 font-semibold hover:bg-blue-600 transition-colors disabled:opacity-60"
               >
                 {savingSettings ? 'Saving...' : 'Save WhatsApp Settings'}
               </button>
@@ -1095,7 +1095,7 @@ const Settings = () => {
                   </thead>
                   <tbody>
                     {[
-                      { key: 'bkash', label: 'bKash', type: 'Mobile Payment', accent: 'pink' },
+                      { key: 'bkash', label: 'bKash', type: 'Mobile Payment', accent: 'blue' },
                       { key: 'nogod', label: 'Nagad', type: 'Mobile Payment', accent: 'orange' },
                       { key: 'cod', label: 'Cash on Delivery', type: 'Cash', accent: 'slate' },
                       { key: 'card', label: 'Credit/Debit Card', type: 'Card', accent: 'purple' },
@@ -1121,7 +1121,7 @@ const Settings = () => {
                                 type="checkbox"
                                 checked={Boolean(methodData.enabled)}
                                 onChange={() => handleTogglePaymentMethod(method.key)}
-                                className="h-4 w-4 rounded border-gray-600 accent-pink-500"
+                                className="h-4 w-4 rounded border-gray-600 accent-blue-500"
                               />
                               <span className="text-xs text-gray-300">
                                 {methodData.enabled ? 'Enabled' : 'Disabled'}
@@ -1135,7 +1135,7 @@ const Settings = () => {
                                 placeholder="01XXXXXXXXX"
                                 value={methodData.number || ''}
                                 onChange={(e) => handleUpdatePaymentNumber(method.key, e.target.value)}
-                                className="w-full rounded-md border border-gray-700 bg-gray-700 text-white px-2.5 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-pink-500"
+                                className="w-full rounded-md border border-gray-700 bg-gray-700 text-white px-2.5 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
                               />
                             ) : (
                               <span className="text-gray-500">No number required</span>
@@ -1148,7 +1148,7 @@ const Settings = () => {
                                 placeholder="e.g., Send Money / Cash Out"
                                 value={methodData.note || ''}
                                 onChange={(e) => handleUpdatePaymentNote(method.key, e.target.value)}
-                                className="w-full rounded-md border border-gray-700 bg-gray-700 text-white px-2.5 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-pink-500 resize-none"
+                                className="w-full rounded-md border border-gray-700 bg-gray-700 text-white px-2.5 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                               />
                             ) : (
                               <span className="text-gray-500">No note required</span>
@@ -1191,7 +1191,7 @@ const Settings = () => {
                                 type="checkbox"
                                 checked={Boolean(method?.enabled)}
                                 onChange={() => handleTogglePaymentMethod(key)}
-                                className="h-4 w-4 rounded border-gray-600 accent-pink-500"
+                                className="h-4 w-4 rounded border-gray-600 accent-blue-500"
                               />
                               <span className="text-xs text-gray-300">
                                 {method?.enabled ? 'Enabled' : 'Disabled'}
@@ -1205,7 +1205,7 @@ const Settings = () => {
                                 placeholder="01XXXXXXXXX"
                                 value={method?.number || ''}
                                 onChange={(e) => handleUpdatePaymentNumber(key, e.target.value)}
-                                className="w-full rounded-md border border-gray-700 bg-gray-700 text-white px-2.5 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-pink-500"
+                                className="w-full rounded-md border border-gray-700 bg-gray-700 text-white px-2.5 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
                               />
                             ) : (
                               <span className="text-gray-500">No number required</span>
@@ -1218,7 +1218,7 @@ const Settings = () => {
                                 placeholder="e.g., Send Money / Cash Out"
                                 value={method?.note || ''}
                                 onChange={(e) => handleUpdatePaymentNote(key, e.target.value)}
-                                className="w-full rounded-md border border-gray-700 bg-gray-700 text-white px-2.5 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-pink-500 resize-none"
+                                className="w-full rounded-md border border-gray-700 bg-gray-700 text-white px-2.5 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                               />
                             ) : (
                               <span className="text-gray-500">No note required</span>
@@ -1264,7 +1264,7 @@ const Settings = () => {
                           placeholder="e.g., Stripe, PayPal"
                           value={newPaymentMethod.name}
                           onChange={(e) => setNewPaymentMethod((prev) => ({ ...prev, name: e.target.value }))}
-                          className="w-full rounded-lg border border-gray-700 bg-gray-800 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                          className="w-full rounded-lg border border-gray-700 bg-gray-800 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                       </div>
 
@@ -1273,7 +1273,7 @@ const Settings = () => {
                         <select
                           value={newPaymentMethod.type}
                           onChange={(e) => setNewPaymentMethod((prev) => ({ ...prev, type: e.target.value }))}
-                          className="w-full rounded-lg border border-gray-700 bg-gray-800 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                          className="w-full rounded-lg border border-gray-700 bg-gray-800 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
                           <option value="mobile_banking">Mobile Banking</option>
                           <option value="cash">Cash</option>
@@ -1290,7 +1290,7 @@ const Settings = () => {
                             placeholder="01XXXXXXXXX"
                             value={newPaymentMethod.number}
                             onChange={(e) => setNewPaymentMethod((prev) => ({ ...prev, number: e.target.value }))}
-                            className="w-full rounded-lg border border-gray-700 bg-gray-800 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                            className="w-full rounded-lg border border-gray-700 bg-gray-800 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                           />
                         </div>
                       )}
@@ -1303,7 +1303,7 @@ const Settings = () => {
                             placeholder="e.g., Send Money / Cash Out"
                             value={newPaymentMethod.note}
                             onChange={(e) => setNewPaymentMethod((prev) => ({ ...prev, note: e.target.value }))}
-                            className="w-full rounded-lg border border-gray-700 bg-gray-800 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                            className="w-full rounded-lg border border-gray-700 bg-gray-800 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                           />
                         </div>
                       )}
@@ -1313,7 +1313,7 @@ const Settings = () => {
                           type="checkbox"
                           checked={newPaymentMethod.enabled}
                           onChange={(e) => setNewPaymentMethod((prev) => ({ ...prev, enabled: e.target.checked }))}
-                          className="h-4 w-4 rounded border-gray-600 accent-pink-500"
+                          className="h-4 w-4 rounded border-gray-600 accent-blue-500"
                         />
                         <span className="text-sm text-gray-300">Enable</span>
                       </div>
@@ -1330,7 +1330,7 @@ const Settings = () => {
                       <button
                         type="button"
                         onClick={handleAddPaymentMethod}
-                        className="rounded-lg bg-pink-500 px-4 py-2 text-sm font-medium text-white hover:bg-pink-600"
+                        className="rounded-lg bg-blue-500 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600"
                       >
                         Add Method
                       </button>
@@ -1342,7 +1342,7 @@ const Settings = () => {
               <button
                 type="submit"
                 disabled={savingSettings}
-                className="w-full md:w-auto rounded-xl bg-pink-500 text-white px-6 py-2.5 font-semibold hover:bg-pink-600 transition-colors disabled:opacity-60"
+                className="w-full md:w-auto rounded-xl bg-blue-500 text-white px-6 py-2.5 font-semibold hover:bg-blue-600 transition-colors disabled:opacity-60"
               >
                 {savingSettings ? 'Saving...' : 'Save Payment Settings'}
               </button>
@@ -1437,7 +1437,7 @@ const Settings = () => {
                   type="text"
                   value={customerEditForm.name}
                   onChange={(event) => setCustomerEditForm((prev) => ({ ...prev, name: event.target.value }))}
-                  className="w-full rounded-xl border border-gray-700 bg-gray-800 px-3 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
+                  className="w-full rounded-xl border border-gray-700 bg-gray-800 px-3 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
@@ -1447,7 +1447,7 @@ const Settings = () => {
                   type="email"
                   value={customerEditForm.email}
                   onChange={(event) => setCustomerEditForm((prev) => ({ ...prev, email: event.target.value }))}
-                  className="w-full rounded-xl border border-gray-700 bg-gray-800 px-3 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
+                  className="w-full rounded-xl border border-gray-700 bg-gray-800 px-3 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
@@ -1457,7 +1457,7 @@ const Settings = () => {
                   type="text"
                   value={customerEditForm.phone}
                   onChange={(event) => setCustomerEditForm((prev) => ({ ...prev, phone: event.target.value }))}
-                  className="w-full rounded-xl border border-gray-700 bg-gray-800 px-3 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
+                  className="w-full rounded-xl border border-gray-700 bg-gray-800 px-3 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
@@ -1472,7 +1472,7 @@ const Settings = () => {
                 <button
                   type="submit"
                   disabled={savingCustomer}
-                  className="rounded-lg bg-pink-500 px-4 py-2 text-sm font-semibold text-white hover:bg-pink-600 disabled:opacity-60"
+                  className="rounded-lg bg-blue-500 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-600 disabled:opacity-60"
                 >
                   {savingCustomer ? 'Saving...' : 'Save Changes'}
                 </button>
@@ -1486,3 +1486,4 @@ const Settings = () => {
 };
 
 export default Settings;
+

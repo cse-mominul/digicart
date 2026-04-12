@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import API from '../api/axios';
 
 const HeroSlider = () => {
@@ -95,7 +95,7 @@ const HeroSlider = () => {
             onClick={() => setActiveIndex(idx)}
             className={`rounded-full transition-all flex-shrink-0 ${
               idx === activeIndex
-                ? 'w-3 h-3 bg-pink-500'
+                ? 'w-3 h-3 bg-blue-500'
                 : 'w-2.5 h-2.5 bg-gray-300 dark:bg-gray-600 hover:bg-gray-400'
             }`}
             aria-label={`Go to slide ${idx + 1}`}
@@ -107,3 +107,4 @@ const HeroSlider = () => {
 };
 
 export default HeroSlider;
+

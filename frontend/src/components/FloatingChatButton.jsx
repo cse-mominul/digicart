@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+﻿import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import API from '../api/axios';
 
@@ -82,7 +82,7 @@ const FloatingChatButton = () => {
 
             <Link
               to="/contact-us"
-              className="inline-flex w-full items-center justify-center rounded-xl border border-gray-300 px-3 py-2 text-sm font-semibold text-gray-700 transition hover:border-[#ff3366] hover:text-[#ff3366] dark:border-gray-600 dark:text-gray-200"
+              className="inline-flex w-full items-center justify-center rounded-xl border border-gray-300 px-3 py-2 text-sm font-semibold text-gray-700 transition hover:border-[#2563eb] hover:text-[#2563eb] dark:border-gray-600 dark:text-gray-200"
             >
               Contact Page
             </Link>
@@ -96,7 +96,7 @@ const FloatingChatButton = () => {
           fetchWhatsappSettings();
           setOpen((prev) => !prev);
         }}
-        className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-[#ff3366] text-white shadow-[0_14px_30px_rgba(255,51,102,0.35)] transition hover:scale-105"
+        className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-[#2563eb] text-white shadow-[0_14px_30px_rgba(37,99,235,0.35)] transition hover:scale-105"
         aria-label="Open chat options"
       >
         <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -108,3 +108,4 @@ const FloatingChatButton = () => {
 };
 
 export default FloatingChatButton;
+

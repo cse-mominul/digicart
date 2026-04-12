@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+﻿import { useState, useEffect, useMemo } from 'react';
 import API from '../api/axios';
 import { formatPrice } from '../utils/formatPrice';
 import toast from 'react-hot-toast';
@@ -246,7 +246,7 @@ const MyOrders = () => {
                       type="button"
                       disabled={!isSuccessfulOrder(order.status)}
                       onClick={() => openReviewModal(order, item)}
-                      className="rounded-lg border border-pink-200 bg-pink-50 px-3 py-1.5 text-xs font-semibold text-pink-700 transition-colors hover:bg-pink-100 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-700 transition-colors hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       Review
                     </button>
@@ -274,7 +274,7 @@ const MyOrders = () => {
                 type="button"
                 onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
                 disabled={currentPage === 1}
-                className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:border-pink-400 hover:text-pink-600 disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:border-blue-400 hover:text-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Prev
               </button>
@@ -291,8 +291,8 @@ const MyOrders = () => {
                     onClick={() => setCurrentPage(item)}
                     className={`rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors ${
                       currentPage === item
-                        ? 'bg-pink-500 text-white'
-                        : 'border border-gray-300 bg-white text-gray-700 hover:border-pink-400 hover:text-pink-600'
+                        ? 'bg-blue-500 text-white'
+                        : 'border border-gray-300 bg-white text-gray-700 hover:border-blue-400 hover:text-blue-600'
                     }`}
                   >
                     {item}
@@ -304,7 +304,7 @@ const MyOrders = () => {
                 type="button"
                 onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
                 disabled={currentPage === totalPages}
-                className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:border-pink-400 hover:text-pink-600 disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:border-blue-400 hover:text-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Next
               </button>
@@ -396,7 +396,7 @@ const MyOrders = () => {
                   <button
                     type="submit"
                     disabled={reviewSubmitting}
-                    className="rounded-lg bg-pink-500 px-4 py-2 text-sm font-semibold text-white hover:bg-pink-600 disabled:opacity-60"
+                    className="rounded-lg bg-blue-500 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-600 disabled:opacity-60"
                   >
                     {reviewSubmitting ? 'Submitting...' : 'Submit Review'}
                   </button>
@@ -411,3 +411,4 @@ const MyOrders = () => {
 };
 
 export default MyOrders;
+

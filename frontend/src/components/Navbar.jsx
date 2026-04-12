@@ -200,7 +200,7 @@ const Navbar = () => {
                 </svg>
               </button>
 
-              <Link to="/" className="flex items-center gap-2 text-[#ff3366]">
+              <Link to="/" className="flex items-center gap-2 text-[#2563eb]">
                 {siteBranding.siteLogoUrl ? (
                   <img
                     src={siteBranding.siteLogoUrl}
@@ -214,14 +214,14 @@ const Navbar = () => {
 
               <button
                 onClick={() => setCartOpen(true)}
-                className="relative inline-flex h-14 w-14 items-center justify-center rounded-full bg-[#ff3366] text-white"
+                className="relative inline-flex h-14 w-14 items-center justify-center rounded-full bg-[#2563eb] text-white"
                 aria-label="Open cart"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14l-1 12H6L5 8zm2-3a3 3 0 016 0v1H7V5z" />
                 </svg>
                 {totalItems > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-[#ff3366] text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">
+                  <span className="absolute -top-1 -right-1 bg-[#2563eb] text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">
                     {totalItems}
                   </span>
                 )}
@@ -236,11 +236,11 @@ const Navbar = () => {
                   value={searchQuery}
                   onChange={handleSearchChange}
                   onKeyPress={handleSearch}
-                  className="w-full bg-white dark:bg-gray-900 border border-[#ff3366]/40 dark:border-[#ff3366]/40 rounded-full py-3 pl-5 pr-14 text-lg text-gray-700 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#ff3366]/20"
+                  className="w-full bg-white dark:bg-gray-900 border border-[#2563eb]/40 dark:border-[#2563eb]/40 rounded-full py-3 pl-5 pr-14 text-lg text-gray-700 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#2563eb]/20"
                 />
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-9 w-9 absolute right-4 top-1/2 -translate-y-1/2 text-[#ff3366]"
+                  className="h-9 w-9 absolute right-4 top-1/2 -translate-y-1/2 text-[#2563eb]"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -275,7 +275,7 @@ const Navbar = () => {
           </div>
 
           <div className="hidden sm:flex items-center gap-2 sm:gap-3 md:gap-6">
-            <Link to="/" className="text-lg sm:text-xl md:text-2xl font-extrabold text-[#ff3366] tracking-tight flex-shrink-0">
+            <Link to="/" className="text-lg sm:text-xl md:text-2xl font-extrabold text-[#2563eb] tracking-tight flex-shrink-0">
               {siteBranding.siteLogoUrl ? (
                 <img
                   src={siteBranding.siteLogoUrl}
@@ -295,7 +295,7 @@ const Navbar = () => {
                   value={searchQuery}
                   onChange={handleSearchChange}
                   onKeyPress={handleSearch}
-                  className="w-full bg-white dark:bg-gray-900 border border-[#ff3366] rounded-full py-2 sm:py-2.5 pl-10 sm:pl-11 pr-3 sm:pr-4 text-xs sm:text-sm text-gray-800 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:outline-none focus:ring-0"
+                  className="w-full bg-white dark:bg-gray-900 border border-[#2563eb] rounded-full py-2 sm:py-2.5 pl-10 sm:pl-11 pr-3 sm:pr-4 text-xs sm:text-sm text-gray-800 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:outline-none focus:ring-0"
                 />
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -348,13 +348,13 @@ const Navbar = () => {
                 )}
               </button>
 
-              <Link to="/account/wishlist" className="hidden sm:flex items-center gap-1 text-gray-800 dark:text-gray-100 hover:text-[#ff3366] transition-colors relative">
+              <Link to="/account/wishlist" className="hidden sm:flex items-center gap-1 text-gray-800 dark:text-gray-100 hover:text-[#2563eb] transition-colors relative">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                 </svg>
                 <span>Wishlist</span>
                 {wishlistCount > 0 && (
-                  <span className="absolute -top-2 -right-3 bg-pink-500 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">
+                  <span className="absolute -top-2 -right-3 bg-blue-500 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">
                     {wishlistCount}
                   </span>
                 )}
@@ -364,7 +364,7 @@ const Navbar = () => {
                 <div ref={accountRef} className="relative">
                   <button
                     onClick={() => setAccountOpen((prev) => !prev)}
-                    className="flex items-center gap-2 text-gray-800 dark:text-gray-100 hover:text-[#ff3366] transition-colors"
+                    className="flex items-center gap-2 text-gray-800 dark:text-gray-100 hover:text-[#2563eb] transition-colors"
                     aria-label="My account menu"
                     aria-expanded={accountOpen}
                   >
@@ -401,14 +401,14 @@ const Navbar = () => {
                   )}
                 </div>
               ) : (
-                <Link to="/login" className="text-gray-800 dark:text-gray-100 hover:text-[#ff3366] transition-colors">
+                <Link to="/login" className="text-gray-800 dark:text-gray-100 hover:text-[#2563eb] transition-colors">
                   Login
                 </Link>
               )}
 
               <button
                 onClick={() => setCartOpen(true)}
-                className="relative flex items-center gap-1 text-gray-800 dark:text-gray-100 hover:text-[#ff3366] transition-colors"
+                className="relative flex items-center gap-1 text-gray-800 dark:text-gray-100 hover:text-[#2563eb] transition-colors"
                 aria-label="Open cart"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -416,7 +416,7 @@ const Navbar = () => {
                 </svg>
                 <span className="hidden sm:inline">Bag</span>
                 {totalItems > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-pink-500 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">
+                  <span className="absolute -top-2 -right-2 bg-blue-500 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">
                     {totalItems}
                   </span>
                 )}
@@ -436,13 +436,13 @@ const Navbar = () => {
                   key={category}
                   type="button"
                   onClick={() => navigate(`/products/${slug}`)}
-                  className={`group relative cursor-pointer text-sm font-medium transition-all duration-200 hover:text-pink-500 ${
-                    isActive ? 'text-pink-500' : 'text-gray-700 dark:text-gray-200'
+                  className={`group relative cursor-pointer text-sm font-medium transition-all duration-200 hover:text-blue-500 ${
+                    isActive ? 'text-blue-500' : 'text-gray-700 dark:text-gray-200'
                   }`}
                 >
                   {category}
                   <span
-                    className={`absolute left-0 -bottom-1 h-0.5 bg-pink-500 transition-all duration-200 ${
+                    className={`absolute left-0 -bottom-1 h-0.5 bg-blue-500 transition-all duration-200 ${
                       isActive ? 'w-full' : 'w-0 group-hover:w-full'
                     }`}
                   />
@@ -464,7 +464,7 @@ const Navbar = () => {
 
           <aside className="relative h-full w-[86%] max-w-[360px] overflow-y-auto bg-[#f4f5f7] px-4 pb-8 pt-4 shadow-[8px_0_30px_rgba(15,23,42,0.2)]">
             <div className="flex items-center justify-between">
-              <Link to="/" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2 text-[#ff3366]">
+              <Link to="/" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2 text-[#2563eb]">
                 {siteBranding.siteLogoUrl ? (
                   <img
                     src={siteBranding.siteLogoUrl}
@@ -495,7 +495,7 @@ const Navbar = () => {
                   onClick={() => setMobileMenuOpen(false)}
                   className="flex items-center gap-3 text-base font-medium text-gray-700"
                 >
-                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#ff3366] text-white">
+                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#2563eb] text-white">
                     {renderMobileMenuIcon('home')}
                   </span>
                   <span>Home</span>
@@ -506,7 +506,7 @@ const Navbar = () => {
                   onClick={() => setMobileMenuOpen(false)}
                   className="flex items-center gap-3 text-base font-medium text-gray-700"
                 >
-                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#ff3366] text-white">
+                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#2563eb] text-white">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                     </svg>
@@ -520,7 +520,7 @@ const Navbar = () => {
                     onClick={() => setMobileMenuOpen(false)}
                     className="flex items-center gap-3 text-base font-medium text-gray-700"
                   >
-                    <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#ff3366] text-white">
+                    <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#2563eb] text-white">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.121 17.804A9 9 0 1118.88 17.8M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                       </svg>
@@ -533,7 +533,7 @@ const Navbar = () => {
                     onClick={() => setMobileMenuOpen(false)}
                     className="flex items-center gap-3 text-base font-medium text-gray-700"
                   >
-                    <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#ff3366] text-white">
+                    <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#2563eb] text-white">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14M13 5l7 7-7 7" />
                       </svg>
@@ -549,7 +549,7 @@ const Navbar = () => {
                     onClick={() => setMobileMenuOpen(false)}
                     className="flex items-center gap-3 text-base font-medium text-gray-700"
                   >
-                    <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#ff3366] text-white">
+                    <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#2563eb] text-white">
                       {renderMobileMenuIcon(item.icon)}
                     </span>
                     <span>{item.label}</span>
@@ -581,7 +581,7 @@ const Navbar = () => {
                       href="https://facebook.com"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#0f8f84] text-white hover:bg-[#077a6f] transition-colors"
+                      className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#2563eb] text-white hover:bg-[#1d4ed8] transition-colors"
                       aria-label="Facebook"
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
@@ -592,7 +592,7 @@ const Navbar = () => {
                       href="https://linkedin.com"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#0f8f84] text-white hover:bg-[#077a6f] transition-colors"
+                      className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#2563eb] text-white hover:bg-[#1d4ed8] transition-colors"
                       aria-label="LinkedIn"
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
@@ -603,7 +603,7 @@ const Navbar = () => {
                       href="https://instagram.com"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#0f8f84] text-white hover:bg-[#077a6f] transition-colors"
+                      className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#2563eb] text-white hover:bg-[#1d4ed8] transition-colors"
                       aria-label="Instagram"
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
@@ -614,7 +614,7 @@ const Navbar = () => {
                       href="https://twitter.com"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#0f8f84] text-white hover:bg-[#077a6f] transition-colors"
+                      className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#2563eb] text-white hover:bg-[#1d4ed8] transition-colors"
                       aria-label="Twitter"
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
@@ -635,3 +635,4 @@ const Navbar = () => {
 };
 
 export default Navbar;
+

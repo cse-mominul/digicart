@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'framer-motion';
+﻿import { AnimatePresence, motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
@@ -82,7 +82,7 @@ const CartDrawer = ({ open, onClose }) => {
                       />
                       <div className="flex-1 min-w-0">
                         <p className="font-medium text-gray-800 dark:text-gray-100 text-sm truncate">{item.name}</p>
-                        <p className="text-pink-600 dark:text-pink-400 font-semibold text-sm">{formatPrice(item.price)}</p>
+                        <p className="text-blue-600 dark:text-blue-400 font-semibold text-sm">{formatPrice(item.price)}</p>
                         <div className="flex items-center gap-2 mt-1">
                           <button
                             onClick={() => updateQuantity(item._id, item.quantity - 1)}
@@ -113,14 +113,14 @@ const CartDrawer = ({ open, onClose }) => {
               <div className="p-4 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900">
                 <div className="flex justify-between items-center mb-4">
                   <span className="font-semibold text-gray-700 dark:text-gray-200">Total:</span>
-                  <span className="font-bold text-2xl text-pink-600 dark:text-pink-400">{formatPrice(totalPrice)}</span>
+                  <span className="font-bold text-2xl text-blue-600 dark:text-blue-400">{formatPrice(totalPrice)}</span>
                 </div>
 
                 <div className="space-y-2">
                   <button
                     onClick={handleCheckout}
                     disabled={cartItems.length === 0}
-                    className="w-full bg-pink-500 text-white py-3 rounded-xl font-semibold hover:bg-pink-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-blue-500 text-white py-3 rounded-xl font-semibold hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Proceed to Checkout
                   </button>
@@ -141,3 +141,4 @@ const CartDrawer = ({ open, onClose }) => {
 };
 
 export default CartDrawer;
+

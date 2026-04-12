@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+﻿import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../../api/axios';
 import toast from 'react-hot-toast';
@@ -256,7 +256,7 @@ const Reviews = () => {
                       onClick={() => handlePageChange(item)}
                       className={`h-10 min-w-10 rounded-xl border px-3 text-sm font-medium transition-colors ${
                         currentPage === item
-                          ? 'bg-pink-500 text-white border-pink-500'
+                          ? 'bg-blue-500 text-white border-blue-500'
                           : 'bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800'
                       }`}
                     >

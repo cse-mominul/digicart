@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+﻿import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useCart } from '../context/CartContext';
@@ -96,7 +96,7 @@ const OurProductsSection = ({ products = [], loading = false }) => {
                   onClick={() => navigate(`/product/${product._id}`)}
                 >
                   <div className="relative">
-                    <span className="absolute left-1 sm:left-1.5 top-1 sm:top-1.5 z-10 rounded bg-[#ff3366] px-1 sm:px-1.5 py-0.5 text-[7px] sm:text-[9px] font-bold uppercase text-white">
+                    <span className="absolute left-1 sm:left-1.5 top-1 sm:top-1.5 z-10 rounded bg-yellow-400 px-1 sm:px-1.5 py-0.5 text-[7px] sm:text-[9px] font-bold uppercase text-slate-900">
                       {discountLabel}
                     </span>
                     <div className="flex aspect-square sm:h-28 items-center justify-center rounded-lg sm:rounded-xl bg-slate-50 p-1.5 sm:p-2 dark:bg-slate-900">
@@ -134,7 +134,7 @@ const OurProductsSection = ({ products = [], loading = false }) => {
                     <div className="mt-1 sm:mt-1.5 flex flex-wrap items-center gap-0.5 sm:gap-1.5 text-[10px] sm:text-sm">
                       <span className="font-semibold text-slate-900 dark:text-white">{formatPrice(price)}</span>
                       <span className="text-slate-400 line-through text-[8px] sm:text-[10px]">{formatPrice(oldPrice)}</span>
-                      <span className="font-semibold text-[#ff3366] text-[8px] sm:text-[10px]">{discountLabel}</span>
+                      <span className="font-semibold text-amber-600 text-[8px] sm:text-[10px]">{discountLabel}</span>
                     </div>
 
                     <div className="mt-1.5 sm:mt-2 flex items-center gap-1 sm:gap-2">
@@ -143,8 +143,8 @@ const OurProductsSection = ({ products = [], loading = false }) => {
                         onClick={(event) => handleWishlist(event, product)}
                         className={`inline-flex h-6 sm:h-7 w-6 sm:w-7 items-center justify-center rounded-full border transition-colors flex-shrink-0 ${
                           inWishlist
-                            ? 'border-[#ff3366] bg-[#ff3366] text-white'
-                            : 'border-slate-200 text-slate-500 hover:border-[#ff3366] hover:text-[#ff3366] active:scale-90 dark:border-slate-700 dark:text-slate-300'
+                            ? 'border-[#2563eb] bg-[#2563eb] text-white'
+                            : 'border-slate-200 text-slate-500 hover:border-[#2563eb] hover:text-[#2563eb] active:scale-90 dark:border-slate-700 dark:text-slate-300'
                         }`}
                         aria-label="Toggle wishlist"
                       >
@@ -156,7 +156,7 @@ const OurProductsSection = ({ products = [], loading = false }) => {
                       <button
                         type="button"
                         onClick={(event) => handleAddToCart(event, product)}
-                        className="inline-flex min-w-0 flex-1 items-center justify-center gap-1 rounded-full bg-[#ff3366] px-2 py-1.5 text-[10px] font-semibold text-white transition-colors hover:bg-[#ff1f58] sm:text-[11px]"
+                        className="inline-flex min-w-0 flex-1 items-center justify-center gap-1 rounded-full bg-[#2563eb] px-2 py-1.5 text-[10px] font-semibold text-white transition-colors hover:bg-[#1d4ed8] sm:text-[11px]"
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14l-1 12H6L5 8zm2-3a3 3 0 016 0v1H7V5z" />
@@ -192,8 +192,8 @@ const OurProductsSection = ({ products = [], loading = false }) => {
                   onClick={() => setCurrentPage(pageNumber)}
                   className={`h-9 min-w-9 rounded-full px-3 text-sm font-medium transition-colors ${
                     currentPage === pageNumber
-                      ? 'bg-[#ff3366] text-white'
-                      : 'border border-slate-200 text-slate-700 hover:border-[#ff3366] hover:text-[#ff3366] dark:border-slate-700 dark:text-slate-200'
+                      ? 'bg-[#2563eb] text-white'
+                      : 'border border-slate-200 text-slate-700 hover:border-[#2563eb] hover:text-[#2563eb] dark:border-slate-700 dark:text-slate-200'
                   }`}
                 >
                   {pageNumber}
@@ -217,3 +217,4 @@ const OurProductsSection = ({ products = [], loading = false }) => {
 };
 
 export default OurProductsSection;
+

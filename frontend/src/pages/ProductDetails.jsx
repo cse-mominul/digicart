@@ -707,7 +707,7 @@ const ProductDetails = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(255,51,102,0.08),_transparent_30%),linear-gradient(180deg,#ffffff_0%,#f8fafc_52%,#eef2ff_100%)] px-4 py-8 dark:bg-[radial-gradient(circle_at_top,_rgba(255,51,102,0.12),_transparent_30%),linear-gradient(180deg,#020617_0%,#0f172a_55%,#111827_100%)]">
+      <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(37,99,235,0.08),_transparent_30%),linear-gradient(180deg,#ffffff_0%,#f8fafc_52%,#eef2ff_100%)] px-4 py-8 dark:bg-[radial-gradient(circle_at_top,_rgba(37,99,235,0.12),_transparent_30%),linear-gradient(180deg,#020617_0%,#0f172a_55%,#111827_100%)]">
         <div className="mx-auto max-w-7xl">
           <div className="h-8 w-44 bg-white/80 dark:bg-white/10 rounded-full animate-pulse mb-6" />
           <div className="grid gap-8 lg:grid-cols-[1.08fr_0.92fr]">
@@ -721,11 +721,11 @@ const ProductDetails = () => {
 
   if (!product) {
     return (
-      <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(255,51,102,0.08),_transparent_30%),linear-gradient(180deg,#ffffff_0%,#f8fafc_52%,#eef2ff_100%)] px-4 py-8 dark:bg-[radial-gradient(circle_at_top,_rgba(255,51,102,0.12),_transparent_30%),linear-gradient(180deg,#020617_0%,#0f172a_55%,#111827_100%)]">
+      <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(37,99,235,0.08),_transparent_30%),linear-gradient(180deg,#ffffff_0%,#f8fafc_52%,#eef2ff_100%)] px-4 py-8 dark:bg-[radial-gradient(circle_at_top,_rgba(37,99,235,0.12),_transparent_30%),linear-gradient(180deg,#020617_0%,#0f172a_55%,#111827_100%)]">
       <div className="mx-auto max-w-7xl">
         <Link
           to="/"
-          className="inline-flex items-center gap-2 mb-6 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-pink-500"
+          className="inline-flex items-center gap-2 mb-6 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-500"
         >
           ← Back to Home
         </Link>
@@ -738,11 +738,11 @@ const ProductDetails = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(255,51,102,0.08),_transparent_28%),radial-gradient(circle_at_right,_rgba(15,143,132,0.08),_transparent_24%),linear-gradient(180deg,#ffffff_0%,#f8fafc_42%,#eef2ff_100%)] pb-24 md:pb-10 dark:bg-[radial-gradient(circle_at_top,_rgba(255,51,102,0.12),_transparent_28%),radial-gradient(circle_at_right,_rgba(15,143,132,0.12),_transparent_24%),linear-gradient(180deg,#020617_0%,#0f172a_52%,#111827_100%)]">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(37,99,235,0.08),_transparent_28%),radial-gradient(circle_at_right,_rgba(37,99,235,0.08),_transparent_24%),linear-gradient(180deg,#ffffff_0%,#f8fafc_42%,#eef2ff_100%)] pb-24 md:pb-10 dark:bg-[radial-gradient(circle_at_top,_rgba(37,99,235,0.12),_transparent_28%),radial-gradient(circle_at_right,_rgba(37,99,235,0.12),_transparent_24%),linear-gradient(180deg,#020617_0%,#0f172a_52%,#111827_100%)]">
       <div className="mx-auto max-w-7xl px-4 py-6 sm:py-8 lg:py-10">
       <Link
         to="/"
-        className="inline-flex items-center gap-2 mb-6 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-pink-500"
+        className="inline-flex items-center gap-2 mb-6 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-500"
       >
         ← Back to Home
       </Link>
@@ -750,7 +750,7 @@ const ProductDetails = () => {
       <section className="grid gap-8 lg:grid-cols-[1.08fr_0.92fr] lg:gap-10 items-start mb-10">
         <div className="rounded-[22px] border border-white/70 bg-white/75 p-2.5 shadow-[0_30px_120px_rgba(15,23,42,0.10)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 sm:p-4">
           <div className="mb-4 flex items-center justify-between">
-            <span className="inline-flex items-center rounded-full bg-pink-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-pink-600 dark:bg-pink-500/15 dark:text-pink-300">
+            <span className="inline-flex items-center rounded-full bg-blue-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-blue-600 dark:bg-blue-500/15 dark:text-blue-300">
               Featured Product
             </span>
             <span className="inline-flex items-center rounded-full bg-teal-500/10 px-3 py-1 text-xs font-semibold text-teal-700 dark:bg-teal-500/15 dark:text-teal-300">
@@ -767,8 +767,8 @@ const ProductDetails = () => {
                   onClick={() => setActiveImage(image)}
                   className={`group relative h-14 w-14 shrink-0 overflow-hidden rounded-2xl border transition-all duration-200 xl:h-14 xl:w-14 ${
                     activeImage === image
-                      ? 'border-pink-500 ring-2 ring-pink-500/20'
-                      : 'border-slate-200 bg-white hover:border-pink-300 dark:border-white/10 dark:bg-white/5'
+                      ? 'border-blue-500 ring-2 ring-blue-500/20'
+                      : 'border-slate-200 bg-white hover:border-blue-300 dark:border-white/10 dark:bg-white/5'
                   }`}
                 >
                   <img
@@ -804,13 +804,13 @@ const ProductDetails = () => {
 
         <div className="rounded-[22px] border border-white/70 bg-white/80 p-3.5 shadow-[0_30px_120px_rgba(15,23,42,0.10)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 sm:p-5 lg:sticky lg:top-24">
           <div className="flex items-start justify-between gap-3">
-            <span className="inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-pink-500/10 text-pink-600 dark:bg-pink-500/15 dark:text-pink-300 mb-3">
+            <span className="inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-600 dark:bg-blue-500/15 dark:text-blue-300 mb-3">
             {product.category}
             </span>
 
             <button
               type="button"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 transition-colors hover:border-pink-500 hover:text-pink-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-300"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 transition-colors hover:border-blue-500 hover:text-blue-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-300"
               aria-label="Wishlist"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -824,7 +824,7 @@ const ProductDetails = () => {
           </h1>
 
           <div className="mt-3.5 flex flex-wrap items-center gap-2.5">
-            <span className="text-2xl font-black text-pink-500 sm:text-[2.35rem]">{formatPrice(product.price)}</span>
+            <span className="text-2xl font-black text-blue-500 sm:text-[2.35rem]">{formatPrice(product.price)}</span>
             <span className="text-base text-slate-400 line-through sm:text-lg">{formatPrice(oldPrice)}</span>
             <span className="inline-flex rounded-full bg-yellow-400/20 px-3 py-1 text-xs font-bold text-yellow-700 dark:bg-yellow-400/15 dark:text-yellow-200">
               {discountLabel}
@@ -840,7 +840,7 @@ const ProductDetails = () => {
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
               <button
                 onClick={scrollToOrderForm}
-                className="w-full rounded-full bg-[#ff3366] py-3 font-semibold text-white shadow-[0_16px_40px_rgba(255,51,102,0.25)] transition-colors hover:bg-[#ff1f58]"
+                className="w-full rounded-full bg-[#2563eb] py-3 font-semibold text-white shadow-[0_16px_40px_rgba(37,99,235,0.25)] transition-colors hover:bg-[#1d4ed8]"
               >
                 Order Now
               </button>
@@ -879,7 +879,7 @@ const ProductDetails = () => {
                 onClick={() => setActiveTab(tab.key)}
                 className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
                   activeTab === tab.key
-                    ? 'bg-white text-pink-500 shadow-sm dark:bg-slate-900 dark:text-pink-300'
+                    ? 'bg-white text-blue-500 shadow-sm dark:bg-slate-900 dark:text-blue-300'
                     : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
                 }`}
               >
@@ -934,12 +934,12 @@ const ProductDetails = () => {
                       </p>
                     </div>
 
-                    <div className="rounded-2xl border border-pink-500/15 bg-pink-500/5 p-4 text-sm text-slate-600 dark:text-slate-300">
+                    <div className="rounded-2xl border border-blue-500/15 bg-blue-500/5 p-4 text-sm text-slate-600 dark:text-slate-300">
                       <p className="font-semibold text-slate-900 dark:text-white">Share your experience</p>
                       <p className="mt-2 leading-6">
                         Reviews are available for customers who have placed an order for this product.
                       </p>
-                      <p className="mt-2 text-xs uppercase tracking-[0.2em] text-pink-500 dark:text-pink-300">
+                      <p className="mt-2 text-xs uppercase tracking-[0.2em] text-blue-500 dark:text-blue-300">
                         {ratingLabel}
                       </p>
                     </div>
@@ -1009,12 +1009,12 @@ const ProductDetails = () => {
                     </div>
 
                     {!user ? (
-                      <div className="mt-4 rounded-2xl border border-pink-500/15 bg-pink-500/5 p-4 text-sm text-slate-600 dark:text-slate-300">
+                      <div className="mt-4 rounded-2xl border border-blue-500/15 bg-blue-500/5 p-4 text-sm text-slate-600 dark:text-slate-300">
                         <p>Please log in to submit a product review.</p>
                         <button
                           type="button"
                           onClick={() => navigate('/login')}
-                          className="mt-3 rounded-full bg-[#ff3366] px-4 py-2 text-sm font-semibold text-white hover:bg-[#ff1f58]"
+                          className="mt-3 rounded-full bg-[#2563eb] px-4 py-2 text-sm font-semibold text-white hover:bg-[#1d4ed8]"
                         >
                           Go to Login
                         </button>
@@ -1026,7 +1026,7 @@ const ProductDetails = () => {
                           <select
                             value={reviewForm.rating}
                             onChange={(event) => setReviewForm((prev) => ({ ...prev, rating: Number(event.target.value) }))}
-                            className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-pink-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
+                            className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
                           >
                             {[5, 4, 3, 2, 1].map((rating) => (
                               <option key={rating} value={rating}>
@@ -1042,7 +1042,7 @@ const ProductDetails = () => {
                             rows={4}
                             value={reviewForm.comment}
                             onChange={(event) => setReviewForm((prev) => ({ ...prev, comment: event.target.value }))}
-                            className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-pink-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
+                            className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
                             placeholder="Tell others what you liked or what could be better"
                           />
                         </div>
@@ -1053,7 +1053,7 @@ const ProductDetails = () => {
                             type="file"
                             accept="image/*"
                             onChange={handleReviewImageChange}
-                            className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-pink-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
+                            className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
                           />
                           {reviewForm.image ? (
                             <img
@@ -1067,7 +1067,7 @@ const ProductDetails = () => {
                         <button
                           type="submit"
                           disabled={submittingReview}
-                          className="rounded-full bg-[#ff3366] px-5 py-3 font-semibold text-white shadow-[0_16px_40px_rgba(255,51,102,0.22)] transition-colors hover:bg-[#ff1f58] disabled:opacity-60"
+                          className="rounded-full bg-[#2563eb] px-5 py-3 font-semibold text-white shadow-[0_16px_40px_rgba(37,99,235,0.22)] transition-colors hover:bg-[#1d4ed8] disabled:opacity-60"
                         >
                           {submittingReview ? 'Saving...' : reviewsState.currentUserReview ? 'Update Review' : 'Submit Review'}
                         </button>
@@ -1096,7 +1096,7 @@ const ProductDetails = () => {
                   <select
                     value={selectedAddressId}
                     onChange={(event) => handleAddressSelect(event.target.value)}
-                    className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-pink-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
+                    className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
                   >
                     {savedAddresses.map((addressItem) => (
                       <option key={addressItem.id} value={addressItem.id}>
@@ -1114,7 +1114,7 @@ const ProductDetails = () => {
                       <select
                         value={addressTypeToSave}
                         onChange={(event) => setAddressTypeToSave(event.target.value)}
-                        className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-pink-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
+                        className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
                       >
                         <option value="Home">Home</option>
                         <option value="Office">Office</option>
@@ -1123,7 +1123,7 @@ const ProductDetails = () => {
                     <button
                       type="button"
                       onClick={handleSaveCurrentAddressType}
-                      className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:border-pink-400 hover:text-pink-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-100"
+                      className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:border-blue-400 hover:text-blue-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-100"
                     >
                       Save
                     </button>
@@ -1140,7 +1140,7 @@ const ProductDetails = () => {
                     type="text"
                     value={form.fullName}
                     onChange={(event) => setForm((prev) => ({ ...prev, fullName: event.target.value }))}
-                    className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-pink-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
+                    className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
                     placeholder="Enter your full name"
                   />
                 </div>
@@ -1151,7 +1151,7 @@ const ProductDetails = () => {
                     type="text"
                     value={form.phone}
                     onChange={(event) => setForm((prev) => ({ ...prev, phone: event.target.value }))}
-                    className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-pink-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
+                    className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
                     placeholder="Enter your phone number"
                   />
                 </div>
@@ -1162,7 +1162,7 @@ const ProductDetails = () => {
                     rows={4}
                     value={form.fullAddress}
                     onChange={(event) => setForm((prev) => ({ ...prev, fullAddress: event.target.value }))}
-                    className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-pink-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
+                    className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
                     placeholder="House, road, area, city"
                   />
                 </div>
@@ -1172,28 +1172,28 @@ const ProductDetails = () => {
             <div className="rounded-2xl border border-slate-200 bg-[#fff8fb] p-4 space-y-3 dark:border-white/10 dark:bg-white/5">
               <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">Delivery Area</p>
 
-              <label className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-3 py-2 cursor-pointer hover:border-pink-400/40 transition-colors dark:border-white/10 dark:bg-white/5">
+              <label className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-3 py-2 cursor-pointer hover:border-blue-400/40 transition-colors dark:border-white/10 dark:bg-white/5">
                 <div className="flex items-center gap-2">
                   <input
                     type="radio"
                     name="deliveryArea"
                     checked={deliveryArea === 'inside'}
                     onChange={() => setDeliveryArea('inside')}
-                    className="accent-pink-500"
+                    className="accent-blue-500"
                   />
                   <span className="text-sm text-slate-700 dark:text-slate-200">Inside Dhaka</span>
                 </div>
                 <span className="text-sm text-slate-500 dark:text-slate-300">{deliverySettings.insideDhakaCharge} BDT</span>
               </label>
 
-              <label className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-3 py-2 cursor-pointer hover:border-pink-400/40 transition-colors dark:border-white/10 dark:bg-white/5">
+              <label className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-3 py-2 cursor-pointer hover:border-blue-400/40 transition-colors dark:border-white/10 dark:bg-white/5">
                 <div className="flex items-center gap-2">
                   <input
                     type="radio"
                     name="deliveryArea"
                     checked={deliveryArea === 'outside'}
                     onChange={() => setDeliveryArea('outside')}
-                    className="accent-pink-500"
+                    className="accent-blue-500"
                   />
                   <span className="text-sm text-slate-700 dark:text-slate-200">Outside Dhaka</span>
                 </div>
@@ -1207,7 +1207,7 @@ const ProductDetails = () => {
               {availablePaymentMethods.map((method) => (
                 <label
                   key={method.id}
-                  className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-3 py-2 cursor-pointer hover:border-pink-400/40 transition-colors dark:border-white/10 dark:bg-white/5"
+                  className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-3 py-2 cursor-pointer hover:border-blue-400/40 transition-colors dark:border-white/10 dark:bg-white/5"
                 >
                   <div className="flex items-center gap-2">
                     <input
@@ -1215,7 +1215,7 @@ const ProductDetails = () => {
                       name="paymentMethod"
                       checked={paymentMethod === method.id}
                       onChange={() => setPaymentMethod(method.id)}
-                      className="accent-pink-500"
+                      className="accent-blue-500"
                     />
                     <div>
                       <span className="block text-sm text-slate-700 dark:text-slate-200">{method.label}</span>
@@ -1239,14 +1239,14 @@ const ProductDetails = () => {
               </div>
               <div className="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-white/10">
                 <span className="font-semibold text-slate-900 dark:text-white">Grand Total</span>
-                <span className="font-black text-pink-500">{grandTotal} BDT</span>
+                <span className="font-black text-blue-500">{grandTotal} BDT</span>
               </div>
             </div>
 
             <button
               type="submit"
               disabled={placingOrder}
-              className="w-full rounded-full bg-[#0f8f84] py-3 font-semibold text-white shadow-[0_16px_40px_rgba(15,143,132,0.22)] transition-colors hover:bg-[#117b72] disabled:opacity-60"
+              className="w-full rounded-full bg-[#2563eb] py-3 font-semibold text-white shadow-[0_16px_40px_rgba(37,99,235,0.22)] transition-colors hover:bg-[#1d4ed8] disabled:opacity-60"
             >
               {placingOrder ? 'Confirming...' : 'Confirm Order'}
             </button>
@@ -1258,7 +1258,7 @@ const ProductDetails = () => {
         <button
           type="button"
           onClick={scrollToOrderForm}
-          className="w-full rounded-xl bg-pink-500 text-white py-3.5 font-semibold shadow-lg shadow-pink-500/30"
+          className="w-full rounded-xl bg-blue-500 text-white py-3.5 font-semibold shadow-lg shadow-blue-500/30"
         >
           Order Now
         </button>
@@ -1281,14 +1281,14 @@ const ProductDetails = () => {
               </button>
             </div>
 
-            <div className="rounded-xl border border-pink-200 bg-pink-50 p-3 dark:border-pink-900/30 dark:bg-pink-900/10">
-              <p className="text-[11px] uppercase tracking-wide text-pink-700 dark:text-pink-300">bKash Number</p>
+            <div className="rounded-xl border border-blue-200 bg-blue-50 p-3 dark:border-blue-900/30 dark:bg-blue-900/10">
+              <p className="text-[11px] uppercase tracking-wide text-blue-700 dark:text-blue-300">bKash Number</p>
               <div className="mt-2 flex items-center justify-between gap-2">
-                <p className="text-base font-black text-pink-700 dark:text-pink-300">{paymentSettings?.bkash?.number || 'N/A'}</p>
+                <p className="text-base font-black text-blue-700 dark:text-blue-300">{paymentSettings?.bkash?.number || 'N/A'}</p>
                 <button
                   type="button"
                   onClick={handleCopyBkashNumber}
-                  className="rounded-md bg-pink-600 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-pink-700 disabled:opacity-60"
+                  className="rounded-md bg-blue-600 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-blue-700 disabled:opacity-60"
                   disabled={!paymentSettings?.bkash?.number?.trim()}
                 >
                   Copy
@@ -1322,7 +1322,7 @@ const ProductDetails = () => {
                   value={bkashSenderNumber}
                   onChange={(event) => setBkashSenderNumber(event.target.value)}
                   placeholder="Enter number used to send money"
-                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-pink-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
                 />
               </div>
 
@@ -1333,7 +1333,7 @@ const ProductDetails = () => {
                   value={bkashTrxId}
                   onChange={(event) => setBkashTrxId(event.target.value)}
                   placeholder="Enter your bKash TrxID"
-                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-pink-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
                 />
               </div>
 
@@ -1526,3 +1526,5 @@ const ProductDetails = () => {
 };
 
 export default ProductDetails;
+
+

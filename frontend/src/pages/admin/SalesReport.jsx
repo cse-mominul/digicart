@@ -256,7 +256,7 @@ const SalesReport = () => {
 
           <button
             type="button"
-            className="rounded-full bg-[#0f8f84] px-4 py-1.5 text-xs font-bold text-white transition-colors hover:bg-[#117b72]"
+            className="rounded-full bg-[#2563eb] px-4 py-1.5 text-xs font-bold text-white transition-colors hover:bg-[#1d4ed8]"
           >
             Export
           </button>

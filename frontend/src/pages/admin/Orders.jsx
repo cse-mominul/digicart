@@ -474,7 +474,7 @@ const Orders = () => {
         <button
           type="button"
           onClick={handleExport}
-          className="rounded-full bg-[#0f8f84] px-6 py-2.5 text-base font-bold text-white shadow-sm transition-colors hover:bg-[#117b72]"
+          className="rounded-full bg-[#2563eb] px-6 py-2.5 text-base font-bold text-white shadow-sm transition-colors hover:bg-[#1d4ed8]"
         >
           Export
         </button>

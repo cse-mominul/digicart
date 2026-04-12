@@ -67,7 +67,7 @@ const AiDealsSection = ({ products = [], loading = false }) => {
     <section className="mb-6 sm:mb-8">
       <div className="mb-3 flex flex-col gap-2 sm:mb-4 sm:flex-row sm:items-end sm:justify-between sm:gap-4 md:mb-5">
         <div className="w-full text-center sm:w-auto sm:text-left">
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#ff3366] sm:text-sm">
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#2563eb] sm:text-sm">
             AI Picks
           </p>
           <h2 className="mt-1 text-lg font-semibold text-gray-900 dark:text-white sm:mt-2 sm:text-2xl md:text-3xl">
@@ -78,7 +78,7 @@ const AiDealsSection = ({ products = [], loading = false }) => {
           <button
             type="button"
             onClick={() => scrollTrack('left')}
-            className="inline-flex h-9 sm:h-10 w-9 sm:w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-700 shadow-sm transition-colors hover:border-[#ff3366] hover:text-[#ff3366] active:scale-90 dark:border-gray-700 dark:bg-[#1a1a1a] dark:text-gray-200"
+            className="inline-flex h-9 sm:h-10 w-9 sm:w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-700 shadow-sm transition-colors hover:border-[#2563eb] hover:text-[#2563eb] active:scale-90 dark:border-gray-700 dark:bg-[#1a1a1a] dark:text-gray-200"
             aria-label="Scroll deals left"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -88,7 +88,7 @@ const AiDealsSection = ({ products = [], loading = false }) => {
           <button
             type="button"
             onClick={() => scrollTrack('right')}
-            className="inline-flex h-9 sm:h-10 w-9 sm:w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-700 shadow-sm transition-colors hover:border-[#ff3366] hover:text-[#ff3366] active:scale-90 dark:border-gray-700 dark:bg-[#1a1a1a] dark:text-gray-200"
+            className="inline-flex h-9 sm:h-10 w-9 sm:w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-700 shadow-sm transition-colors hover:border-[#2563eb] hover:text-[#2563eb] active:scale-90 dark:border-gray-700 dark:bg-[#1a1a1a] dark:text-gray-200"
             aria-label="Scroll deals right"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -125,7 +125,7 @@ const AiDealsSection = ({ products = [], loading = false }) => {
               onClick={() => navigate(`/product/${product._id}`)}
             >
               <div className="relative p-1.5 sm:p-2.5">
-                <span className="absolute left-1.5 sm:left-2.5 top-1.5 sm:top-2.5 z-10 rounded-full bg-[#ff3366] px-1.5 sm:px-2 py-0.5 text-[7px] sm:text-[9px] font-bold uppercase tracking-[0.16em] text-white shadow-sm">
+                <span className="absolute left-1.5 sm:left-2.5 top-1.5 sm:top-2.5 z-10 rounded-full bg-yellow-400 px-1.5 sm:px-2 py-0.5 text-[7px] sm:text-[9px] font-bold uppercase tracking-[0.16em] text-slate-900 shadow-sm">
                   {discountLabel}
                 </span>
 
@@ -137,8 +137,8 @@ const AiDealsSection = ({ products = [], loading = false }) => {
                   }}
                   className={`absolute right-2 sm:right-3 top-2 sm:top-3 z-10 inline-flex h-7 sm:h-9 w-7 sm:w-9 items-center justify-center rounded-full border transition-colors flex-shrink-0 ${
                     inWishlist
-                      ? 'border-[#ff3366] bg-[#ff3366] text-white'
-                      : 'border-gray-200 bg-white/95 text-gray-500 hover:border-[#ff3366] hover:text-[#ff3366] active:scale-90 dark:border-gray-700 dark:bg-gray-900/95 dark:text-gray-300'
+                      ? 'border-[#2563eb] bg-[#2563eb] text-white'
+                      : 'border-gray-200 bg-white/95 text-gray-500 hover:border-[#2563eb] hover:text-[#2563eb] active:scale-90 dark:border-gray-700 dark:bg-gray-900/95 dark:text-gray-300'
                   }`}
                   aria-label="Toggle wishlist"
                 >
@@ -164,12 +164,12 @@ const AiDealsSection = ({ products = [], loading = false }) => {
                   {product.name}
                 </h3>
 
-                <div className="mt-0.5 sm:mt-1 flex items-center gap-0.5 sm:gap-1 text-[#0f8f84]">
+                <div className="mt-0.5 sm:mt-1 flex items-center gap-0.5 sm:gap-1 text-amber-500">
                   {[...Array(5)].map((_, index) => (
                     <svg
                       key={index}
                       xmlns="http://www.w3.org/2000/svg"
-                      className={`h-2.5 sm:h-3.5 w-2.5 sm:w-3.5 ${index < filledStars ? 'text-[#0f8f84]' : 'text-slate-300 dark:text-slate-600'}`}
+                      className={`h-2.5 sm:h-3.5 w-2.5 sm:w-3.5 ${index < filledStars ? 'text-amber-500' : 'text-slate-300 dark:text-slate-600'}`}
                       viewBox="0 0 24 24"
                       fill="currentColor"
                     >
@@ -182,7 +182,7 @@ const AiDealsSection = ({ products = [], loading = false }) => {
                 <div className="mt-1 sm:mt-2 flex flex-wrap items-center gap-0.5 sm:gap-2 text-[9px] sm:text-sm">
                   <span className="font-semibold text-gray-900 dark:text-white">{formatPrice(price)}</span>
                   <span className="text-[7px] sm:text-[11px] text-gray-400 line-through">{formatPrice(oldPrice)}</span>
-                  <span className="rounded-full bg-pink-50 px-1.5 sm:px-2 py-0.5 text-[7px] sm:text-[9px] font-bold text-[#ff3366] dark:bg-[#ff3366]/10">{discountLabel}</span>
+                  <span className="rounded-full bg-yellow-100 px-1.5 sm:px-2 py-0.5 text-[7px] sm:text-[9px] font-bold text-amber-700 dark:bg-yellow-900/30 dark:text-yellow-300">{discountLabel}</span>
                 </div>
 
                 <div className="mt-2 sm:mt-3 flex items-center gap-1 sm:gap-2">
@@ -192,7 +192,7 @@ const AiDealsSection = ({ products = [], loading = false }) => {
                       event.stopPropagation();
                       navigate(`/product/${product._id}`);
                     }}
-                    className="inline-flex h-7 sm:h-8 w-7 sm:w-8 items-center justify-center rounded-full border border-gray-200 bg-white text-[#ff3366] transition-colors hover:border-[#ff3366] hover:bg-pink-50 active:scale-90 dark:border-gray-700 dark:bg-gray-900 dark:hover:bg-[#ff3366]/10 flex-shrink-0"
+                    className="inline-flex h-7 sm:h-8 w-7 sm:w-8 items-center justify-center rounded-full border border-gray-200 bg-white text-[#2563eb] transition-colors hover:border-[#2563eb] hover:bg-blue-50 active:scale-90 dark:border-gray-700 dark:bg-gray-900 dark:hover:bg-[#2563eb]/10 flex-shrink-0"
                     aria-label="View product"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-3 sm:h-4 w-3 sm:w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -206,7 +206,7 @@ const AiDealsSection = ({ products = [], loading = false }) => {
                       event.stopPropagation();
                       handleAddToCart(product);
                     }}
-                    className="flex-1 inline-flex items-center justify-center gap-1 sm:gap-2 rounded-full bg-[#0f8f84] px-2 sm:px-3 py-1.5 sm:py-2 text-[7px] sm:text-xs font-semibold text-white transition-colors hover:bg-[#117b72] active:scale-95"
+                    className="flex-1 inline-flex items-center justify-center gap-1 sm:gap-2 rounded-full bg-[#2563eb] px-2 sm:px-3 py-1.5 sm:py-2 text-[7px] sm:text-xs font-semibold text-white transition-colors hover:bg-[#1d4ed8] active:scale-95"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-3 sm:h-4 w-3 sm:w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14l-1 12H6L5 8zm2-3a3 3 0 016 0v1H7V5z" />

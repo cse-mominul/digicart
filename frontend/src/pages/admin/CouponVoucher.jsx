@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import API from '../../api/axios';
 import toast from 'react-hot-toast';
 import Swal from 'sweetalert2';
@@ -164,7 +164,7 @@ const CouponVoucher = () => {
         <button
           type="button"
           onClick={handleAddNew}
-          className="px-4 py-2.5 rounded-xl bg-pink-500 text-white text-sm font-semibold hover:bg-pink-600 transition-colors"
+          className="px-4 py-2.5 rounded-xl bg-blue-500 text-white text-sm font-semibold hover:bg-blue-600 transition-colors"
         >
           + Add New Coupon
         </button>
@@ -195,7 +195,7 @@ const CouponVoucher = () => {
                   onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
                   placeholder="MOMIN"
                   disabled={editingId !== null}
-                  className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-gray-900 outline-none focus:ring-2 focus:ring-pink-500 dark:border-gray-700 dark:bg-gray-900 dark:text-white disabled:opacity-50"
+                  className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-gray-900 outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-900 dark:text-white disabled:opacity-50"
                 />
               </div>
 
@@ -208,7 +208,7 @@ const CouponVoucher = () => {
                   value={formData.discountPercent}
                   onChange={(e) => setFormData({ ...formData, discountPercent: e.target.value })}
                   placeholder="12"
-                  className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-gray-900 outline-none focus:ring-2 focus:ring-pink-500 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
+                  className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-gray-900 outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
                 />
               </div>
 
@@ -219,7 +219,7 @@ const CouponVoucher = () => {
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   placeholder="Optional description"
-                  className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-gray-900 outline-none focus:ring-2 focus:ring-pink-500 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
+                  className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-gray-900 outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
                 />
               </div>
 
@@ -229,7 +229,7 @@ const CouponVoucher = () => {
                     type="checkbox"
                     checked={Boolean(formData.isActive)}
                     onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                    className="accent-pink-500"
+                    className="accent-blue-500"
                   />
                   Active
                 </label>
@@ -240,7 +240,7 @@ const CouponVoucher = () => {
               <button
                 type="submit"
                 disabled={saving}
-                className="px-6 py-2.5 rounded-xl bg-pink-500 text-white text-sm font-semibold hover:bg-pink-600 transition-colors disabled:opacity-60"
+                className="px-6 py-2.5 rounded-xl bg-blue-500 text-white text-sm font-semibold hover:bg-blue-600 transition-colors disabled:opacity-60"
               >
                 {saving ? 'Saving...' : 'Save Coupon'}
               </button>
@@ -348,7 +348,7 @@ const CouponVoucher = () => {
                   onClick={() => goToPage(page)}
                   className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
                     currentPage === page
-                      ? 'bg-pink-500 text-white'
+                      ? 'bg-blue-500 text-white'
                       : 'border border-gray-300 text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700'
                   }`}
                 >
@@ -373,3 +373,4 @@ const CouponVoucher = () => {
 };
 
 export default CouponVoucher;
+
