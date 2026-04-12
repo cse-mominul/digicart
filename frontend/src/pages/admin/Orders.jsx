@@ -284,7 +284,7 @@ const Orders = () => {
       if (!q) return true;
 
       const orderIdText = String(order?._id || '').toLowerCase();
-      const userText = `${order?.user?.name || ''} ${order?.user?.email || ''}`.toLowerCase();
+      const userText = `${order?.user?.name || order?.customer?.name || ''} ${order?.user?.email || order?.customer?.email || ''}`.toLowerCase();
       const cityText = String(order?.shippingAddress?.city || '').toLowerCase();
       const itemText = (order?.items || [])
         .map((item) => `${item?.name || ''} ${item?.product?.name || ''}`)
@@ -386,8 +386,8 @@ const Orders = () => {
         order._id,
         orderedAt.toLocaleDateString(),
         orderedAt.toLocaleTimeString(),
-        order?.user?.name || 'N/A',
-        order?.user?.email || 'N/A',
+        order?.user?.name || order?.customer?.name || 'N/A',
+        order?.user?.email || order?.customer?.email || 'N/A',
         order?.status || 'N/A',
         Number(order?.totalAmount) || 0,
         order?.shippingAddress?.city || 'N/A',
@@ -585,8 +585,8 @@ const Orders = () => {
                           </td>
 
                           <td className="px-3 py-3">
-                            <p className="font-semibold text-gray-800 dark:text-gray-100">{order?.user?.name || 'N/A'}</p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">{order?.user?.email || 'N/A'}</p>
+                            <p className="font-semibold text-gray-800 dark:text-gray-100">{order?.user?.name || order?.customer?.name || 'N/A'}</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">{order?.user?.email || order?.customer?.email || 'N/A'}</p>
                           </td>
 
                           <td className="px-3 py-3 text-gray-700 dark:text-gray-300">{order?.shippingAddress?.city || 'N/A'}</td>

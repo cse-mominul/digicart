@@ -9,11 +9,11 @@ const {
   updateOrderPayment,
   deleteOrder,
 } = require('../controllers/orderController');
-const { protect } = require('../middleware/authMiddleware');
+const { protect, optionalProtect } = require('../middleware/authMiddleware');
 const requireAdmin = require('../middleware/requireAdmin');
 
 // User routes
-router.post('/', protect, createOrder);
+router.post('/', optionalProtect, createOrder);
 router.get('/myorders', protect, getMyOrders);
 
 // Admin routes

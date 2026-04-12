@@ -10,7 +10,7 @@ const orderItemSchema = new mongoose.Schema({
 
 const orderSchema = new mongoose.Schema(
   {
-    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: false, default: null },
     items: [orderItemSchema],
     totalAmount: { type: Number, required: true },
     status: {
@@ -43,6 +43,13 @@ const orderSchema = new mongoose.Schema(
       type: String,
       default: '',
       trim: true,
+    },
+    customer: {
+      name: { type: String, trim: true, default: '' },
+      phone: { type: String, trim: true, default: '' },
+      email: { type: String, trim: true, default: '' },
+      note: { type: String, trim: true, default: '' },
+      address: { type: String, trim: true, default: '' },
     },
   },
   { timestamps: true }

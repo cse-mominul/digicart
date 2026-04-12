@@ -10,20 +10,35 @@ const createOrder = async (req, res) => {
   }
 
   const profilePhone = String(req.user?.phone || '').trim();
-  if (!profilePhone) {
-    return res.status(400).json({ message: 'Please add your phone number in Profile Information before placing an order' });
+  const customerName = String(customer?.name || '').trim();
+  const customerPhone = String(customer?.phone || '').trim();
+  const effectivePhone = String(shippingAddress?.phone || customerPhone || profilePhone).trim();
+
+  if (!effectivePhone) {
+    return res.status(400).json({ message: 'Phone number is required to place an order' });
+  }
+
+  if (!req.user && !customerName) {
+    return res.status(400).json({ message: 'Customer name is required for guest checkout' });
   }
 
   try {
     const order = await Order.create({
-      user: req.user._id,
+      user: req.user?._id || null,
       items,
       totalAmount,
       shippingAddress: {
         ...(shippingAddress || {}),
-        phone: shippingAddress?.phone || customer?.phone || profilePhone,
+        phone: effectivePhone,
       },
       appliedCoupon: String(appliedCoupon || '').trim().toUpperCase(),
+      customer: {
+        name: customerName || String(req.user?.name || '').trim(),
+        phone: effectivePhone,
+        email: String(customer?.email || req.user?.email || '').trim(),
+        note: String(customer?.note || '').trim(),
+        address: String(customer?.address || shippingAddress?.address || '').trim(),
+      },
       paymentStatus: 'Unpaid',
       amountPaid: 0,
       isPaid: false,

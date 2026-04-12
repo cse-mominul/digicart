@@ -131,11 +131,7 @@ function App() {
         />
         <Route
           path="/checkout"
-          element={
-            <ProtectedRoute>
-              <UserLayout><Checkout /></UserLayout>
-            </ProtectedRoute>
-          }
+          element={<UserLayout><Checkout /></UserLayout>}
         />
         <Route
           path="/my-orders"

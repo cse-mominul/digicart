@@ -98,8 +98,8 @@ const OrderDetails = () => {
 
         <div className="rounded-2xl border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
           <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Customer</p>
-          <p className="mt-1 text-base font-semibold text-gray-800 dark:text-gray-100">{order?.user?.name || 'N/A'}</p>
-          <p className="text-sm text-gray-600 dark:text-gray-300">{order?.user?.email || 'N/A'}</p>
+          <p className="mt-1 text-base font-semibold text-gray-800 dark:text-gray-100">{order?.user?.name || order?.customer?.name || 'N/A'}</p>
+          <p className="text-sm text-gray-600 dark:text-gray-300">{order?.user?.email || order?.customer?.email || 'N/A'}</p>
           <p className="text-sm text-gray-600 dark:text-gray-300">{order?.shippingAddress?.phone || order?.user?.phone || 'N/A'}</p>
         </div>
 
