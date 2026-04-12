@@ -110,6 +110,14 @@ function App() {
           }
         />
         <Route
+          path="/account/reviews"
+          element={
+            <ProtectedRoute>
+              <UserLayout><UserAccount /></UserLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/account/addresses"
           element={
             <ProtectedRoute>

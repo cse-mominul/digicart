@@ -9,6 +9,7 @@ const {
   deleteProduct,
 } = require('../controllers/productController');
 const {
+  getMyReviews,
   getProductReviews,
   createOrUpdateProductReview,
 } = require('../controllers/reviewController');
@@ -17,6 +18,7 @@ const requireAdmin = require('../middleware/requireAdmin');
 
 router.get('/', getProducts);
 router.get('/top-selling', getTopSellingProducts);
+router.get('/my-reviews', protect, getMyReviews);
 router.get('/:id/reviews', getProductReviews);
 router.post('/:id/reviews', protect, createOrUpdateProductReview);
 router.get('/:id', getProductById);

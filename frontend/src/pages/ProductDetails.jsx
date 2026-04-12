@@ -27,7 +27,6 @@ const ProductDetails = () => {
   });
   const [reviewForm, setReviewForm] = useState({
     rating: 5,
-    title: '',
     comment: '',
     image: '',
   });
@@ -90,7 +89,6 @@ const ProductDetails = () => {
         if (data?.currentUserReview) {
           setReviewForm({
             rating: Number(data.currentUserReview.rating) || 5,
-            title: data.currentUserReview.title || '',
             comment: data.currentUserReview.comment || '',
             image: data.currentUserReview.image || '',
           });
@@ -334,7 +332,6 @@ const ProductDetails = () => {
     try {
       const { data } = await API.post(`/products/${id}/reviews`, {
         rating: reviewForm.rating,
-        title: reviewForm.title,
         comment: reviewForm.comment,
         image: reviewForm.image,
       });
@@ -348,7 +345,7 @@ const ProductDetails = () => {
       });
 
       toast.success(data?.message || 'Review saved successfully');
-      setReviewForm((prev) => ({ ...prev, title: '', comment: '', image: '' }));
+      setReviewForm((prev) => ({ ...prev, comment: '', image: '' }));
     } catch (error) {
       if (error.response?.status === 401) {
         toast.error('Please login first to write a review');
@@ -693,9 +690,6 @@ const ProductDetails = () => {
                               <span className="flex items-center text-yellow-500">{renderStars(Math.round(review.rating), 'h-3.5 w-3.5')}</span>
                             </div>
                           </div>
-                          {review.title ? (
-                            <h4 className="mt-3 text-sm font-semibold text-slate-900 dark:text-white">{review.title}</h4>
-                          ) : null}
                           <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300 break-words [overflow-wrap:anywhere]">
                             {review.comment}
                           </p>
@@ -763,17 +757,6 @@ const ProductDetails = () => {
                               </option>
                             ))}
                           </select>
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Title</label>
-                          <input
-                            type="text"
-                            value={reviewForm.title}
-                            onChange={(event) => setReviewForm((prev) => ({ ...prev, title: event.target.value }))}
-                            className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-pink-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
-                            placeholder="Optional short summary"
-                          />
                         </div>
 
                         <div>

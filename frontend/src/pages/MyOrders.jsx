@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import API from '../api/axios';
 import { formatPrice } from '../utils/formatPrice';
 import toast from 'react-hot-toast';
+
+const ORDERS_PER_PAGE = 5;
 
 const statusColors = {
   Pending: 'bg-yellow-100 text-yellow-800',
@@ -26,6 +28,7 @@ const getOrderItemProductId = (item) => {
 const MyOrders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
   const [reviewLoading, setReviewLoading] = useState(false);
   const [reviewSubmitting, setReviewSubmitting] = useState(false);
   const [reviewModal, setReviewModal] = useState({
@@ -52,6 +55,35 @@ const MyOrders = () => {
     };
     fetchOrders();
   }, []);
+
+  const totalPages = Math.max(1, Math.ceil(orders.length / ORDERS_PER_PAGE));
+
+  const paginatedOrders = useMemo(() => {
+    const startIndex = (currentPage - 1) * ORDERS_PER_PAGE;
+    return orders.slice(startIndex, startIndex + ORDERS_PER_PAGE);
+  }, [orders, currentPage]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
+
+  const pageItems = useMemo(() => {
+    if (totalPages <= 7) {
+      return Array.from({ length: totalPages }, (_, index) => index + 1);
+    }
+
+    if (currentPage <= 4) {
+      return [1, 2, 3, 4, 5, '...', totalPages];
+    }
+
+    if (currentPage >= totalPages - 3) {
+      return [1, '...', totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+    }
+
+    return [1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages];
+  }, [currentPage, totalPages]);
 
   const openReviewModal = async (order, item) => {
     if (!isSuccessfulOrder(order?.status)) {
@@ -180,7 +212,7 @@ const MyOrders = () => {
         </div>
       ) : (
         <div className="space-y-4">
-          {orders.map((order) => (
+          {paginatedOrders.map((order) => (
             <div key={order._id} className="bg-white rounded-xl shadow-md p-6">
               <div className="flex justify-between items-start mb-4 flex-wrap gap-2">
                 <div>
@@ -232,6 +264,52 @@ const MyOrders = () => {
               </div>
             </div>
           ))}
+
+          <div className="mt-2 flex flex-col gap-3 border-t border-gray-200 pt-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm text-gray-500">
+              Page {currentPage} of {totalPages}
+            </p>
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                disabled={currentPage === 1}
+                className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:border-pink-400 hover:text-pink-600 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                Prev
+              </button>
+
+              {pageItems.map((item, index) => (
+                item === '...' ? (
+                  <span key={`ellipsis-${index}`} className="px-1 text-sm font-semibold text-gray-400">
+                    ...
+                  </span>
+                ) : (
+                  <button
+                    key={item}
+                    type="button"
+                    onClick={() => setCurrentPage(item)}
+                    className={`rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors ${
+                      currentPage === item
+                        ? 'bg-pink-500 text-white'
+                        : 'border border-gray-300 bg-white text-gray-700 hover:border-pink-400 hover:text-pink-600'
+                    }`}
+                  >
+                    {item}
+                  </button>
+                )
+              ))}
+
+              <button
+                type="button"
+                onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                disabled={currentPage === totalPages}
+                className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:border-pink-400 hover:text-pink-600 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                Next
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

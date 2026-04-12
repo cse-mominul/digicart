@@ -9,11 +9,13 @@ import { formatPrice } from '../utils/formatPrice';
 
 const ADDRESS_STORAGE_KEY = 'digicart_saved_addresses';
 const WISHLIST_ITEMS_PER_PAGE = 6;
+const ORDERS_ITEMS_PER_PAGE = 5;
 const ORDER_FILTERS = ['All', 'Processing', 'Delivering', 'Completed', 'Cancelled'];
 
 const navItems = [
   { id: 'profile', label: 'My Account', to: '/account/profile', icon: 'user' },
   { id: 'orders', label: 'Orders', to: '/account/orders', icon: 'box' },
+  { id: 'reviews', label: 'My Reviews', to: '/account/reviews', icon: 'review' },
   { id: 'wishlist', label: 'Wishlist', to: '/account/wishlist', icon: 'heart' },
   { id: 'address', label: 'My Address', to: '/account/addresses', icon: 'location' },
   { id: 'logout', label: 'Log Out', to: '/login', icon: 'logout' },
@@ -78,6 +80,14 @@ const Icon = ({ type }) => {
     );
   }
 
+  if (type === 'review') {
+    return (
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.9} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.955a1 1 0 00.95.69h4.157c.969 0 1.371 1.24.588 1.81l-3.364 2.444a1 1 0 00-.364 1.118l1.286 3.955c.3.921-.755 1.688-1.54 1.118l-3.364-2.444a1 1 0 00-1.175 0l-3.364 2.444c-.784.57-1.838-.197-1.54-1.118l1.286-3.955a1 1 0 00-.364-1.118L2.074 9.382c-.783-.57-.38-1.81.588-1.81h4.157a1 1 0 00.95-.69l1.286-3.955z" />
+      </svg>
+    );
+  }
+
   return (
     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.9} d="M17 16l4-4m0 0l-4-4m4 4H7" />
@@ -111,6 +121,8 @@ const UserAccount = () => {
 
   const [orders, setOrders] = useState([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
+  const [myReviews, setMyReviews] = useState([]);
+  const [myReviewsLoading, setMyReviewsLoading] = useState(false);
   const [activeOrderFilter, setActiveOrderFilter] = useState('All');
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
@@ -121,9 +133,11 @@ const UserAccount = () => {
   const [addressModalOpen, setAddressModalOpen] = useState(false);
   const [editingAddressId, setEditingAddressId] = useState(null);
   const [wishlistPage, setWishlistPage] = useState(1);
+  const [ordersPage, setOrdersPage] = useState(1);
 
   const section = useMemo(() => {
     if (location.pathname === '/account/orders') return 'orders';
+    if (location.pathname === '/account/reviews') return 'reviews';
     if (location.pathname === '/account/wishlist') return 'wishlist';
     if (location.pathname === '/account/addresses') return 'addresses';
     return 'profile';
@@ -148,6 +162,74 @@ const UserAccount = () => {
 
     if (section === 'orders') {
       fetchOrders();
+    }
+  }, [section]);
+
+  useEffect(() => {
+    const fetchMyReviews = async () => {
+      setMyReviewsLoading(true);
+      try {
+        const { data } = await API.get('/products/my-reviews');
+        setMyReviews(Array.isArray(data) ? data : []);
+      } catch {
+        // Fallback for environments where /products/my-reviews route is unavailable.
+        try {
+          const { data: orderData } = await API.get('/orders/myorders');
+          const successfulOrders = (Array.isArray(orderData) ? orderData : []).filter((order) => {
+            const rawStatus = String(order?.status || '').toLowerCase();
+            return rawStatus === 'delivered' || rawStatus === 'completed';
+          });
+
+          const productMap = new Map();
+          successfulOrders.forEach((order) => {
+            const items = Array.isArray(order?.items) ? order.items : [];
+            items.forEach((item) => {
+              const productId = typeof item?.product === 'string' ? item.product : item?.product?._id;
+              if (!productId || productMap.has(productId)) return;
+
+              productMap.set(productId, {
+                _id: productId,
+                name: item?.name || item?.product?.name || 'Product',
+                image: item?.image || item?.product?.image || 'https://placehold.co/64x64?text=?',
+                category: item?.product?.category || '',
+                price: Number(item?.price || item?.product?.price || 0),
+              });
+            });
+          });
+
+          const productIds = Array.from(productMap.keys());
+          const reviewResponses = await Promise.all(
+            productIds.map(async (productId) => {
+              try {
+                const { data } = await API.get(`/products/${productId}/reviews`);
+                if (!data?.currentUserReview) return null;
+
+                return {
+                  ...data.currentUserReview,
+                  product: productMap.get(productId),
+                };
+              } catch {
+                return null;
+              }
+            })
+          );
+
+          const ownReviews = reviewResponses
+            .filter(Boolean)
+            .sort((a, b) => new Date(b?.createdAt || 0).getTime() - new Date(a?.createdAt || 0).getTime());
+
+          setMyReviews(ownReviews);
+        } catch {
+          setMyReviews([]);
+          toast.error('Failed to load your reviews');
+        }
+      } finally {
+        setMyReviewsLoading(false);
+      }
+    };
+
+    if (section === 'reviews') {
+      fetchMyReviews();
     }
   }, [section]);
 
@@ -222,6 +304,39 @@ const UserAccount = () => {
 
     return orders.filter((order) => normalizeOrderStatus(order.status) === activeOrderFilter);
   }, [activeOrderFilter, orders]);
+
+  const totalOrdersPages = Math.max(1, Math.ceil(filteredOrders.length / ORDERS_ITEMS_PER_PAGE));
+
+  const paginatedOrders = useMemo(() => {
+    const startIndex = (ordersPage - 1) * ORDERS_ITEMS_PER_PAGE;
+    return filteredOrders.slice(startIndex, startIndex + ORDERS_ITEMS_PER_PAGE);
+  }, [filteredOrders, ordersPage]);
+
+  useEffect(() => {
+    setOrdersPage(1);
+  }, [activeOrderFilter, section]);
+
+  useEffect(() => {
+    if (ordersPage > totalOrdersPages) {
+      setOrdersPage(totalOrdersPages);
+    }
+  }, [ordersPage, totalOrdersPages]);
+
+  const getOrdersPageNumbers = () => {
+    if (totalOrdersPages <= 7) {
+      return Array.from({ length: totalOrdersPages }, (_, index) => index + 1);
+    }
+
+    if (ordersPage <= 4) {
+      return [1, 2, 3, 4, 5, '...', totalOrdersPages];
+    }
+
+    if (ordersPage >= totalOrdersPages - 3) {
+      return [1, '...', totalOrdersPages - 4, totalOrdersPages - 3, totalOrdersPages - 2, totalOrdersPages - 1, totalOrdersPages];
+    }
+
+    return [1, '...', ordersPage - 1, ordersPage, ordersPage + 1, '...', totalOrdersPages];
+  };
 
   const getOrderLineItems = (order) => {
     if (Array.isArray(order?.items)) return order.items;
@@ -522,7 +637,7 @@ const UserAccount = () => {
                 </div>
               ) : (
                 <div className="space-y-6">
-                  {filteredOrders.map((order) => {
+                  {paginatedOrders.map((order) => {
                     const normalizedStatus = normalizeOrderStatus(order.status);
                     const orderItems = Array.isArray(order.orderItems) ? order.orderItems.length : 0;
                     const deliveryText =
@@ -603,6 +718,53 @@ const UserAccount = () => {
                       </article>
                     );
                   })}
+
+                  <div className="mt-2 flex flex-col gap-3 border-t border-gray-100 pt-4 dark:border-gray-700 sm:flex-row sm:items-center sm:justify-between">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Page {ordersPage} of {totalOrdersPages}
+                    </p>
+
+                    <div className="flex flex-wrap items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setOrdersPage((prev) => Math.max(1, prev - 1))}
+                        disabled={ordersPage === 1}
+                        className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:border-pink-400 hover:text-pink-600 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
+                      >
+                        Prev
+                      </button>
+
+                      {getOrdersPageNumbers().map((item, index) => (
+                        item === '...' ? (
+                          <span key={`orders-ellipsis-${index}`} className="px-1 text-sm font-semibold text-gray-400 dark:text-gray-500">
+                            ...
+                          </span>
+                        ) : (
+                          <button
+                            key={item}
+                            type="button"
+                            onClick={() => setOrdersPage(item)}
+                            className={`rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors ${
+                              ordersPage === item
+                                ? 'bg-pink-500 text-white'
+                                : 'border border-gray-300 bg-white text-gray-700 hover:border-pink-400 hover:text-pink-600 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200'
+                            }`}
+                          >
+                            {item}
+                          </button>
+                        )
+                      ))}
+
+                      <button
+                        type="button"
+                        onClick={() => setOrdersPage((prev) => Math.min(totalOrdersPages, prev + 1))}
+                        disabled={ordersPage === totalOrdersPages}
+                        className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:border-pink-400 hover:text-pink-600 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
+                      >
+                        Next
+                      </button>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
@@ -737,6 +899,79 @@ const UserAccount = () => {
                       Next
                     </button>
                   </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {section === 'reviews' && (
+            <div className="rounded-3xl border border-gray-100 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900 sm:p-6 min-h-[460px]">
+              <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <h1 className="text-2xl font-semibold text-gray-900 dark:text-white sm:text-3xl">My Reviews</h1>
+                  <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">All reviews you have submitted are listed here.</p>
+                </div>
+                <span className="rounded-full bg-pink-50 px-4 py-2 text-sm font-semibold text-[#ff3366] dark:bg-gray-800 dark:text-pink-300">
+                  {myReviews.length} review(s)
+                </span>
+              </div>
+
+              {myReviewsLoading ? (
+                <div className="space-y-4">
+                  {[...Array(3)].map((_, index) => (
+                    <div key={index} className="h-40 animate-pulse rounded-2xl bg-gray-100 dark:bg-gray-800" />
+                  ))}
+                </div>
+              ) : myReviews.length === 0 ? (
+                <div className="flex min-h-[220px] items-center justify-center rounded-2xl border border-dashed border-gray-200 bg-white text-center dark:border-gray-700 dark:bg-gray-900">
+                  <div>
+                    <p className="text-lg font-semibold text-gray-900 dark:text-white">No reviews yet.</p>
+                    <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">After purchasing products, your reviews will appear here.</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {myReviews.map((review) => (
+                    <article key={review._id} className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+                      <div className="flex flex-wrap items-start justify-between gap-3 border-b border-gray-100 pb-4 dark:border-gray-800">
+                        <div className="flex items-center gap-3">
+                          <img
+                            src={review?.product?.image || 'https://placehold.co/64x64?text=?'}
+                            alt={review?.product?.name || 'Product'}
+                            className="h-12 w-12 rounded-lg object-cover"
+                            onError={(event) => {
+                              event.currentTarget.src = 'https://placehold.co/64x64?text=?';
+                            }}
+                          />
+                          <div>
+                            <p className="font-semibold text-gray-900 dark:text-white">{review?.product?.name || 'Product'}</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                              Reviewed on {review?.createdAt ? new Date(review.createdAt).toLocaleDateString() : 'N/A'}
+                            </p>
+                          </div>
+                        </div>
+
+                        <span className="rounded-full bg-yellow-100 px-3 py-1 text-xs font-semibold text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300">
+                          {Number(review?.rating || 0).toFixed(1)} / 5
+                        </span>
+                      </div>
+
+                      <p className="pt-4 text-sm leading-6 text-gray-600 dark:text-gray-300">
+                        {review?.comment || 'No comment'}
+                      </p>
+
+                      {review?.image ? (
+                        <img
+                          src={review.image}
+                          alt="Review"
+                          className="mt-3 h-24 w-24 rounded-lg border border-gray-200 object-cover dark:border-gray-700"
+                          onError={(event) => {
+                            event.currentTarget.style.display = 'none';
+                          }}
+                        />
+                      ) : null}
+                    </article>
+                  ))}
                 </div>
               )}
             </div>

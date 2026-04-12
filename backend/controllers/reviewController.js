@@ -32,6 +32,20 @@ const hasPurchasedProduct = async (userId, productId) => {
   );
 };
 
+// @desc  Get logged-in user's reviews
+// @route GET /api/products/my-reviews
+const getMyReviews = async (req, res) => {
+  try {
+    const reviews = await Review.find({ user: req.user._id })
+      .populate('product', 'name image category price')
+      .sort({ createdAt: -1 });
+
+    res.json(reviews);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 const getProductReviewPayload = async (productId, currentUserId = null) => {
   const productObjectId = new mongoose.Types.ObjectId(productId);
 
@@ -90,7 +104,7 @@ const getProductReviews = async (req, res) => {
 // @desc  Create or update a product review
 // @route POST /api/products/:id/reviews
 const createOrUpdateProductReview = async (req, res) => {
-  const { rating, title, comment, image } = req.body;
+  const { rating, comment, image } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
     return res.status(400).json({ message: 'Invalid product ID' });
@@ -119,7 +133,6 @@ const createOrUpdateProductReview = async (req, res) => {
       { product: req.params.id, user: req.user._id },
       {
         rating: Number(rating),
-        title: String(title || '').trim(),
         comment: String(comment).trim(),
         image: String(image || '').trim(),
       },
@@ -156,7 +169,7 @@ const getAllReviews = async (req, res) => {
 // @desc  Update a review (admin only)
 // @route PUT /api/admin/reviews/:id
 const updateReviewByAdmin = async (req, res) => {
-  const { rating, title, comment, image } = req.body;
+  const { rating, comment, image } = req.body;
 
   if (rating != null) {
     const parsed = Number(rating);
@@ -173,10 +186,6 @@ const updateReviewByAdmin = async (req, res) => {
 
     if (rating != null) {
       review.rating = Number(rating);
-    }
-
-    if (title != null) {
-      review.title = String(title).trim();
     }
 
     if (comment != null) {
@@ -217,6 +226,7 @@ const deleteReviewByAdmin = async (req, res) => {
 };
 
 module.exports = {
+  getMyReviews,
   getProductReviews,
   createOrUpdateProductReview,
   getAllReviews,
