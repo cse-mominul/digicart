@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import Swal from 'sweetalert2';
 import API from '../api/axios';
@@ -109,6 +109,7 @@ const Icon = ({ type }) => {
 
 const UserAccount = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { user, login, logout } = useAuth();
   const { wishlistItems, removeFromWishlist } = useWishlist();
   const { addToCart } = useCart();
@@ -501,20 +502,8 @@ const UserAccount = () => {
     showAddToCartSuccess(product.name);
   };
 
-  const handleOrderAgain = (order) => {
-    const orderItems = Array.isArray(order?.orderItems) ? order.orderItems : [];
-
-    if (orderItems.length === 0) {
-      toast.error('No order items found to reorder');
-      return;
-    }
-
-    orderItems.forEach((item) => {
-      const quantity = Number(item.qty || item.quantity || 1);
-      addToCart({ ...item, quantity });
-    });
-
-    toast.success('Items added to cart');
+  const handleOrderAgain = () => {
+    navigate('/products');
   };
 
   const handleViewOrderDetails = (order) => {
