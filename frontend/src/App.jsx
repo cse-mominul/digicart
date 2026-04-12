@@ -13,6 +13,7 @@ import Dashboard from './pages/admin/Dashboard';
 import Products from './pages/admin/Products';
 import CouponVoucher from './pages/admin/CouponVoucher';
 import Orders from './pages/admin/Orders';
+import OrderDetails from './pages/admin/OrderDetails';
 import AbandonedCarts from './pages/admin/AbandonedCarts';
 import ShippingDelays from './pages/admin/ShippingDelays';
 import PaymentFailures from './pages/admin/PaymentFailures';
@@ -158,6 +159,7 @@ function App() {
           <Route path="campaigns" element={<Campaigns />} />
           <Route path="settings" element={<Settings />} />
           <Route path="orders" element={<Orders />} />
+          <Route path="orders/:id" element={<OrderDetails />} />
           <Route path="shipping-delays" element={<ShippingDelays />} />
           <Route path="payment-failures" element={<PaymentFailures />} />
           <Route path="refund-requests" element={<RefundRequests />} />

@@ -61,6 +61,24 @@ const getAllOrders = async (req, res) => {
   }
 };
 
+// @desc  Get order by ID (admin only)
+// @route GET /api/orders/:id
+const getOrderById = async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id)
+      .populate('user', 'name email phone')
+      .populate('items.product', 'name image category brand');
+
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    res.json(order);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // @desc  Update order status (admin only)
 // @route PUT /api/orders/:id/status
 const updateOrderStatus = async (req, res) => {
@@ -157,4 +175,12 @@ const deleteOrder = async (req, res) => {
   }
 };
 
-module.exports = { createOrder, getMyOrders, getAllOrders, updateOrderStatus, updateOrderPayment, deleteOrder };
+module.exports = {
+  createOrder,
+  getMyOrders,
+  getAllOrders,
+  getOrderById,
+  updateOrderStatus,
+  updateOrderPayment,
+  deleteOrder,
+};
