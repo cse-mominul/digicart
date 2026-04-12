@@ -86,6 +86,31 @@ const getStatIcon = (type) => {
   );
 };
 
+const getColumnIcon = (type) => {
+  if (type === 'status') {
+    return (
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    );
+  }
+
+  if (type === 'payment') {
+    return (
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a5 5 0 00-10 0v2m-2 0h14a1 1 0 011 1v9a1 1 0 01-1 1H5a1 1 0 01-1-1v-9a1 1 0 011-1z" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v.01M12 12v.01M12 18v.01" />
+    </svg>
+  );
+};
+
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -96,6 +121,12 @@ const Orders = () => {
   const [expandedOrderId, setExpandedOrderId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [paymentDrafts, setPaymentDrafts] = useState({});
+  const [actionsModalOrder, setActionsModalOrder] = useState(null);
+  const [actionDraft, setActionDraft] = useState({
+    status: 'Pending',
+    paymentStatus: 'Unpaid',
+    amountPaid: 0,
+  });
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -111,28 +142,32 @@ const Orders = () => {
     fetchOrders();
   }, []);
 
-  const handleStatusChange = async (orderId, status) => {
-    const result = await Swal.fire({
-      title: 'Update order status?',
-      text: `Change status to ${status}?`,
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonText: 'Yes, update',
-      cancelButtonText: 'Cancel',
-      confirmButtonColor: '#2563eb',
-      cancelButtonColor: '#64748b',
-      reverseButtons: true,
-    });
+  const handleStatusChange = async (orderId, status, skipConfirm = false) => {
+    if (!skipConfirm) {
+      const result = await Swal.fire({
+        title: 'Update order status?',
+        text: `Change status to ${status}?`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, update',
+        cancelButtonText: 'Cancel',
+        confirmButtonColor: '#2563eb',
+        cancelButtonColor: '#64748b',
+        reverseButtons: true,
+      });
 
-    if (!result.isConfirmed) return;
+      if (!result.isConfirmed) return false;
+    }
 
     setUpdatingId(orderId);
     try {
       const { data } = await API.put(`/orders/${orderId}/status`, { status });
       setOrders((prev) => prev.map((o) => (o._id === orderId ? { ...o, ...data } : o)));
       toast.success('Order status updated!');
+      return true;
     } catch {
       toast.error('Failed to update status');
+      return false;
     } finally {
       setUpdatingId(null);
     }
@@ -170,24 +205,24 @@ const Orders = () => {
     }));
   };
 
-  const handlePaymentUpdate = async (order) => {
-    const draft = getPaymentDraft(order);
+  const handlePaymentUpdate = async (order, draftOverride = null) => {
+    const draft = draftOverride || getPaymentDraft(order);
     const totalAmount = Number(order?.totalAmount) || 0;
     const normalizedAmountPaid = Number(draft.amountPaid);
 
     if (!Number.isFinite(normalizedAmountPaid) || normalizedAmountPaid < 0) {
       toast.error('Amount paid must be a valid non-negative number');
-      return;
+      return false;
     }
 
     if (draft.paymentStatus === 'Partial' && (normalizedAmountPaid <= 0 || normalizedAmountPaid >= totalAmount)) {
       toast.error('For partial payment, amount must be greater than 0 and less than total amount');
-      return;
+      return false;
     }
 
     if (normalizedAmountPaid > totalAmount) {
       toast.error('Amount paid cannot be greater than total amount');
-      return;
+      return false;
     }
 
     setUpdatingId(order._id);
@@ -206,11 +241,35 @@ const Orders = () => {
         },
       }));
       toast.success('Payment status updated!');
+      return true;
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to update payment status');
+      return false;
     } finally {
       setUpdatingId(null);
     }
+  };
+
+  const openActionsModal = (order) => {
+    const draft = getPaymentDraft(order);
+
+    setPaymentDrafts((prev) => ({
+      ...prev,
+      [order._id]: {
+        paymentStatus: draft.paymentStatus,
+        amountPaid: draft.amountPaid,
+      },
+    }));
+    setActionDraft({
+      status: order?.status || 'Pending',
+      paymentStatus: draft.paymentStatus,
+      amountPaid: draft.amountPaid,
+    });
+    setActionsModalOrder(order);
+  };
+
+  const closeActionsModal = () => {
+    setActionsModalOrder(null);
   };
 
   const filteredOrders = useMemo(() => {
@@ -494,9 +553,15 @@ const Orders = () => {
                     <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Customer</th>
                     <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">City</th>
                     <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Total</th>
-                    <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Status</th>
-                    <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Payment</th>
-                    <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Actions</th>
+                    <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">
+                      <span className="inline-flex items-center gap-1.5">{getColumnIcon('status')} Status</span>
+                    </th>
+                    <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">
+                      <span className="inline-flex items-center gap-1.5">{getColumnIcon('payment')} Payment</span>
+                    </th>
+                    <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">
+                      <span className="inline-flex items-center gap-1.5">{getColumnIcon('actions')} Actions</span>
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -526,78 +591,71 @@ const Orders = () => {
 
                           <td className="px-4 py-4">
                             <span className={`mb-2 inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${statusColors[order.status]}`}>
+                              <svg xmlns="http://www.w3.org/2000/svg" className="mr-1 h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                              </svg>
                               {order.status}
                             </span>
-                            <select
-                              value={order.status}
-                              disabled={updatingId === order._id}
-                              onChange={(e) => handleStatusChange(order._id, e.target.value)}
-                              className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-2.5 py-2 text-xs text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-60 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
-                            >
-                              {STATUS_OPTIONS.map((s) => (
-                                <option key={s} value={s}>{s === 'Failed' ? 'Payment Failures' : s}</option>
-                              ))}
-                            </select>
                           </td>
 
                           <td className="px-4 py-4">
                             <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${paymentBadge}`}>
+                              <svg xmlns="http://www.w3.org/2000/svg" className="mr-1 h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a5 5 0 00-10 0v2m-2 0h14a1 1 0 011 1v9a1 1 0 01-1 1H5a1 1 0 01-1-1v-9a1 1 0 011-1z" />
+                              </svg>
                               {paymentDraft.paymentStatus}
                             </span>
                             <p className="mt-1 text-xs text-gray-600 dark:text-gray-300">
                               Paid: {formatPrice(Number(order?.amountPaid) || 0)}
                             </p>
-
-                            <div className="mt-2 flex gap-2">
-                              <select
-                                value={paymentDraft.paymentStatus}
-                                disabled={updatingId === order._id}
-                                onChange={(e) => updatePaymentDraft(order, { paymentStatus: e.target.value })}
-                                className="rounded-lg border border-gray-300 bg-white px-2 py-2 text-xs text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-60 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
-                              >
-                                {PAYMENT_STATUS_OPTIONS.map((status) => (
-                                  <option key={status} value={status}>{status}</option>
-                                ))}
-                              </select>
-
-                              <input
-                                type="number"
-                                min="0"
-                                step="0.01"
-                                value={paymentDraft.amountPaid}
-                                disabled={updatingId === order._id}
-                                onChange={(e) => updatePaymentDraft(order, { amountPaid: e.target.value })}
-                                className="w-24 rounded-lg border border-gray-300 bg-white px-2 py-2 text-xs text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-60 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
-                              />
-                            </div>
-
-                            <button
-                              type="button"
-                              disabled={updatingId === order._id}
-                              onClick={() => handlePaymentUpdate(order)}
-                              className="mt-2 rounded-lg border border-emerald-300 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700 transition-colors hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-60 dark:border-emerald-500/40 dark:bg-emerald-500/10 dark:text-emerald-300"
-                            >
-                              {updatingId === order._id ? 'Saving...' : 'Update Payment'}
-                            </button>
                           </td>
 
                           <td className="px-4 py-4">
-                            <div className="flex flex-col gap-2">
+                            <div className="flex items-center gap-2">
+                              <button
+                                type="button"
+                                onClick={() => openActionsModal(order)}
+                                className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-indigo-200 bg-indigo-50 text-indigo-700 transition-colors hover:bg-indigo-100 dark:border-indigo-500/40 dark:bg-indigo-500/10 dark:text-indigo-300"
+                                title="Edit"
+                                aria-label="Edit order"
+                              >
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5" />
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.5 2.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                </svg>
+                              </button>
+
                               <button
                                 type="button"
                                 onClick={() => toggleExpand(order._id)}
-                                className="rounded-lg border border-gray-300 bg-transparent px-3 py-1.5 text-xs font-semibold text-gray-700 transition-colors hover:border-gray-400 hover:text-gray-900 dark:border-gray-600 dark:text-gray-200 dark:hover:border-gray-500 dark:hover:text-white"
+                                className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-700 transition-colors hover:bg-slate-100 dark:border-slate-600 dark:bg-slate-700/40 dark:text-slate-200"
+                                title={isExpanded ? 'Hide details' : 'View details'}
+                                aria-label={isExpanded ? 'Hide order details' : 'View order details'}
                               >
-                                {isExpanded ? 'Hide Details' : 'View Details'}
+                                {isExpanded ? (
+                                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                                  </svg>
+                                ) : (
+                                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                  </svg>
+                                )}
                               </button>
 
                               <button
                                 type="button"
                                 disabled={deletingId === order._id}
                                 onClick={() => handleDeleteOrder(order._id)}
-                                className="rounded-lg border border-red-300 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700 transition-colors hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-60 dark:border-red-500/40 dark:bg-red-500/10 dark:text-red-300"
+                                className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-red-200 bg-red-50 text-red-700 transition-colors hover:bg-red-100 disabled:opacity-60 dark:border-red-500/40 dark:bg-red-500/10 dark:text-red-300"
+                                title="Delete"
+                                aria-label="Delete order"
                               >
-                                {deletingId === order._id ? 'Deleting...' : 'Delete'}
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 7h12M9 7V5h6v2m-7 4v6m4-6v6m4-10v12a1 1 0 01-1 1H9a1 1 0 01-1-1V7h8z" />
+                                </svg>
                               </button>
                             </div>
                           </td>
@@ -696,6 +754,97 @@ const Orders = () => {
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {actionsModalOrder && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-md rounded-2xl bg-white p-5 shadow-2xl dark:bg-gray-900">
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white">Edit Order</h3>
+            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Order: #{actionsModalOrder._id}</p>
+
+            <div className="mt-4 space-y-3">
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">Status</label>
+                <select
+                  value={actionDraft.status}
+                  onChange={(event) => setActionDraft((prev) => ({ ...prev, status: event.target.value }))}
+                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+                >
+                  {STATUS_OPTIONS.map((status) => (
+                    <option key={status} value={status}>{status === 'Failed' ? 'Payment Failures' : status}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">Payment Status</label>
+                <select
+                  value={actionDraft.paymentStatus}
+                  onChange={(event) => setActionDraft((prev) => ({ ...prev, paymentStatus: event.target.value }))}
+                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-emerald-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+                >
+                  {PAYMENT_STATUS_OPTIONS.map((status) => (
+                    <option key={status} value={status}>{status}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">Amount Paid</label>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={actionDraft.amountPaid}
+                  onChange={(event) => setActionDraft((prev) => ({ ...prev, amountPaid: event.target.value }))}
+                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-emerald-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+                />
+              </div>
+
+              <button
+                type="button"
+                disabled={updatingId === actionsModalOrder._id}
+                onClick={async () => {
+                  let ok = true;
+
+                  if (actionDraft.status !== actionsModalOrder.status) {
+                    ok = await handleStatusChange(actionsModalOrder._id, actionDraft.status, true);
+                  }
+
+                  if (!ok) return;
+
+                  const paymentChanged =
+                    actionDraft.paymentStatus !== getNormalizedPayment(actionsModalOrder) ||
+                    Number(actionDraft.amountPaid) !== Number(actionsModalOrder?.amountPaid || 0);
+
+                  if (paymentChanged) {
+                    ok = await handlePaymentUpdate(actionsModalOrder, {
+                      paymentStatus: actionDraft.paymentStatus,
+                      amountPaid: actionDraft.amountPaid,
+                    });
+                  }
+
+                  if (ok) {
+                    closeActionsModal();
+                  }
+                }}
+                className="w-full rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-60"
+              >
+                {updatingId === actionsModalOrder._id ? 'Saving...' : 'Save Changes'}
+              </button>
+            </div>
+
+            <div className="mt-5 flex justify-end">
+              <button
+                type="button"
+                onClick={closeActionsModal}
+                className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-800"
+              >
+                Close
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
