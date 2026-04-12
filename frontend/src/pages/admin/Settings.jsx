@@ -289,6 +289,21 @@ const Settings = () => {
       return;
     }
 
+    const confirmation = await Swal.fire({
+      title: 'Save company settings?',
+      text: 'This will update your company contact and support information.',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#ec4899',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Save',
+      cancelButtonText: 'Cancel',
+    });
+
+    if (!confirmation.isConfirmed) {
+      return;
+    }
+
     setSavingSettings(true);
     try {
       await saveSettings('Company settings updated');
