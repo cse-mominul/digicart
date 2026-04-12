@@ -548,7 +548,7 @@ const Orders = () => {
         <div className="space-y-4">
           <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-[#1a1a1a]">
             <div className="overflow-x-auto">
-              <table className="min-w-[980px] w-full text-xs">
+              <table className="min-w-[1080px] w-full text-xs">
                 <thead className="bg-gray-50 dark:bg-gray-800/70">
                   <tr>
                     <th className="px-3 py-2.5 text-left font-semibold text-gray-700 dark:text-gray-300">Order</th>
@@ -561,6 +561,7 @@ const Orders = () => {
                     <th className="px-3 py-2.5 text-left font-semibold text-gray-700 dark:text-gray-300">
                       <span className="inline-flex items-center gap-1.5">{getColumnIcon('payment')} Payment</span>
                     </th>
+                    <th className="px-3 py-2.5 text-left font-semibold text-gray-700 dark:text-gray-300">Due Amount</th>
                     <th className="px-3 py-2.5 text-left font-semibold text-gray-700 dark:text-gray-300">
                       <span className="inline-flex items-center gap-1.5">{getColumnIcon('actions')} Actions</span>
                     </th>
@@ -574,6 +575,14 @@ const Orders = () => {
                     const paymentBadge = paymentStatusColors[paymentDraft.paymentStatus] || paymentStatusColors.Unpaid;
                     const orderIdText = String(order?._id || '');
                     const shortOrderId = orderIdText ? `#${orderIdText.slice(0, 8)}...` : 'N/A';
+                    const totalAmount = Number(order?.totalAmount) || 0;
+                    const rawAmountPaid = Math.max(Number(order?.amountPaid) || 0, 0);
+                    const effectiveAmountPaid = paymentDraft.paymentStatus === 'Paid'
+                      ? totalAmount
+                      : paymentDraft.paymentStatus === 'Unpaid'
+                        ? 0
+                        : Math.min(rawAmountPaid, totalAmount);
+                    const dueAmount = Math.max(totalAmount - effectiveAmountPaid, 0);
 
                     return (
                       <Fragment key={order._id}>
@@ -612,6 +621,12 @@ const Orders = () => {
                             </span>
                             <p className="mt-1 text-xs text-gray-600 dark:text-gray-300">
                               Paid: {formatPrice(Number(order?.amountPaid) || 0)}
+                            </p>
+                          </td>
+
+                          <td className="px-3 py-3">
+                            <p className={`font-semibold ${dueAmount > 0 ? 'text-rose-600 dark:text-rose-300' : 'text-emerald-600 dark:text-emerald-300'}`}>
+                              {formatPrice(dueAmount)}
                             </p>
                           </td>
 
@@ -661,7 +676,7 @@ const Orders = () => {
 
                         {isExpanded && (
                           <tr className="bg-gray-50/70 dark:bg-gray-900/40">
-                            <td colSpan={7} className="px-4 py-4">
+                            <td colSpan={8} className="px-4 py-4">
                               <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
                                 <div>
                                   <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Shipping Address</p>
