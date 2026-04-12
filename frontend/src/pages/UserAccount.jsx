@@ -18,6 +18,7 @@ const ORDER_FILTERS = ['All', 'Processing', 'Delivering', 'Completed', 'Cancelle
 const navItems = [
   { id: 'profile', label: 'My Account', to: '/account/profile', icon: 'user' },
   { id: 'orders', label: 'Orders', to: '/account/orders', icon: 'box' },
+  { id: 'payments', label: 'Payments', to: '/account/payments', icon: 'wallet' },
   { id: 'reviews', label: 'My Reviews', to: '/account/reviews', icon: 'review' },
   { id: 'wishlist', label: 'Wishlist', to: '/account/wishlist', icon: 'heart' },
   { id: 'address', label: 'My Address', to: '/account/addresses', icon: 'location' },
@@ -91,6 +92,14 @@ const Icon = ({ type }) => {
     );
   }
 
+  if (type === 'wallet') {
+    return (
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.9} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V5a3 3 0 00-3-3H6a3 3 0 00-3 3v11a3 3 0 003 3z" />
+      </svg>
+    );
+  }
+
   return (
     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.9} d="M17 16l4-4m0 0l-4-4m4 4H7" />
@@ -128,6 +137,10 @@ const UserAccount = () => {
   const [myReviewsLoading, setMyReviewsLoading] = useState(false);
   const [editingReviewId, setEditingReviewId] = useState(null);
   const [reviewActionLoading, setReviewActionLoading] = useState(false);
+  const [payments, setPayments] = useState([]);
+  const [paymentsLoading, setPaymentsLoading] = useState(false);
+  const [paymentsPage, setPaymentsPage] = useState(1);
+  const PAYMENTS_ITEMS_PER_PAGE = 5;
   const [reviewDraft, setReviewDraft] = useState({
     rating: 5,
     comment: '',
@@ -148,6 +161,7 @@ const UserAccount = () => {
 
   const section = useMemo(() => {
     if (location.pathname === '/account/orders') return 'orders';
+    if (location.pathname === '/account/payments') return 'payments';
     if (location.pathname === '/account/reviews') return 'reviews';
     if (location.pathname === '/account/wishlist') return 'wishlist';
     if (location.pathname === '/account/addresses') return 'addresses';
@@ -173,6 +187,23 @@ const UserAccount = () => {
 
     if (section === 'orders') {
       fetchOrders();
+    }
+    if (section === 'payments') {
+      const fetchPayments = async () => {
+        setPaymentsLoading(true);
+        try {
+          const { data } = await API.get('/orders/myorders');
+          const paymentsData = Array.isArray(data)
+            ? data.filter((order) => order.paymentMethod)
+            : [];
+          setPayments(paymentsData);
+        } catch {
+          toast.error('Failed to load payments');
+        } finally {
+          setPaymentsLoading(false);
+        }
+      };
+      fetchPayments();
     }
   }, [section]);
 
@@ -651,6 +682,8 @@ const UserAccount = () => {
                     ? 'profile'
                     : section === 'orders'
                       ? 'orders'
+                      : section === 'payments'
+                        ? 'payments'
                       : section === 'reviews'
                         ? 'reviews'
                       : section === 'wishlist'
@@ -1067,6 +1100,108 @@ const UserAccount = () => {
                       Next
                     </button>
                   </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {section === 'payments' && (
+            <div className="rounded-3xl border border-gray-100 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900 sm:p-6 min-h-[460px]">
+              <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <h1 className="text-2xl font-semibold text-gray-900 dark:text-white sm:text-3xl">My Payments</h1>
+                  <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">All your payment transactions are listed here.</p>
+                </div>
+                <span className="rounded-full bg-pink-50 px-4 py-2 text-sm font-semibold text-[#ff3366] dark:bg-gray-800 dark:text-pink-300">
+                  {payments.length} transaction(s)
+                </span>
+              </div>
+
+              {paymentsLoading ? (
+                <div className="space-y-4">
+                  {[...Array(3)].map((_, index) => (
+                    <div key={index} className="h-16 animate-pulse rounded-2xl bg-gray-100 dark:bg-gray-800" />
+                  ))}
+                </div>
+              ) : payments.length === 0 ? (
+                <div className="flex min-h-[220px] items-center justify-center rounded-2xl border border-dashed border-gray-200 bg-white text-center dark:border-gray-700 dark:bg-gray-900">
+                  <div>
+                    <p className="text-lg font-semibold text-gray-900 dark:text-white">No payments yet.</p>
+                    <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">Complete a purchase to see your payment history here.</p>
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <div className="overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
+                    <table className="w-full text-sm">
+                      <thead className="border-b border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800/50">
+                        <tr>
+                          <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Amount</th>
+                          <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Method</th>
+                          <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Status</th>
+                          <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Payment Status</th>
+                          <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Date</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                        {payments.slice((paymentsPage - 1) * PAYMENTS_ITEMS_PER_PAGE, paymentsPage * PAYMENTS_ITEMS_PER_PAGE).map((payment) => {
+                          const paymentMethod = payment.paymentMethod === 'bkash' ? 'bKash' : payment.paymentMethod === 'nogod' ? 'Nagad' : payment.paymentMethod === 'cod' ? 'Cash on Delivery' : (payment.paymentMethod || 'Unknown');
+                          const isPaid = payment.paymentStatus === 'Paid';
+                          const isSuccess = payment.paymentVerificationStatus === 'Success';
+                          const createdDate = new Date(payment.createdAt).toLocaleDateString();
+
+                          return (
+                            <tr key={payment._id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                              <td className="px-4 py-3 font-semibold text-gray-900 dark:text-gray-100">{formatPrice(payment.totalAmount)}</td>
+                              <td className="px-4 py-3 text-gray-700 dark:text-gray-300">
+                                <span className="inline-flex rounded-full bg-pink-50 px-3 py-1 text-xs font-semibold text-[#ff3366] dark:bg-gray-800 dark:text-pink-300">
+                                  {paymentMethod}
+                                </span>
+                              </td>
+                              <td className="px-4 py-3 text-gray-700 dark:text-gray-300">
+                                <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${isSuccess ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300' : 'bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'}`}>
+                                  {payment.paymentVerificationStatus}
+                                </span>
+                              </td>
+                              <td className="px-4 py-3 text-gray-700 dark:text-gray-300">
+                                <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${isPaid ? 'bg-teal-50 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300' : 'bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-300'}`}>
+                                  {isPaid ? 'Paid' : 'Unpaid'}
+                                </span>
+                              </td>
+                              <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{createdDate}</td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {payments.length > PAYMENTS_ITEMS_PER_PAGE && (
+                    <div className="mt-6 flex items-center justify-between border-t border-gray-100 pt-4 dark:border-gray-700">
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        Page {paymentsPage} of {Math.ceil(payments.length / PAYMENTS_ITEMS_PER_PAGE)}
+                      </p>
+
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setPaymentsPage((prev) => Math.max(1, prev - 1))}
+                          disabled={paymentsPage === 1}
+                          className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:border-pink-400 hover:text-pink-600 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
+                        >
+                          Prev
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setPaymentsPage((prev) => Math.min(Math.ceil(payments.length / PAYMENTS_ITEMS_PER_PAGE), prev + 1))}
+                          disabled={paymentsPage === Math.ceil(payments.length / PAYMENTS_ITEMS_PER_PAGE)}
+                          className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:border-pink-400 hover:text-pink-600 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
+                        >
+                          Next
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
