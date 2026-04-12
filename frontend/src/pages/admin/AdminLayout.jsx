@@ -8,6 +8,11 @@ const navItems = [
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
     </svg>
   )},
+  { to: '/admin/reports', label: 'Reports', end: false, icon: (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-6m4 6V7m4 10v-3M5 21h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2z" />
+    </svg>
+  )},
   { to: '/admin/products', label: 'Products', end: false, icon: (
     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10" />
@@ -52,8 +57,10 @@ const AdminLayout = () => {
   const navigate = useNavigate();
   const [dark, setDark] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const isDashboardSectionOpen = location.pathname === '/admin' || location.pathname.startsWith('/admin/sales-report');
+  const isDashboardSectionOpen = location.pathname === '/admin';
   const [dashboardDropdownOpen, setDashboardDropdownOpen] = useState(isDashboardSectionOpen);
+  const isReportSectionOpen = location.pathname.startsWith('/admin/sales-report');
+  const [reportDropdownOpen, setReportDropdownOpen] = useState(isReportSectionOpen);
 
   const isOrderSectionOpen =
     location.pathname.startsWith('/admin/orders') ||
@@ -69,6 +76,12 @@ const AdminLayout = () => {
       setDashboardDropdownOpen(true);
     }
   }, [isDashboardSectionOpen]);
+
+  useEffect(() => {
+    if (isReportSectionOpen) {
+      setReportDropdownOpen(true);
+    }
+  }, [isReportSectionOpen]);
 
   useEffect(() => {
     if (isOrderSectionOpen) {
@@ -155,6 +168,35 @@ const AdminLayout = () => {
                         >
                           Overview
                         </NavLink>
+                      </div>
+                    )}
+                  </>
+                ) : item.to === '/admin/reports' ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => setReportDropdownOpen((prev) => !prev)}
+                      className={`w-full flex items-center gap-3 px-4 py-3 text-sm transition-colors ${
+                        sidebarOpen ? '' : 'justify-center'
+                      } ${
+                        isReportSectionOpen
+                          ? 'bg-indigo-600 text-white'
+                          : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                      }`}
+                    >
+                      <span className="flex-shrink-0">{item.icon}</span>
+                      {sidebarOpen && (
+                        <>
+                          <span className="flex-1 text-left">{item.label}</span>
+                          <svg xmlns="http://www.w3.org/2000/svg" className={`h-4 w-4 transition-transform ${reportDropdownOpen ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </>
+                      )}
+                    </button>
+
+                    {sidebarOpen && reportDropdownOpen && (
+                      <div className="mt-1 space-y-1">
                         <NavLink
                           to="/admin/sales-report"
                           className={({ isActive }) =>
@@ -165,7 +207,7 @@ const AdminLayout = () => {
                             }`
                           }
                         >
-                          Sales Report
+                          Sales reports
                         </NavLink>
                       </div>
                     )}
