@@ -1114,17 +1114,36 @@ const UserAccount = () => {
                           {paginatedMyReviews.map((review) => (
                             <tr key={review._id} className="align-top hover:bg-gray-50/80 dark:hover:bg-gray-800/40">
                               <td className="px-4 py-4">
-                                <div className="flex items-center gap-3">
-                                  <img
-                                    src={review?.product?.image || 'https://placehold.co/64x64?text=?'}
-                                    alt={review?.product?.name || 'Product'}
-                                    className="h-10 w-10 rounded-lg object-cover"
-                                    onError={(event) => {
-                                      event.currentTarget.src = 'https://placehold.co/64x64?text=?';
-                                    }}
-                                  />
-                                  <p className="font-semibold text-gray-900 dark:text-white">{review?.product?.name || 'Product'}</p>
-                                </div>
+                                {review?.product?._id ? (
+                                  <Link
+                                    to={`/product/${review.product._id}`}
+                                    className="group inline-flex items-center gap-3"
+                                  >
+                                    <img
+                                      src={review?.product?.image || 'https://placehold.co/64x64?text=?'}
+                                      alt={review?.product?.name || 'Product'}
+                                      className="h-10 w-10 rounded-lg object-cover"
+                                      onError={(event) => {
+                                        event.currentTarget.src = 'https://placehold.co/64x64?text=?';
+                                      }}
+                                    />
+                                    <p className="font-semibold text-gray-900 transition-colors group-hover:text-[#ff3366] dark:text-white dark:group-hover:text-pink-300">
+                                      {review?.product?.name || 'Product'}
+                                    </p>
+                                  </Link>
+                                ) : (
+                                  <div className="flex items-center gap-3">
+                                    <img
+                                      src={review?.product?.image || 'https://placehold.co/64x64?text=?'}
+                                      alt={review?.product?.name || 'Product'}
+                                      className="h-10 w-10 rounded-lg object-cover"
+                                      onError={(event) => {
+                                        event.currentTarget.src = 'https://placehold.co/64x64?text=?';
+                                      }}
+                                    />
+                                    <p className="font-semibold text-gray-900 dark:text-white">{review?.product?.name || 'Product'}</p>
+                                  </div>
+                                )}
                               </td>
                               <td className="px-4 py-4">
                                 <span className="rounded-full bg-yellow-100 px-3 py-1 text-xs font-semibold text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300">
