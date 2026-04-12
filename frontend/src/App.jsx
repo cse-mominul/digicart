@@ -27,6 +27,7 @@ import CategoryManager from './pages/admin/CategoryManager';
 import Settings from './pages/admin/Settings';
 import Campaigns from './pages/admin/Campaigns';
 import Payments from './pages/admin/Payments';
+import Expenses from './pages/admin/Expenses';
 import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
@@ -202,6 +203,7 @@ function App() {
         >
           <Route index element={<Dashboard />} />
           <Route path="sales-report" element={<SalesReport />} />
+          <Route path="expenses" element={<Expenses />} />
           <Route path="products" element={<Products />} />
           <Route path="coupons" element={<CouponVoucher />} />
           <Route path="categories" element={<CategoryManager />} />

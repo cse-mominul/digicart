@@ -64,7 +64,9 @@ const AdminLayout = () => {
   const navigate = useNavigate();
   const [dark, setDark] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const isReportSectionOpen = location.pathname.startsWith('/admin/sales-report');
+  const isReportSectionOpen =
+    location.pathname.startsWith('/admin/sales-report') ||
+    location.pathname.startsWith('/admin/expenses');
   const [reportDropdownOpen, setReportDropdownOpen] = useState(isReportSectionOpen);
 
   const isOrderSectionOpen =
@@ -225,6 +227,18 @@ const AdminLayout = () => {
                           }
                         >
                           Sales reports
+                        </NavLink>
+                        <NavLink
+                          to="/admin/expenses"
+                          className={({ isActive }) =>
+                            `ml-10 mr-2 flex items-center rounded-lg px-3 py-2 text-xs transition-colors ${
+                              isActive
+                                ? 'bg-indigo-500 text-white'
+                                : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                            }`
+                          }
+                        >
+                          Expense
                         </NavLink>
                       </div>
                     )}

@@ -18,6 +18,11 @@ const {
 	markNotificationRead,
 	markAllNotificationsRead,
 } = require('../controllers/notificationController');
+const {
+	getExpenses,
+	createExpense,
+	deleteExpense,
+} = require('../controllers/expenseController');
 const { protect } = require('../middleware/authMiddleware');
 const requireAdmin = require('../middleware/requireAdmin');
 
@@ -36,5 +41,8 @@ router.get('/abandoned-carts', protect, requireAdmin, getAbandonedCartInsights);
 router.get('/abandoned-carts/:userId', protect, requireAdmin, getAbandonedCartDetailsByAdmin);
 router.put('/abandoned-carts/:userId', protect, requireAdmin, resolveAbandonedCartByAdmin);
 router.delete('/abandoned-carts/:userId', protect, requireAdmin, deleteAbandonedCartByAdmin);
+router.get('/expenses', protect, requireAdmin, getExpenses);
+router.post('/expenses', protect, requireAdmin, createExpense);
+router.delete('/expenses/:id', protect, requireAdmin, deleteExpense);
 
 module.exports = router;
