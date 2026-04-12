@@ -10,6 +10,7 @@ import {
   Tooltip,
   Area,
   Line,
+  Bar,
 } from 'recharts';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -344,9 +345,9 @@ const SalesReport = () => {
                       formatter={(value) => formatPrice(Number(value) || 0)}
                       contentStyle={{ borderRadius: 10, border: '1px solid #e5e7eb' }}
                     />
+                    <Bar dataKey="refund" fill="#60a5fa" barSize={14} radius={[6, 6, 0, 0]} />
                     <Area type="monotone" dataKey="earning" stroke="#10b981" fill="#86efac" fillOpacity={0.25} strokeWidth={2.5} />
                     <Line type="monotone" dataKey="earning" stroke="#10b981" strokeWidth={2.5} dot={false} />
-                    <Line type="monotone" dataKey="refund" stroke="#3b82f6" strokeWidth={2.5} dot={false} />
                   </ComposedChart>
                 </ResponsiveContainer>
               </div>
