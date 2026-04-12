@@ -356,6 +356,16 @@ const UserAccount = () => {
     return Boolean(order?.isPaid || paymentStatus === 'paid' || isCompleted);
   };
 
+  const getPaymentMethodLabel = (method) => {
+    const normalizedMethod = String(method || '').trim().toLowerCase();
+    if (!normalizedMethod) return 'Unknown';
+    if (normalizedMethod === 'bkash') return 'bKash';
+    if (normalizedMethod === 'nogod' || normalizedMethod === 'nagad') return 'Nagad';
+    if (normalizedMethod === 'cod') return 'Cash on Delivery';
+    if (normalizedMethod === 'upay') return 'Upay';
+    return normalizedMethod.replace(/[_-]+/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase());
+  };
+
   const getOrderBadgeClasses = (status) => {
     if (status === 'Cancelled') {
       return 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300';
@@ -1156,7 +1166,7 @@ const UserAccount = () => {
                       </thead>
                       <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                         {payments.slice((paymentsPage - 1) * PAYMENTS_ITEMS_PER_PAGE, paymentsPage * PAYMENTS_ITEMS_PER_PAGE).map((payment) => {
-                          const paymentMethod = payment.paymentMethod === 'bkash' ? 'bKash' : payment.paymentMethod === 'nogod' ? 'Nagad' : payment.paymentMethod === 'cod' ? 'Cash on Delivery' : (payment.paymentMethod || 'Unknown');
+                          const paymentMethod = getPaymentMethodLabel(payment.paymentMethod);
                           const isPaid = payment.paymentStatus === 'Paid';
                           const isSuccess = payment.paymentVerificationStatus === 'Success';
                           const createdDate = new Date(payment.createdAt).toLocaleDateString();
@@ -1714,8 +1724,9 @@ const UserAccount = () => {
                 </div>
                 <div className="rounded-2xl bg-gray-50 p-4 dark:bg-gray-800">
                   <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Payment</p>
-                  <p className="mt-2 text-sm font-semibold text-gray-900 dark:text-white">
-                    {isOrderPaid(selectedOrder) ? 'Paid' : 'Unpaid'}
+                  <p className="mt-2 text-sm font-semibold text-gray-900 dark:text-white">{isOrderPaid(selectedOrder) ? 'Paid' : 'Unpaid'}</p>
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    Method: <span className="font-semibold text-gray-700 dark:text-gray-200">{getPaymentMethodLabel(selectedOrder?.paymentMethod)}</span>
                   </p>
                 </div>
               </div>
