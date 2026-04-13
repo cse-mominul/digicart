@@ -734,51 +734,51 @@ const UserAccount = () => {
 
         <section className="lg:col-span-9">
           {section === 'profile' && (
-            <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900 sm:p-5 min-h-[420px]">
-              <h1 className="mb-5 text-lg font-semibold text-gray-900 dark:text-white sm:text-xl">Profile Information</h1>
-              <form onSubmit={handleProfileSave} className="max-w-xl space-y-3.5">
+            <div className="rounded-xl border border-gray-100 bg-white p-2 shadow-sm dark:border-gray-800 dark:bg-gray-900 sm:p-3 min-h-[320px]">
+              <h1 className="mb-3 text-base font-semibold text-gray-900 dark:text-white sm:text-lg">Profile Information</h1>
+              <form onSubmit={handleProfileSave} className="max-w-md space-y-2.5">
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
+                  <label className="mb-0.5 block text-xs font-medium text-gray-700 dark:text-gray-300">Name</label>
                   <input
                     type="text"
                     value={profileForm.name}
                     onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })}
-                    className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                    className="w-full rounded border border-gray-300 bg-white px-2 py-1.5 text-xs text-gray-900 outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
+                  <label className="mb-0.5 block text-xs font-medium text-gray-700 dark:text-gray-300">Email</label>
                   <input
                     type="email"
                     value={profileForm.email}
                     onChange={(e) => setProfileForm({ ...profileForm, email: e.target.value })}
-                    className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                    className="w-full rounded border border-gray-300 bg-white px-2 py-1.5 text-xs text-gray-900 outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Phone Number</label>
+                  <label className="mb-0.5 block text-xs font-medium text-gray-700 dark:text-gray-300">Phone Number</label>
                   <input
                     type="text"
                     value={profileForm.phone}
                     onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
-                    className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                    className="w-full rounded border border-gray-300 bg-white px-2 py-1.5 text-xs text-gray-900 outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                     placeholder="Enter your phone number"
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Current Password</label>
+                  <label className="mb-0.5 block text-xs font-medium text-gray-700 dark:text-gray-300">Current Password</label>
                   <div className="relative">
                     <input
                       type={showCurrentPassword ? 'text' : 'password'}
                       value={profileForm.currentPassword}
                       onChange={(e) => setProfileForm({ ...profileForm, currentPassword: e.target.value })}
                       placeholder="Enter current password"
-                      className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 pr-16 text-gray-900 outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                      className="w-full rounded border border-gray-300 bg-white px-2 py-1.5 pr-12 text-xs text-gray-900 outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                     />
                     <button
                       type="button"
                       onClick={() => setShowCurrentPassword((prev) => !prev)}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 rounded px-2 py-1 text-xs font-medium text-blue-600 hover:bg-blue-50 dark:text-blue-300 dark:hover:bg-gray-700"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 rounded px-1.5 py-0.5 text-[10px] font-medium text-blue-600 hover:bg-blue-50 dark:text-blue-300 dark:hover:bg-gray-700"
                       aria-label={showCurrentPassword ? 'Hide current password' : 'Show current password'}
                     >
                       {showCurrentPassword ? 'Hide' : 'Show'}
@@ -786,19 +786,19 @@ const UserAccount = () => {
                   </div>
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">New Password</label>
+                  <label className="mb-0.5 block text-xs font-medium text-gray-700 dark:text-gray-300">New Password</label>
                   <div className="relative">
                     <input
                       type={showNewPassword ? 'text' : 'password'}
                       value={profileForm.newPassword}
                       onChange={(e) => setProfileForm({ ...profileForm, newPassword: e.target.value })}
                       placeholder="Enter new password"
-                      className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 pr-16 text-gray-900 outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                      className="w-full rounded border border-gray-300 bg-white px-2 py-1.5 pr-12 text-xs text-gray-900 outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                     />
                     <button
                       type="button"
                       onClick={() => setShowNewPassword((prev) => !prev)}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 rounded px-2 py-1 text-xs font-medium text-blue-600 hover:bg-blue-50 dark:text-blue-300 dark:hover:bg-gray-700"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 rounded px-1.5 py-0.5 text-[10px] font-medium text-blue-600 hover:bg-blue-50 dark:text-blue-300 dark:hover:bg-gray-700"
                       aria-label={showNewPassword ? 'Hide new password' : 'Show new password'}
                     >
                       {showNewPassword ? 'Hide' : 'Show'}
@@ -808,7 +808,7 @@ const UserAccount = () => {
                 <button
                   type="submit"
                   disabled={profileSaving}
-                  className="rounded-[12px] bg-[#2563eb] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#1d4ed8]"
+                  className="rounded-[10px] bg-[#2563eb] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#1d4ed8]"
                 >
                   {profileSaving ? 'Saving...' : 'Save Changes'}
                 </button>

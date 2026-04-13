@@ -31,7 +31,6 @@ const Settings = () => {
     supportEmail: 'support@digicart.com',
     salesEmail: 'sales@digicart.com',
     siteTitle: 'DigiCart',
-    siteLogoUrl: '',
     faviconUrl: '',
     siteSlogan: 'Rebranded Sellzy',
     footerCopyrightText: '© 2026 DigiCart. All rights reserved.',
@@ -74,7 +73,6 @@ const Settings = () => {
           supportEmail: data?.supportEmail || 'support@digicart.com',
           salesEmail: data?.salesEmail || 'sales@digicart.com',
           siteTitle: data?.siteTitle || 'DigiCart',
-          siteLogoUrl: data?.siteLogoUrl || '',
           faviconUrl: data?.faviconUrl || '',
           siteSlogan: data?.siteSlogan || 'Rebranded Sellzy',
           footerCopyrightText: data?.footerCopyrightText || '© 2026 DigiCart. All rights reserved.',
@@ -226,7 +224,6 @@ const Settings = () => {
       supportEmail: settingsForm.supportEmail,
       salesEmail: settingsForm.salesEmail,
       siteTitle: settingsForm.siteTitle,
-      siteLogoUrl: settingsForm.siteLogoUrl,
       faviconUrl: settingsForm.faviconUrl,
       siteSlogan: settingsForm.siteSlogan,
       footerCopyrightText: settingsForm.footerCopyrightText,
@@ -247,7 +244,6 @@ const Settings = () => {
       supportEmail: data?.supportEmail || settingsForm.supportEmail,
       salesEmail: data?.salesEmail || settingsForm.salesEmail,
       siteTitle: data?.siteTitle || settingsForm.siteTitle,
-      siteLogoUrl: data?.siteLogoUrl || settingsForm.siteLogoUrl,
       faviconUrl: data?.faviconUrl || settingsForm.faviconUrl,
       siteSlogan: data?.siteSlogan || settingsForm.siteSlogan,
       footerCopyrightText: data?.footerCopyrightText || settingsForm.footerCopyrightText,
@@ -928,21 +924,7 @@ const Settings = () => {
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm text-gray-300 mb-1">Logo URL</label>
-                  <input
-                    type="url"
-                    value={settingsForm.siteLogoUrl}
-                    onChange={(event) =>
-                      setSettingsForm((prev) => ({ ...prev, siteLogoUrl: event.target.value }))
-                    }
-                    placeholder="https://example.com/logo.png"
-                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  <p className="mt-1 text-xs text-gray-400">
-                    Recommended logo size: 320x80 px (or similar 4:1 ratio), PNG/SVG, transparent background.
-                  </p>
-                </div>
+
 
                 <div>
                   <label className="block text-sm text-gray-300 mb-1">Favicon URL</label>
