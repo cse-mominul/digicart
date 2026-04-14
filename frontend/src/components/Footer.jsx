@@ -83,9 +83,9 @@ const Footer = () => {
 
   const aboutLinks = [
     { label: 'Contact us', href: '/contact-us' },
-    { label: 'Careers', href: '/careers' },
-    { label: 'Press & Media', href: '/press' },
-    { label: 'Blog', href: '/blog' },
+    { label: 'Careers', href: '/contact-us' },
+    { label: 'Press & Media', href: '/contact-us' },
+    { label: 'Blog', href: '/contact-us' },
   ];
 
   const accountLinks = [
