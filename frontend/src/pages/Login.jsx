@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import logoLight from '../assets/logo-light.png';
+import logoDark from '../assets/logo-dark.png';
 import { Link, useNavigate } from 'react-router-dom';
 import API from '../api/axios';
 import { useAuth } from '../context/AuthContext';
@@ -29,7 +31,18 @@ const Login = () => {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-[radial-gradient(circle_at_top,_rgba(37,99,235,0.08),_transparent_30%),linear-gradient(180deg,#ffffff_0%,#f8fafc_52%,#eef2ff_100%)] dark:bg-[radial-gradient(circle_at_top,_rgba(37,99,235,0.12),_transparent_30%),linear-gradient(180deg,#020617_0%,#0f172a_55%,#111827_100%)]">
       <div className="bg-white/90 dark:bg-slate-900/90 rounded-2xl shadow-2xl p-8 w-full max-w-md border border-white/70 dark:border-white/10 backdrop-blur-xl">
-        <h1 className="text-3xl font-extrabold text-center text-[#2563eb] dark:text-blue-400 mb-2 tracking-tight">DigiCart</h1>
+        <div className="flex justify-center mb-2">
+          <img
+            src={logoLight}
+            alt="Logo"
+            className="h-12 w-auto block dark:hidden"
+          />
+          <img
+            src={logoDark}
+            alt="Logo"
+            className="h-12 w-auto hidden dark:block"
+          />
+        </div>
         <p className="text-center text-slate-500 dark:text-slate-300 mb-8">Sign in to your account</p>
 
         <form onSubmit={handleSubmit} className="space-y-5">
