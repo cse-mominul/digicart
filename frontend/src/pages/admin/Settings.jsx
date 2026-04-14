@@ -31,7 +31,6 @@ const Settings = () => {
     supportEmail: 'support@digicart.com',
     salesEmail: 'sales@digicart.com',
     siteTitle: 'DigiCart',
-    faviconUrl: '',
     siteSlogan: 'Rebranded Sellzy',
     footerCopyrightText: '© 2026 DigiCart. All rights reserved.',
     siteDescription: 'DigiCart helps modern shoppers discover top-rated products at honest prices, fast delivery, and smooth checkout experiences.',
@@ -73,7 +72,6 @@ const Settings = () => {
           supportEmail: data?.supportEmail || 'support@digicart.com',
           salesEmail: data?.salesEmail || 'sales@digicart.com',
           siteTitle: data?.siteTitle || 'DigiCart',
-          faviconUrl: data?.faviconUrl || '',
           siteSlogan: data?.siteSlogan || 'Rebranded Sellzy',
           footerCopyrightText: data?.footerCopyrightText || '© 2026 DigiCart. All rights reserved.',
           siteDescription: data?.siteDescription || 'DigiCart helps modern shoppers discover top-rated products at honest prices, fast delivery, and smooth checkout experiences.',
@@ -224,7 +222,6 @@ const Settings = () => {
       supportEmail: settingsForm.supportEmail,
       salesEmail: settingsForm.salesEmail,
       siteTitle: settingsForm.siteTitle,
-      faviconUrl: settingsForm.faviconUrl,
       siteSlogan: settingsForm.siteSlogan,
       footerCopyrightText: settingsForm.footerCopyrightText,
       siteDescription: settingsForm.siteDescription,
@@ -244,7 +241,6 @@ const Settings = () => {
       supportEmail: data?.supportEmail || settingsForm.supportEmail,
       salesEmail: data?.salesEmail || settingsForm.salesEmail,
       siteTitle: data?.siteTitle || settingsForm.siteTitle,
-      faviconUrl: data?.faviconUrl || settingsForm.faviconUrl,
       siteSlogan: data?.siteSlogan || settingsForm.siteSlogan,
       footerCopyrightText: data?.footerCopyrightText || settingsForm.footerCopyrightText,
       siteDescription: data?.siteDescription || settingsForm.siteDescription,
@@ -926,21 +922,6 @@ const Settings = () => {
 
 
 
-                <div>
-                  <label className="block text-sm text-gray-300 mb-1">Favicon URL</label>
-                  <input
-                    type="url"
-                    value={settingsForm.faviconUrl}
-                    onChange={(event) =>
-                      setSettingsForm((prev) => ({ ...prev, faviconUrl: event.target.value }))
-                    }
-                    placeholder="https://example.com/favicon.ico"
-                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  <p className="mt-1 text-xs text-gray-400">
-                    Recommended favicon size: 32x32 px (ICO/PNG).
-                  </p>
-                </div>
 
               </div>
 
