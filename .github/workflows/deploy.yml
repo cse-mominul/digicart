@@ -36,7 +36,7 @@ jobs:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
           password: ${{ secrets.VM_PASSWORD }} # key এর পরিবর্তে password ব্যবহার করা হয়েছে
-          port: 22
+          port: 8899
           script: |
             # Docker Hub থেকে লেটেস্ট ইমেজটি নামানো
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/mern-app:latest
