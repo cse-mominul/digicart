@@ -12,13 +12,13 @@ dotenv.config();
 const demoUsers = [
   {
     name: 'Admin User',
-    email: 'admin@digicart.com',
+    email: 'admin@clickandpick.com',
     password: 'admin123',
     role: 'admin',
   },
   {
     name: 'John Customer',
-    email: 'user@digicart.com',
+    email: 'user@clickandpick.com',
     password: 'user123',
     role: 'user',
   },
@@ -31,6 +31,7 @@ const demoProducts = [
     description: 'High-performance laptop with Ryzen 7 CPU, 16GB RAM, and RTX graphics for gaming and development.',
     category: 'Laptops',
     countInStock: 8,
+    brand: 'DigiBrand',
     stock: 8,
     image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800',
     images: [
@@ -52,6 +53,7 @@ const demoProducts = [
     description: 'Comfort-focused wireless mouse with adjustable DPI and long battery life for daily productivity.',
     category: 'Accessories',
     countInStock: 35,
+    brand: 'DigiBrand',
     stock: 35,
     image: 'https://images.unsplash.com/photo-1527814050087-3793815479db?w=800',
     images: [
@@ -72,6 +74,7 @@ const demoProducts = [
     description: 'Tactile mechanical keyboard with customizable RGB backlight and durable key switches.',
     category: 'Accessories',
     countInStock: 20,
+    brand: 'DigiBrand',
     stock: 20,
     image: 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=800',
     images: [
@@ -92,6 +95,7 @@ const demoProducts = [
     description: 'Crisp 4K monitor with accurate colors and thin bezels, ideal for coding, design, and media.',
     category: 'Monitors',
     countInStock: 12,
+    brand: 'DigiBrand',
     stock: 12,
     image: 'https://images.unsplash.com/photo-1527443224154-c4b4e0ad64df?w=800',
     images: [
@@ -112,6 +116,7 @@ const demoProducts = [
     description: 'Multi-port dock with HDMI, Ethernet, and USB expansion to turn your laptop into a full workstation.',
     category: 'Accessories',
     countInStock: 18,
+    brand: 'DigiBrand',
     stock: 18,
     image: 'https://images.unsplash.com/photo-1625948515291-69613efd103f?w=800',
     images: [
@@ -132,6 +137,7 @@ const demoProducts = [
     description: 'Over-ear Bluetooth headphones with active noise cancellation and immersive audio quality.',
     category: 'Audio',
     countInStock: 22,
+    brand: 'DigiBrand',
     stock: 22,
     image: 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=800',
     images: [
@@ -152,6 +158,7 @@ const demoProducts = [
     description: 'Fast and durable portable SSD with 1TB storage capacity for backup and file transfers.',
     category: 'Storage',
     countInStock: 30,
+    brand: 'DigiBrand',
     stock: 30,
     image: 'https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=800',
     images: [
