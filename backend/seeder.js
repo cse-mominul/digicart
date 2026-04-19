@@ -2,36 +2,10 @@ const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const connectDB = require('./config/db');
-const User = require('./models/User');
-const Category = require('./models/Category');
-const Product = require('./models/Product');
-const Coupon = require('./models/Coupon');
 
-dotenv.config();
-
-const demoUsers = [
-  {
-    name: 'Admin User',
-    email: 'admin@clickandpick.com',
-    password: 'admin123',
-    role: 'admin',
-  },
-  {
-    name: 'John Customer',
-    email: 'user@clickandpick.com',
-    password: 'user123',
-    role: 'user',
-  },
-];
-
-const demoProducts = [
-  {
-    name: 'Gaming Laptop Pro X15',
-    price: 1299.99,
-    description: 'High-performance laptop with Ryzen 7 CPU, 16GB RAM, and RTX graphics for gaming and development.',
     category: 'Laptops',
     countInStock: 8,
-    brand: 'DigiBrand',
+    brand: 'Click&Pick',
     stock: 8,
     image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800',
     images: [
@@ -53,7 +27,7 @@ const demoProducts = [
     description: 'Comfort-focused wireless mouse with adjustable DPI and long battery life for daily productivity.',
     category: 'Accessories',
     countInStock: 35,
-    brand: 'DigiBrand',
+    brand: 'Click&Pick',
     stock: 35,
     image: 'https://images.unsplash.com/photo-1527814050087-3793815479db?w=800',
     images: [
@@ -74,7 +48,7 @@ const demoProducts = [
     description: 'Tactile mechanical keyboard with customizable RGB backlight and durable key switches.',
     category: 'Accessories',
     countInStock: 20,
-    brand: 'DigiBrand',
+    brand: 'Click&Pick',
     stock: 20,
     image: 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=800',
     images: [
@@ -95,7 +69,7 @@ const demoProducts = [
     description: 'Crisp 4K monitor with accurate colors and thin bezels, ideal for coding, design, and media.',
     category: 'Monitors',
     countInStock: 12,
-    brand: 'DigiBrand',
+    brand: 'Click&Pick',
     stock: 12,
     image: 'https://images.unsplash.com/photo-1527443224154-c4b4e0ad64df?w=800',
     images: [
@@ -116,7 +90,7 @@ const demoProducts = [
     description: 'Multi-port dock with HDMI, Ethernet, and USB expansion to turn your laptop into a full workstation.',
     category: 'Accessories',
     countInStock: 18,
-    brand: 'DigiBrand',
+    brand: 'Click&Pick',
     stock: 18,
     image: 'https://images.unsplash.com/photo-1625948515291-69613efd103f?w=800',
     images: [
@@ -137,7 +111,7 @@ const demoProducts = [
     description: 'Over-ear Bluetooth headphones with active noise cancellation and immersive audio quality.',
     category: 'Audio',
     countInStock: 22,
-    brand: 'DigiBrand',
+    brand: 'Click&Pick',
     stock: 22,
     image: 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=800',
     images: [
@@ -158,7 +132,7 @@ const demoProducts = [
     description: 'Fast and durable portable SSD with 1TB storage capacity for backup and file transfers.',
     category: 'Storage',
     countInStock: 30,
-    brand: 'DigiBrand',
+    brand: 'Click&Pick',
     stock: 30,
     image: 'https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=800',
     images: [
@@ -175,6 +149,7 @@ const demoProducts = [
   },
   {
     name: '4K USB Webcam',
+    brand: 'Click&Pick',
     price: 89.99,
     description: 'Crystal-clear 4K webcam with built-in microphone for online meetings and streaming.',
     category: 'Accessories',
@@ -195,6 +170,7 @@ const demoProducts = [
   },
   {
     name: 'Ultra-Wide Monitor 34"',
+    brand: 'Click&Pick',
     price: 499.99,
     description: 'Immersive 34-inch ultra-wide curved monitor with HDR support for gaming and productivity.',
     category: 'Monitors',
@@ -215,6 +191,7 @@ const demoProducts = [
   },
   {
     name: 'USB Hub 7-Port',
+    brand: 'Click&Pick',
     price: 29.99,
     description: 'Expand your laptop connectivity with 7 USB 3.0 ports supporting high-speed data transfer.',
     category: 'Accessories',
@@ -235,6 +212,7 @@ const demoProducts = [
   },
   {
     name: 'Laptop Stand Adjustable',
+    brand: 'Click&Pick',
     price: 34.99,
     description: 'Ergonomic aluminum laptop stand with adjustable height for better posture and ventilation.',
     category: 'Accessories',
@@ -253,288 +231,10 @@ const demoProducts = [
       { label: 'Warranty', value: '6 Months' },
     ],
   },
-  {
-    name: 'Wireless Charging Pad',
-    price: 24.99,
-    description: 'Fast 15W wireless charging pad compatible with all Qi-enabled devices.',
-    category: 'Accessories',
-    countInStock: 45,
-    stock: 45,
-    image: 'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=800',
-    images: [
-      'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=800',
-      'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=801',
-      'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=802',
-    ],
-    additionalInfo: [
-      { label: 'Power', value: '15W' },
-      { label: 'Compatibility', value: 'Qi Enabled' },
-      { label: 'LED Indicator', value: 'Yes' },
-      { label: 'Warranty', value: '1 Year' },
-    ],
-  },
-  {
-    name: 'HDMI 2.1 Cable 6ft',
-    price: 14.99,
-    description: 'High-speed HDMI 2.1 cable supporting 8K resolution and enhanced audio formats.',
-    category: 'Cables',
-    countInStock: 100,
-    stock: 100,
-    image: 'https://images.unsplash.com/photo-1625948515291-69613efd103f?w=800',
-    images: [
-      'https://images.unsplash.com/photo-1625948515291-69613efd103f?w=800',
-      'https://images.unsplash.com/photo-1625948515291-69613efd103f?w=801',
-      'https://images.unsplash.com/photo-1625948515291-69613efd103f?w=802',
-    ],
-    additionalInfo: [
-      { label: 'Standard', value: 'HDMI 2.1' },
-      { label: 'Length', value: '6 feet' },
-      { label: 'Max Resolution', value: '8K' },
-      { label: 'Warranty', value: '2 Years' },
-    ],
-  },
-  {
-    name: 'USB-C Multiport Adapter',
-    price: 44.99,
-    description: 'Compact USB-C hub with HDMI, USB 3.0, and card reader for MacBook and laptops.',
-    category: 'Accessories',
-    countInStock: 28,
-    stock: 28,
-    image: 'https://images.unsplash.com/photo-1625948515291-69613efd103f?w=800',
-    images: [
-      'https://images.unsplash.com/photo-1625948515291-69613efd103f?w=800',
-      'https://images.unsplash.com/photo-1625948515291-69613efd103f?w=801',
-      'https://images.unsplash.com/photo-1625948515291-69613efd103f?w=802',
-    ],
-    additionalInfo: [
-      { label: 'Ports', value: 'HDMI, USB 3.0, Card Reader' },
-      { label: 'Input', value: 'USB-C' },
-      { label: 'Compatibility', value: 'Universal' },
-      { label: 'Warranty', value: '1 Year' },
-    ],
-  },
-  {
-    name: 'Desk Lamp LED Adjustable',
-    price: 39.99,
-    description: 'Bright adjustable LED desk lamp with multiple brightness levels and flexible arm.',
-    category: 'Lighting',
-    countInStock: 32,
-    stock: 32,
-    image: 'https://images.unsplash.com/photo-1565636192335-14f752fe1e5a?w=800',
-    images: [
-      'https://images.unsplash.com/photo-1565636192335-14f752fe1e5a?w=800',
-      'https://images.unsplash.com/photo-1565636192335-14f752fe1e5a?w=801',
-      'https://images.unsplash.com/photo-1565636192335-14f752fe1e5a?w=802',
-    ],
-    additionalInfo: [
-      { label: 'Type', value: 'LED' },
-      { label: 'Brightness', value: 'Adjustable' },
-      { label: 'Color Temperature', value: '3000-6500K' },
-      { label: 'Warranty', value: '1 Year' },
-    ],
-  },
-  {
-    name: 'Webcam Ring Light',
-    price: 19.99,
-    description: 'Compact ring light for webcam to improve video quality during online meetings and streams.',
-    category: 'Lighting',
-    countInStock: 55,
-    stock: 55,
-    image: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=800',
-    images: [
-      'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=800',
-      'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=801',
-      'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=802',
-    ],
-    additionalInfo: [
-      { label: 'Brightness', value: 'Adjustable' },
-      { label: 'Color', value: 'White' },
-      { label: 'Power', value: 'USB' },
-      { label: 'Warranty', value: '6 Months' },
-    ],
-  },
-  {
-    name: 'Gaming Mouse Pad Large',
-    price: 29.99,
-    description: 'Extended gaming mouse pad with smooth surface and non-slip base for precise control.',
-    category: 'Accessories',
-    countInStock: 60,
-    stock: 60,
-    image: 'https://images.unsplash.com/photo-1527814050087-3793815479db?w=800',
-    images: [
-      'https://images.unsplash.com/photo-1527814050087-3793815479db?w=800',
-      'https://images.unsplash.com/photo-1527814050087-3793815479db?w=801',
-      'https://images.unsplash.com/photo-1527814050087-3793815479db?w=802',
-    ],
-    additionalInfo: [
-      { label: 'Size', value: '36 x 16 inch' },
-      { label: 'Surface', value: 'Smooth' },
-      { label: 'Base', value: 'Non-slip' },
-      { label: 'Warranty', value: '6 Months' },
-    ],
-  },
-  {
-    name: 'Laptop Cooling Pad',
-    price: 29.99,
-    description: 'Efficient cooling pad with fans to prevent laptop overheating during intense usage.',
-    category: 'Accessories',
-    countInStock: 24,
-    stock: 24,
-    image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800',
-    images: [
-      'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800',
-      'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=801',
-      'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=802',
-    ],
-    additionalInfo: [
-      { label: 'Fans', value: '2 Fans' },
-      { label: 'Noise Level', value: 'Quiet' },
-      { label: 'Speed Control', value: 'Yes' },
-      { label: 'Warranty', value: '1 Year' },
-    ],
-  },
-  {
-    name: 'Portable Phone Charger 20000mAh',
-    price: 34.99,
-    description: 'High-capacity power bank with fast charging support for multiple devices.',
-    category: 'Power',
-    countInStock: 42,
-    stock: 42,
-    image: 'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=800',
-    images: [
-      'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=800',
-      'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=801',
-      'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=802',
-    ],
-    additionalInfo: [
-      { label: 'Capacity', value: '20000mAh' },
-      { label: 'Output', value: 'Fast Charging' },
-      { label: 'Ports', value: 'Dual USB' },
-      { label: 'Warranty', value: '1 Year' },
-    ],
-  },
-  {
-    name: 'USB-C Power Adapter 65W',
-    price: 49.99,
-    description: 'Compact and powerful USB-C adapter for charging laptops and mobile devices quickly.',
-    category: 'Power',
-    countInStock: 35,
-    stock: 35,
-    image: 'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=800',
-    images: [
-      'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=800',
-      'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=801',
-      'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=802',
-    ],
-    additionalInfo: [
-      { label: 'Power', value: '65W' },
-      { label: 'Input', value: '100-240V' },
-      { label: 'Output', value: 'USB-C' },
-      { label: 'Warranty', value: '2 Years' },
-    ],
-  },
-  {
-    name: 'Mechanical Switch Keyboard RGB',
-    price: 119.99,
-    description: 'Professional mechanical keyboard with hot-swappable switches and programmable keys.',
-    category: 'Accessories',
-    countInStock: 16,
-    stock: 16,
-    image: 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=800',
-    images: [
-      'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=800',
-      'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=801',
-      'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=802',
-    ],
-    additionalInfo: [
-      { label: 'Switch', value: 'Hot-swappable' },
-      { label: 'RGB Backlight', value: 'Per-key' },
-      { label: 'Layout', value: 'Full Size' },
-      { label: 'Warranty', value: '1 Year' },
-    ],
-  },
-  {
-    name: 'Studio Microphone Condenser',
-    price: 79.99,
-    description: 'Professional condenser microphone with tripod stand for streaming, podcasting, and recording.',
-    category: 'Audio',
-    countInStock: 14,
-    stock: 14,
-    image: 'https://images.unsplash.com/photo-1516321496761-c3904e2b4848?w=800',
-    images: [
-      'https://images.unsplash.com/photo-1516321496761-c3904e2b4848?w=800',
-      'https://images.unsplash.com/photo-1516321496761-c3904e2b4848?w=801',
-      'https://images.unsplash.com/photo-1516321496761-c3904e2b4848?w=802',
-    ],
-    additionalInfo: [
-      { label: 'Type', value: 'Condenser' },
-      { label: 'Frequency Response', value: '20Hz-20kHz' },
-      { label: 'Tripod', value: 'Included' },
-      { label: 'Warranty', value: '1 Year' },
-    ],
-  },
-  {
-    name: 'Portable Bluetooth Speaker',
-    price: 59.99,
-    description: 'Compact waterproof Bluetooth speaker with 12-hour battery and 360-degree sound.',
-    category: 'Audio',
-    countInStock: 26,
-    stock: 26,
-    image: 'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=800',
-    images: [
-      'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=800',
-      'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=801',
-      'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=802',
-    ],
-    additionalInfo: [
-      { label: 'Waterproof', value: 'IPX7' },
-      { label: 'Battery', value: '12 Hours' },
-      { label: 'Sound', value: '360-degree' },
-      { label: 'Warranty', value: '1 Year' },
-    ],
-  },
-  {
-    name: 'Gaming Headset 7.1 Surround',
-    price: 89.99,
-    description: 'Immersive 7.1 surround sound headset with noise-cancelling mic for competitive gaming.',
-    category: 'Audio',
-    countInStock: 18,
-    stock: 18,
-    image: 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=800',
-    images: [
-      'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=800',
-      'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=801',
-      'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=802',
-    ],
-    additionalInfo: [
-      { label: 'Audio', value: '7.1 Surround' },
-      { label: 'Microphone', value: 'Noise-cancelling' },
-      { label: 'Connectivity', value: 'USB' },
-      { label: 'Warranty', value: '1 Year' },
-    ],
-  },
-  {
-    name: 'Desktop Computer Tower i7',
-    price: 899.99,
-    description: 'Powerful desktop PC with Intel i7 processor, 16GB RAM, and 512GB SSD for work and gaming.',
-    category: 'Computers',
-    countInStock: 6,
-    stock: 6,
-    image: 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=800',
-    images: [
-      'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=800',
-      'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=801',
-      'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=802',
-    ],
-    additionalInfo: [
-      { label: 'Processor', value: 'Intel i7' },
-      { label: 'RAM', value: '16GB' },
-      { label: 'Storage', value: '512GB SSD' },
-      { label: 'Warranty', value: '1 Year' },
-    ],
-  },
+
   {
     name: 'Budget Laptop 15.6 HD',
+    brand: 'Click&Pick',
     price: 349.99,
     description: 'Affordable laptop with 15.6" HD display, 8GB RAM, and 256GB SSD for everyday computing.',
     category: 'Laptops',
@@ -555,6 +255,7 @@ const demoProducts = [
   },
   {
     name: 'Ultrabook 13 inch FHD',
+    brand: 'Click&Pick',
     price: 699.99,
     description: 'Lightweight and sleek ultrabook with FHD display, 256GB SSD, and 10-hour battery life.',
     category: 'Laptops',
@@ -575,6 +276,7 @@ const demoProducts = [
   },
   {
     name: 'Graphics Card RTX 3070 Ti',
+    brand: 'Click&Pick',
     price: 799.99,
     description: 'High-end graphics card for 4K gaming and professional 3D rendering with 8GB GDDR6X memory.',
     category: 'Components',
@@ -595,6 +297,7 @@ const demoProducts = [
   },
   {
     name: 'SSD 2TB NVMe M.2',
+    brand: 'Click&Pick',
     price: 179.99,
     description: 'Ultra-fast NVMe M.2 SSD with 2TB capacity for rapid system boot and file transfers.',
     category: 'Storage',
@@ -611,326 +314,6 @@ const demoProducts = [
       { label: 'Speed', value: '7000MB/s' },
       { label: 'Interface', value: 'NVMe PCIe 4.0' },
       { label: 'Warranty', value: '5 Years' },
-    ],
-  },
-  {
-    name: '27 inch Curved Gaming Monitor',
-    price: 379.99,
-    description: '27" curved monitor with 144Hz refresh rate and 1ms response time for competitive gaming.',
-    category: 'Monitors',
-    countInStock: 11,
-    stock: 11,
-    image: 'https://images.unsplash.com/photo-1527443224154-c4b4e0ad64df?w=800',
-    images: [
-      'https://images.unsplash.com/photo-1527443224154-c4b4e0ad64df?w=800',
-      'https://images.unsplash.com/photo-1527443224154-c4b4e0ad64df?w=801',
-      'https://images.unsplash.com/photo-1527443224154-c4b4e0ad64df?w=802',
-    ],
-    additionalInfo: [
-      { label: 'Screen Size', value: '27 inch' },
-      { label: 'Refresh Rate', value: '144Hz' },
-      { label: 'Response Time', value: '1ms' },
-      { label: 'Warranty', value: '2 Years' },
-    ],
-  },
-  {
-    name: 'Backup External HDD 4TB',
-    price: 89.99,
-    description: 'Reliable external hard drive with 4TB capacity for safe backup of important files.',
-    category: 'Storage',
-    countInStock: 28,
-    stock: 28,
-    image: 'https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=800',
-    images: [
-      'https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=800',
-      'https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=801',
-      'https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=802',
-    ],
-    additionalInfo: [
-      { label: 'Capacity', value: '4TB' },
-      { label: 'Interface', value: 'USB 3.0' },
-      { label: 'Speed', value: '5400 RPM' },
-      { label: 'Warranty', value: '2 Years' },
-    ],
-  },
-  {
-    name: 'Optical Mouse Wired',
-    price: 14.99,
-    description: 'Simple and reliable wired optical mouse with corded connection for desktop use.',
-    category: 'Accessories',
-    countInStock: 75,
-    stock: 75,
-    image: 'https://images.unsplash.com/photo-1527814050087-3793815479db?w=800',
-    images: [
-      'https://images.unsplash.com/photo-1527814050087-3793815479db?w=800',
-      'https://images.unsplash.com/photo-1527814050087-3793815479db?w=801',
-      'https://images.unsplash.com/photo-1527814050087-3793815479db?w=802',
-    ],
-    additionalInfo: [
-      { label: 'Type', value: 'Optical' },
-      { label: 'DPI', value: '1600' },
-      { label: 'Connection', value: 'Wired USB' },
-      { label: 'Warranty', value: '6 Months' },
-    ],
-  },
-  {
-    name: 'Mechanical Blue Switch Keyboard',
-    price: 99.99,
-    description: 'Clicky mechanical keyboard with blue switches, perfect for typing and gaming.',
-    category: 'Accessories',
-    countInStock: 19,
-    stock: 19,
-    image: 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=800',
-    images: [
-      'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=800',
-      'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=801',
-      'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=802',
-    ],
-    additionalInfo: [
-      { label: 'Switch Type', value: 'Blue Mechanical' },
-      { label: 'Backlight', value: 'RGB' },
-      { label: 'Connection', value: 'Wired' },
-      { label: 'Warranty', value: '1 Year' },
-    ],
-  },
-  {
-    name: 'Bluetooth Earbuds True Wireless',
-    price: 69.99,
-    description: 'Compact true wireless earbuds with 24-hour total battery life and touch controls.',
-    category: 'Audio',
-    countInStock: 31,
-    stock: 31,
-    image: 'https://images.unsplash.com/photo-1484704849700-f032a568e944?w=800',
-    images: [
-      'https://images.unsplash.com/photo-1484704849700-f032a568e944?w=800',
-      'https://images.unsplash.com/photo-1484704849700-f032a568e944?w=801',
-      'https://images.unsplash.com/photo-1484704849700-f032a568e944?w=802',
-    ],
-    additionalInfo: [
-      { label: 'Battery', value: '24 Hours Total' },
-      { label: 'Connectivity', value: 'Bluetooth 5.0' },
-      { label: 'Controls', value: 'Touch' },
-      { label: 'Warranty', value: '1 Year' },
-    ],
-  },
-  {
-    name: 'Phone Screen Protector Tempered Glass',
-    price: 9.99,
-    description: 'Durable tempered glass screen protector with easy installation for smartphone protection.',
-    category: 'Accessories',
-    countInStock: 150,
-    stock: 150,
-    image: 'https://images.unsplash.com/photo-1511707267537-b85faf00021e?w=800',
-    images: [
-      'https://images.unsplash.com/photo-1511707267537-b85faf00021e?w=800',
-      'https://images.unsplash.com/photo-1511707267537-b85faf00021e?w=801',
-      'https://images.unsplash.com/photo-1511707267537-b85faf00021e?w=802',
-    ],
-    additionalInfo: [
-      { label: 'Material', value: 'Tempered Glass' },
-      { label: 'Hardness', value: '9H' },
-      { label: 'Clarity', value: '99.9%' },
-      { label: 'Warranty', value: '6 Months' },
-    ],
-  },
-  {
-    name: 'Phone Case Protective Armor',
-    price: 14.99,
-    description: 'Rugged protective phone case with shock absorption and anti-drop technology.',
-    category: 'Accessories',
-    countInStock: 80,
-    stock: 80,
-    image: 'https://images.unsplash.com/photo-1511707267537-b85faf00021e?w=800',
-    images: [
-      'https://images.unsplash.com/photo-1511707267537-b85faf00021e?w=800',
-      'https://images.unsplash.com/photo-1511707267537-b85faf00021e?w=801',
-      'https://images.unsplash.com/photo-1511707267537-b85faf00021e?w=802',
-    ],
-    additionalInfo: [
-      { label: 'Material', value: 'TPU Armor' },
-      { label: 'Drop Protection', value: '6 feet' },
-      { label: 'Fit', value: 'Precise' },
-      { label: 'Warranty', value: '1 Year' },
-    ],
-  },
-  {
-    name: 'USB Type-C Cable 10ft',
-    price: 12.99,
-    description: 'Long USB-C charging cable with 10-foot length for convenient charging and data transfer.',
-    category: 'Cables',
-    countInStock: 90,
-    stock: 90,
-    image: 'https://images.unsplash.com/photo-1625948515291-69613efd103f?w=800',
-    images: [
-      'https://images.unsplash.com/photo-1625948515291-69613efd103f?w=800',
-      'https://images.unsplash.com/photo-1625948515291-69613efd103f?w=801',
-      'https://images.unsplash.com/photo-1625948515291-69613efd103f?w=802',
-    ],
-    additionalInfo: [
-      { label: 'Length', value: '10 feet' },
-      { label: 'Max Current', value: '3A' },
-      { label: 'Data Speed', value: '480Mbps' },
-      { label: 'Warranty', value: '2 Years' },
-    ],
-  },
-  {
-    name: 'Lightning Cable 6ft Apple',
-    price: 11.99,
-    description: 'Official approved Lightning cable for iPhones and iPads with 6-foot length.',
-    category: 'Cables',
-    countInStock: 95,
-    stock: 95,
-    image: 'https://images.unsplash.com/photo-1625948515291-69613efd103f?w=800',
-    images: [
-      'https://images.unsplash.com/photo-1625948515291-69613efd103f?w=800',
-      'https://images.unsplash.com/photo-1625948515291-69613efd103f?w=801',
-      'https://images.unsplash.com/photo-1625948515291-69613efd103f?w=802',
-    ],
-    additionalInfo: [
-      { label: 'Length', value: '6 feet' },
-      { label: 'Compatibility', value: 'Apple iPhones & iPads' },
-      { label: 'Certified', value: 'MFi' },
-      { label: 'Warranty', value: '1 Year' },
-    ],
-  },
-  {
-    name: 'Micro USB Cable 5ft',
-    price: 7.99,
-    description: 'Standard micro USB cable for Android devices and accessories with 5-foot length.',
-    category: 'Cables',
-    countInStock: 120,
-    stock: 120,
-    image: 'https://images.unsplash.com/photo-1625948515291-69613efd103f?w=800',
-    images: [
-      'https://images.unsplash.com/photo-1625948515291-69613efd103f?w=800',
-      'https://images.unsplash.com/photo-1625948515291-69613efd103f?w=801',
-      'https://images.unsplash.com/photo-1625948515291-69613efd103f?w=802',
-    ],
-    additionalInfo: [
-      { label: 'Length', value: '5 feet' },
-      { label: 'Data Transfer', value: 'Yes' },
-      { label: 'Charging', value: '2.4A' },
-      { label: 'Warranty', value: '1 Year' },
-    ],
-  },
-  {
-    name: 'Gaming Mouse RGB DPI Adjustable',
-    price: 49.99,
-    description: 'High-precision gaming mouse with 12000 DPI and customizable RGB lighting.',
-    category: 'Accessories',
-    countInStock: 27,
-    stock: 27,
-    image: 'https://images.unsplash.com/photo-1527814050087-3793815479db?w=800',
-    images: [
-      'https://images.unsplash.com/photo-1527814050087-3793815479db?w=800',
-      'https://images.unsplash.com/photo-1527814050087-3793815479db?w=801',
-      'https://images.unsplash.com/photo-1527814050087-3793815479db?w=802',
-    ],
-    additionalInfo: [
-      { label: 'DPI', value: '12000 Max' },
-      { label: 'Buttons', value: '8 Programmable' },
-      { label: 'RGB', value: 'Customizable' },
-      { label: 'Warranty', value: '1 Year' },
-    ],
-  },
-  {
-    name: 'Webcam 1080P Full HD',
-    price: 59.99,
-    description: 'Full HD 1080P webcam with automatic focus and stereo microphone for video calls.',
-    category: 'Accessories',
-    countInStock: 21,
-    stock: 21,
-    image: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=800',
-    images: [
-      'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=800',
-      'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=801',
-      'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=802',
-    ],
-    additionalInfo: [
-      { label: 'Resolution', value: '1080P Full HD' },
-      { label: 'Focus', value: 'Automatic' },
-      { label: 'Microphone', value: 'Stereo' },
-      { label: 'Warranty', value: '1 Year' },
-    ],
-  },
-  {
-    name: 'Desk Organizer Multi-Compartment',
-    price: 19.99,
-    description: 'Compact desk organizer with multiple compartments for pens, cables, and small items.',
-    category: 'Office',
-    countInStock: 45,
-    stock: 45,
-    image: 'https://images.unsplash.com/photo-1542219206-6855f8397df6?w=800',
-    images: [
-      'https://images.unsplash.com/photo-1542219206-6855f8397df6?w=800',
-      'https://images.unsplash.com/photo-1542219206-6855f8397df6?w=801',
-      'https://images.unsplash.com/photo-1542219206-6855f8397df6?w=802',
-    ],
-    additionalInfo: [
-      { label: 'Material', value: 'Bamboo' },
-      { label: 'Compartments', value: '5' },
-      { label: 'Capacity', value: 'Large' },
-      { label: 'Warranty', value: '6 Months' },
-    ],
-  },
-  {
-    name: 'Cable Management Kit',
-    price: 16.99,
-    description: 'Complete cable management solution with clips, ties, and sleeves for organized desk.',
-    category: 'Accessories',
-    countInStock: 65,
-    stock: 65,
-    image: 'https://images.unsplash.com/photo-1625948515291-69613efd103f?w=800',
-    images: [
-      'https://images.unsplash.com/photo-1625948515291-69613efd103f?w=800',
-      'https://images.unsplash.com/photo-1625948515291-69613efd103f?w=801',
-      'https://images.unsplash.com/photo-1625948515291-69613efd103f?w=802',
-    ],
-    additionalInfo: [
-      { label: 'Contents', value: 'Clips, Ties, Sleeve' },
-      { label: 'Material', value: 'Silicone' },
-      { label: 'Reusable', value: 'Yes' },
-      { label: 'Warranty', value: 'Lifetime' },
-    ],
-  },
-  {
-    name: 'WiFi 6 Router AX6000',
-    price: 149.99,
-    description: 'Next-gen WiFi 6 router with AX6000 speed and extended coverage for faster connectivity.',
-    category: 'Networking',
-    countInStock: 13,
-    stock: 13,
-    image: 'https://images.unsplash.com/photo-1615751072497-5f5169febe17?w=800',
-    images: [
-      'https://images.unsplash.com/photo-1615751072497-5f5169febe17?w=800',
-      'https://images.unsplash.com/photo-1615751072497-5f5169febe17?w=801',
-      'https://images.unsplash.com/photo-1615751072497-5f5169febe17?w=802',
-    ],
-    additionalInfo: [
-      { label: 'Standard', value: 'WiFi 6' },
-      { label: 'Speed', value: 'AX6000' },
-      { label: 'Coverage', value: '2500 sqft' },
-      { label: 'Warranty', value: '1 Year' },
-    ],
-  },
-  {
-    name: 'USB Ethernet Adapter',
-    price: 17.99,
-    description: 'Plug-and-play USB to Ethernet adapter for laptops without built-in LAN port.',
-    category: 'Networking',
-    countInStock: 38,
-    stock: 38,
-    image: 'https://images.unsplash.com/photo-1625948515291-69613efd103f?w=800',
-    images: [
-      'https://images.unsplash.com/photo-1625948515291-69613efd103f?w=800',
-      'https://images.unsplash.com/photo-1625948515291-69613efd103f?w=801',
-      'https://images.unsplash.com/photo-1625948515291-69613efd103f?w=802',
-    ],
-    additionalInfo: [
-      { label: 'Speed', value: '1000Mbps' },
-      { label: 'Input', value: 'USB 3.0' },
-      { label: 'Install', value: 'Plug-and-play' },
-      { label: 'Warranty', value: '1 Year' },
     ],
   },
 ];
@@ -954,25 +337,15 @@ const demoCoupons = [
 const importData = async () => {
   try {
     await connectDB();
-
     await User.deleteMany();
-    await Category.deleteMany();
-    await Product.deleteMany();
-    await Coupon.deleteMany();
-
     const usersWithHashedPasswords = await Promise.all(
       demoUsers.map(async (user) => ({
         ...user,
         password: await bcrypt.hash(user.password, 10),
       }))
     );
-
     await User.insertMany(usersWithHashedPasswords);
-    await Category.insertMany(demoCategories);
-    await Product.insertMany(demoProducts);
-    await Coupon.insertMany(demoCoupons);
-
-    console.log('✅ Demo users, categories, products, and coupons imported successfully');
+    console.log('✅ Demo users imported successfully');
     process.exit();
   } catch (error) {
     console.error(`❌ Seeder failed: ${error.message}`);
@@ -983,3 +356,4 @@ const importData = async () => {
 };
 
 importData();
+    description: 'Default welcome coupon for new customers',
