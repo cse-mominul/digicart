@@ -134,3 +134,88 @@ The frontend uses `/api` as base path via Axios, and the backend serves:
 ## License
 
 This project is for learning and portfolio use. Add your preferred license if needed.
+
+---
+
+## Docker Setup
+
+See `DOCKER_SETUP.md` for full details. Quick start:
+
+1. Ensure you have a `backend/.env` file (see example below).
+2. Build and start with Docker Compose:
+    ```bash
+    docker compose up --build
+    ```
+3. Access the app:
+    - Frontend: http://localhost:8080
+    - API: http://localhost:8080/api
+
+**Sample backend/.env:**
+```env
+PORT=5000
+MONGO_URI=mongodb://mongodb:27017/digicart
+JWT_SECRET=digicart_super_secret_key_change_in_production
+NODE_ENV=production
+```
+
+---
+
+## Default Admin Credentials
+
+After seeding or running the admin script, use:
+
+- **Email:** admin@digicart.com
+- **Password:** password123 *(if created via `npm run admin:create`)*
+- **Password:** admin123 *(if seeded via `npm run data:import`)*
+
+> Change the password after first login for security!
+
+---
+
+## Deploying on Apache CloudStack VM
+
+1. **Provision a VM**
+    - Create a new Ubuntu VM in your Apache CloudStack dashboard.
+    - Assign a public IP and open port 8080 (or your chosen port) in the security group/firewall.
+
+2. **Install Docker & Docker Compose**
+    SSH into your VM and run:
+    ```bash
+    sudo apt update
+    sudo apt install -y docker.io docker-compose
+    sudo systemctl enable --now docker
+    ```
+
+3. **Copy Project Files to VM**
+    - Use `scp` or SFTP to upload your DigiCart folder, or clone from GitHub:
+    ```bash
+    git clone <your-repo-url>
+    cd digicart
+    ```
+
+4. **Set Up Environment Variables**
+    - Edit `backend/.env` with your production values (MongoDB, JWT secret, etc.).
+
+5. **Start with Docker Compose**
+    ```bash
+    docker compose up --build -d
+    ```
+
+6. **Access Your App**
+    - Visit `http://<your-vm-public-ip>:8080` in your browser.
+
+**Tip:** For updates, pull new code and re-run `docker compose up --build -d`.
+
+## Useful Commands
+
+**Seed demo data:**
+```bash
+cd backend
+npm run data:import
+```
+
+**Create/Update admin user:**
+```bash
+cd backend
+npm run admin:create
+```
