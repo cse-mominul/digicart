@@ -35,10 +35,15 @@ jobs:
         with:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
-          key: ${{ secrets.VM_SSH_KEY }}
+          password: ${{ secrets.VM_PASSWORD }} # key এর পরিবর্তে password ব্যবহার করা হয়েছে
           port: 22
           script: |
+            # Docker Hub থেকে লেটেস্ট ইমেজটি নামানো
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/mern-app:latest
+            
+            # আগের কোনো কন্টেইনার থাকলে তা বন্ধ ও রিমুভ করা
             docker stop mern-app || true
             docker rm mern-app || true
+            
+            # নতুন কন্টেইনার রান করা (আপনার পোর্ট ম্যাপিং অনুযায়ী)
             docker run -d --name mern-app -p 80:3000 --restart always ${{ secrets.DOCKERHUB_USERNAME }}/mern-app:latest
