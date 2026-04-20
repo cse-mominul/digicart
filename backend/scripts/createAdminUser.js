@@ -10,11 +10,15 @@ const createOrUpdateAdminUser = async () => {
   try {
     await connectDB();
 
-    const hashedPassword = await bcrypt.hash('password123', 10);
+
+    const adminName = process.env.ADMIN_NAME || 'Admin User';
+    const adminEmail = process.env.ADMIN_EMAIL || 'admin@digicart.com';
+    const adminPassword = process.env.ADMIN_PASSWORD || 'password123';
+    const hashedPassword = await bcrypt.hash(adminPassword, 10);
 
     const adminData = {
-      name: 'Admin User',
-      email: 'admin@digicart.com',
+      name: adminName,
+      email: adminEmail,
       password: hashedPassword,
       role: 'admin',
     };

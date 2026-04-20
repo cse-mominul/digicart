@@ -66,7 +66,9 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 const PORT = process.env.PORT || 5000;
+const HOST = '0.0.0.0';
 app.listen(
   PORT,
-  () => console.log(`🚀 Server running in `.yellow + `${process.env.NODE_ENV}`.yellow.bold + ` mode on port `.yellow + `${PORT}`.yellow.bold.underline)
+  HOST,
+  () => console.log(`🚀 Server running in `.yellow + `${process.env.NODE_ENV}`.yellow.bold + ` mode on http://${HOST}:`.yellow + `${PORT}`.yellow.bold.underline)
 );
