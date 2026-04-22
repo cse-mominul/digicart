@@ -30,9 +30,9 @@ services:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: admin1234
       MONGO_INITDB_DATABASE: digicart
-    # MongoDB-r port 27017 baire expose na korleo cholbe (Security-r jonno)
-    # ports:
-    #   - "27017:27017"
+    # MongoDB-r port expose for local dev
+    ports:
+      - "127.0.0.1:27017:27017"
     volumes:
       - mongo_data:/data/db
     restart: unless-stopped
