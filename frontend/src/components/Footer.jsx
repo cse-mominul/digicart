@@ -217,7 +217,7 @@ const Footer = () => {
               <Link to="/terms-and-conditions" onClick={handleScrollToTop} className="text-gray-400 transition-colors hover:text-white">
                 Terms &amp; Conditions
               </Link>
-              <Link to="/privacy" onClick={handleScrollToTop} className="text-gray-400 transition-colors hover:text-white">
+              <Link to="/privacy-policy" onClick={handleScrollToTop} className="text-gray-400 transition-colors hover:text-white">
                 Privacy Policy
               </Link>
             </div>
