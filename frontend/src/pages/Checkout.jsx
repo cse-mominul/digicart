@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import API from '../api/axios';
 import { useCart } from '../context/CartContext';
@@ -9,7 +9,6 @@ import toast from 'react-hot-toast';
 import Swal from 'sweetalert2';
 
 const shippingMethods = [
-  { id: 'free', label: 'Free Shipping', cost: 0 },
   { id: 'inside-dhaka', label: 'Inside Dhaka ৳৬০', cost: 60 },
   { id: 'outside-dhaka', label: 'Outside Dhaka ৳১২০', cost: 120 },
 ];
