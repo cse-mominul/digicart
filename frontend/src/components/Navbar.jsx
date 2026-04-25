@@ -540,7 +540,7 @@ const Navbar = () => {
               <Link
                 to="/"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-3 text-base font-medium text-gray-700"
+                className="flex items-center gap-3 text-base font-medium text-gray-700 dark:text-gray-200"
               >
                 <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#2563eb] text-white">
                   {renderMobileMenuIcon('home')}
@@ -551,7 +551,7 @@ const Navbar = () => {
               <Link
                 to="/account/wishlist"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-3 text-base font-medium text-gray-700"
+                className="flex items-center gap-3 text-base font-medium text-gray-700 dark:text-gray-200"
               >
                 <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#2563eb] text-white">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
