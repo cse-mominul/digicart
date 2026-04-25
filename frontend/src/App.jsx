@@ -43,7 +43,7 @@ import ScrollToTop from './components/ScrollToTop';
 import API from './api/axios';
 
 const UserLayout = ({ children }) => (
-  <div className="flex flex-col gap-0">
+  <div className="flex flex-col gap-0 pt-32 sm:pt-40">
     <Navbar />
     {children}
     <Footer />
