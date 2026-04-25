@@ -90,7 +90,7 @@ export default function MobileBottomNav({ cartCount = 0, onCartClick }) {
                   {content}
                 </a>
               ) : (
-                <Link to={item.to} className={className}>
+                <Link to={item.to} className={className} onClick={() => window.scrollTo(0, 0)}>
                   {content}
                 </Link>
               )}
