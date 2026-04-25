@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import API from '../api/axios';
 import ProductCard from '../components/ProductCard';
@@ -36,10 +36,11 @@ const CategoryProducts = () => {
   const searchTerm = searchParams.get('search') || '';
 
   const categoryTitle = useMemo(() => {
+    if (searchParams.get('sort') === 'price_asc') return 'Super Six - Best Value';
     if (searchTerm) return `Search Results for "${searchTerm}"`;
     if (showAllCategories) return 'All Products';
     return toTitleFromSlug(categorySlug || '');
-  }, [categorySlug, showAllCategories, searchTerm]);
+  }, [categorySlug, showAllCategories, searchTerm, searchParams]);
 
   const maxPrice = useMemo(() => {
     if (products.length === 0) return 0;
@@ -65,6 +66,9 @@ const CategoryProducts = () => {
     const fetchProductsByCategory = async () => {
       setLoading(true);
       try {
+        const searchTerm = searchParams.get('search') || '';
+        const sortParam = searchParams.get('sort') || '';
+
         const queryParams = new URLSearchParams({
           page: String(currentPage),
           limit: String(itemsPerPage),
@@ -76,6 +80,10 @@ const CategoryProducts = () => {
 
         if (searchTerm) {
           queryParams.append('search', searchTerm);
+        }
+
+        if (sortParam) {
+          queryParams.append('sort', sortParam);
         }
 
         const { data } = await API.get(`/products?${queryParams.toString()}`);
@@ -106,7 +114,7 @@ const CategoryProducts = () => {
     };
 
     fetchProductsByCategory();
-  }, [categorySlug, showAllCategories, currentPage, searchTerm]);
+  }, [categorySlug, showAllCategories, currentPage, searchParams]);
 
   useEffect(() => {
     setCurrentPage(1);

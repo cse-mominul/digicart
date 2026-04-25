@@ -7,8 +7,15 @@ const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 // @route GET /api/products
 const getProducts = async (req, res) => {
   try {
-    const { category, search } = req.query;
+    const { category, search, sort } = req.query;
     const query = {};
+
+    let sortOptions = { createdAt: -1 };
+    if (sort === 'price_asc') {
+      sortOptions = { price: 1 };
+    } else if (sort === 'price_desc') {
+      sortOptions = { price: -1 };
+    }
 
     if (typeof category === 'string' && category.trim()) {
       const normalizedCategory = decodeURIComponent(category.trim()).replace(/-/g, ' ');
@@ -28,14 +35,14 @@ const getProducts = async (req, res) => {
     const limit = Math.min(50, Math.max(1, Number.parseInt(req.query.limit, 10) || 12));
 
     if (!hasPaginationQuery) {
-      const products = await Product.find(query).sort({ createdAt: -1 });
+      const products = await Product.find(query).sort(sortOptions);
       return res.json(products);
     }
 
     const skip = (page - 1) * limit;
     const total = await Product.countDocuments(query);
     const products = await Product.find(query)
-      .sort({ createdAt: -1 })
+      .sort(sortOptions)
       .skip(skip)
       .limit(limit);
 
