@@ -54,7 +54,7 @@ const NewLaunchProductsSection = ({ products = [], loading = false }) => {
       {/* Product Slider */}
       <div
         ref={trackRef}
-        className="mt-3 flex flex-col items-center gap-3 pb-2 sm:mt-6 md:mt-8 sm:flex-row sm:items-stretch sm:gap-3 md:gap-4 sm:overflow-x-auto sm:scroll-smooth sm:pb-6 sm:[scrollbar-width:none] sm:[&::-webkit-scrollbar]:hidden"
+        className="mt-3 grid grid-cols-2 gap-3 pb-2 sm:mt-6 md:mt-8 sm:flex sm:flex-row sm:items-stretch sm:gap-3 md:gap-4 sm:overflow-x-auto sm:scroll-smooth sm:pb-6 sm:[scrollbar-width:none] sm:[&::-webkit-scrollbar]:hidden"
       >
         {launchProducts.map((product, index) => {
           const price = Number(product.price) || 0;
@@ -76,7 +76,7 @@ const NewLaunchProductsSection = ({ products = [], loading = false }) => {
             <article
               key={product.id || product._id || index}
               data-launch-card
-              className="group w-[90vw] max-w-[360px] shrink-0 overflow-hidden rounded-lg sm:rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl active:scale-95 cursor-pointer sm:w-[220px] sm:max-w-none md:w-[230px] dark:border-gray-800 dark:bg-[#1a1a1a]"
+              className="group w-full shrink-0 overflow-hidden rounded-lg sm:rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl active:scale-95 cursor-pointer sm:w-[220px] sm:max-w-none md:w-[230px] dark:border-gray-800 dark:bg-[#1a1a1a]"
               onClick={() => navigate(`/product/${product._id}`)}
             >
               <div className="relative p-1.5 sm:p-2.5">

@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useCart } from '../context/CartContext';
@@ -61,7 +61,7 @@ const OurProductsSection = ({ products = [], loading = false }) => {
       </div>
 
       {loading ? (
-        <div className="grid grid-cols-1 gap-2 sm:gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="grid grid-cols-2 gap-2 sm:gap-3 md:grid-cols-3 lg:grid-cols-5">
           {[...Array(10)].map((_, index) => (
             <div key={index} className="aspect-square sm:aspect-auto sm:h-[228px] animate-pulse rounded-lg sm:rounded-2xl border border-slate-200 bg-slate-100 dark:border-slate-700 dark:bg-slate-900" />
           ))}
@@ -72,7 +72,7 @@ const OurProductsSection = ({ products = [], loading = false }) => {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 gap-2 sm:gap-3 sm:grid-cols-2 lg:grid-cols-5">
+          <div className="grid grid-cols-2 gap-2 sm:gap-3 md:grid-cols-3 lg:grid-cols-5">
             {visibleProducts.map((product) => {
               const price = Number(product.price) || 0;
               const showDiscount = product.showDiscount !== false;

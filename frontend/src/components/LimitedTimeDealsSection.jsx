@@ -131,7 +131,7 @@ const LimitedTimeDealsSection = ({ products = [], loading = false }) => {
         <div className="min-w-0">
           <div
             ref={trackRef}
-            className="flex snap-x snap-mandatory gap-2 sm:gap-3 overflow-x-auto scroll-smooth pb-3 pr-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            className="grid grid-cols-2 gap-2 sm:flex sm:snap-x sm:snap-mandatory sm:gap-3 sm:overflow-x-auto sm:scroll-smooth pb-3 pr-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           >
             {dealProducts.map((product) => {
               const price = Number(product.price) || 0;
@@ -154,7 +154,7 @@ const LimitedTimeDealsSection = ({ products = [], loading = false }) => {
                 <article
                   key={product._id}
                   data-hot-deal-card
-                  className="group w-[90vw] max-w-[360px] sm:w-[220px] sm:max-w-none md:w-[230px] lg:w-[250px] shrink-0 snap-start rounded-lg sm:rounded-2xl border border-slate-200 bg-white p-2 sm:p-2.5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md active:scale-95 dark:border-slate-700 dark:bg-[#111827] cursor-pointer"
+                  className="group w-full sm:w-[220px] sm:max-w-none md:w-[230px] lg:w-[250px] sm:shrink-0 sm:snap-start rounded-lg sm:rounded-2xl border border-slate-200 bg-white p-2 sm:p-2.5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md active:scale-95 dark:border-slate-700 dark:bg-[#111827] cursor-pointer"
                   onClick={() => navigate(`/product/${product._id}`)}
                 >
                   <div className="relative">
