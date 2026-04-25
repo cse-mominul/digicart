@@ -114,6 +114,31 @@ function App() {
     };
 
     applySiteBranding();
+
+    // Intersection Observer for Reveal Animations
+    const revealCallback = (entries, observer) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('reveal-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    };
+
+    const revealObserver = new IntersectionObserver(revealCallback, {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px',
+    });
+
+    const observerTimer = setInterval(() => {
+      const elements = document.querySelectorAll('.reveal:not(.reveal-visible)');
+      elements.forEach((el) => revealObserver.observe(el));
+    }, 1000);
+
+    return () => {
+      clearInterval(observerTimer);
+      revealObserver.disconnect();
+    };
   }, []);
 
   return (

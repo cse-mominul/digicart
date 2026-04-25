@@ -1,4 +1,4 @@
-﻿import { useCart } from '../context/CartContext';
+import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
@@ -40,7 +40,7 @@ const ProductCard = ({ product }) => {
 
   return (
     <article
-      className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-xl transition-all duration-300 group overflow-hidden cursor-pointer"
+      className="reveal bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-xl transition-all duration-300 group overflow-hidden cursor-pointer"
       onClick={() => navigate(`/product/${product._id}`)}
     >
       <div className="relative overflow-hidden">
