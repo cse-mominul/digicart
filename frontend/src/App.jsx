@@ -8,6 +8,7 @@ import CategoryProducts from './pages/CategoryProducts';
 import Checkout from './pages/Checkout';
 import ContactUs from './pages/ContactUs';
 import UserAccount from './pages/UserAccount';
+import TermsAndConditions from './pages/TermsAndConditions';
 import AdminLayout from './pages/admin/AdminLayout';
 import Dashboard from './pages/admin/Dashboard';
 import SalesReport from './pages/admin/SalesReport';
@@ -121,6 +122,7 @@ function App() {
         <Route path="/products/:categorySlug" element={<UserLayout><CategoryProducts /></UserLayout>} />
         <Route path="/category/:categoryName" element={<UserLayout><Home /></UserLayout>} />
         <Route path="/contact-us" element={<UserLayout><ContactUs /></UserLayout>} />
+        <Route path="/terms-and-conditions" element={<UserLayout><TermsAndConditions /></UserLayout>} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/wishlist" element={<Navigate to="/account/wishlist" replace />} />

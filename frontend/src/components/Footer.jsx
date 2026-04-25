@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import API from '../api/axios';
 
@@ -85,7 +85,7 @@ const Footer = () => {
     { label: 'Contact us', href: '/contact-us' },
     { label: 'Careers', href: '/contact-us' },
     { label: 'Press & Media', href: '/contact-us' },
-    { label: 'Blog', href: '/contact-us' },
+    { label: 'Terms & Conditions', href: '/terms-and-conditions' },
   ];
 
   const accountLinks = [
@@ -214,7 +214,7 @@ const Footer = () => {
             <p className="text-center text-sm text-gray-400">{siteBranding.footerCopyrightText}</p>
 
             <div className="flex items-center justify-center gap-4 text-sm md:justify-end">
-              <Link to="/terms" onClick={handleScrollToTop} className="text-gray-400 transition-colors hover:text-white">
+              <Link to="/terms-and-conditions" onClick={handleScrollToTop} className="text-gray-400 transition-colors hover:text-white">
                 Terms &amp; Conditions
               </Link>
               <Link to="/privacy" onClick={handleScrollToTop} className="text-gray-400 transition-colors hover:text-white">
