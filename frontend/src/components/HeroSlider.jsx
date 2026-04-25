@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import API from '../api/axios';
 
 const HeroSlider = () => {
@@ -46,7 +46,7 @@ const HeroSlider = () => {
 
   if (loading) {
     return (
-      <section className="rounded-2xl overflow-hidden shadow-lg mb-8 bg-gray-200 dark:bg-gray-800 h-80 animate-pulse" />
+      <section className="rounded-none sm:rounded-2xl overflow-hidden shadow-lg mb-8 bg-gray-200 dark:bg-gray-800 h-48 sm:h-80 md:h-96 lg:h-[450px] animate-pulse -mx-3 sm:mx-0" />
     );
   }
 
@@ -62,7 +62,7 @@ const HeroSlider = () => {
   return (
     <section className="rounded-none sm:rounded-2xl overflow-hidden shadow-lg mb-8 max-w-full -mx-3 sm:mx-0">
       {/* Mobile - Full width with fixed height and object-fit cover */}
-      <div className="sm:hidden relative h-80 w-full bg-gray-300 dark:bg-gray-700 overflow-hidden">
+      <div className="sm:hidden relative h-48 w-full bg-gray-300 dark:bg-gray-700 overflow-hidden">
         <img
           src={activeImage || 'https://placehold.co/400x300?text=Banner'}
           alt={activeSlide?.title || 'Campaign Banner'}
