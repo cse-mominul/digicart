@@ -446,166 +446,175 @@ const Navbar = () => {
         </div>
       </header>
 
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 z-[70] sm:hidden">
-          <button
-            type="button"
-            className="absolute inset-0 bg-black/30"
-            onClick={() => setMobileMenuOpen(false)}
-            aria-label="Close mobile menu overlay"
-          />
+      {/* Mobile Menu Sidebar with Slide Animation */}
+      <div 
+        className={`fixed inset-0 z-[70] sm:hidden transition-all duration-300 ${
+          mobileMenuOpen ? 'visible' : 'invisible'
+        }`}
+      >
+        {/* Overlay */}
+        <div 
+          className={`absolute inset-0 bg-black/30 transition-opacity duration-300 ${
+            mobileMenuOpen ? 'opacity-100' : 'opacity-0'
+          }`}
+          onClick={() => setMobileMenuOpen(false)}
+        />
 
-          <aside className="relative h-full w-[86%] max-w-[360px] overflow-y-auto bg-white px-4 pb-8 pt-4 shadow-[8px_0_30px_rgba(15,23,42,0.1)]">
-            <div className="flex items-center justify-between">
-              <Link to="/" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2 text-[#2563eb]">
-                <>
-                  {/* Light mode logo */}
-                  <img
-                    src={logoLight}
-                    alt={siteBranding.siteTitle}
-                    className="h-8 w-auto max-w-[140px] object-contain block dark:hidden"
-                  />
-                  {/* Dark mode logo */}
-                  <img
-                    src={logoDark}
-                    alt={siteBranding.siteTitle}
-                    className="h-8 w-auto max-w-[140px] object-contain hidden dark:block"
-                  />
-                </>
+        {/* Sidebar */}
+        <aside 
+          className={`relative h-full w-[86%] max-w-[360px] overflow-y-auto bg-white px-4 pb-8 pt-4 shadow-[8px_0_30px_rgba(15,23,42,0.1)] transition-transform duration-300 ease-out ${
+            mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+          }`}
+        >
+          <div className="flex items-center justify-between">
+            <Link to="/" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2 text-[#2563eb]">
+              <>
+                {/* Light mode logo */}
+                <img
+                  src={logoLight}
+                  alt={siteBranding.siteTitle}
+                  className="h-8 w-auto max-w-[140px] object-contain block dark:hidden"
+                />
+                {/* Dark mode logo */}
+                <img
+                  src={logoDark}
+                  alt={siteBranding.siteTitle}
+                  className="h-8 w-auto max-w-[140px] object-contain hidden dark:block"
+                />
+              </>
+            </Link>
+
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(false)}
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-600"
+              aria-label="Close mobile menu"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          <div className="mt-5 p-0">
+            <div className="space-y-3">
+              <Link
+                to="/"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 text-base font-medium text-gray-700"
+              >
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#2563eb] text-white">
+                  {renderMobileMenuIcon('home')}
+                </span>
+                <span>Home</span>
               </Link>
 
-              <button
-                type="button"
+              <Link
+                to="/account/wishlist"
                 onClick={() => setMobileMenuOpen(false)}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-600"
-                aria-label="Close mobile menu"
+                className="flex items-center gap-3 text-base font-medium text-gray-700"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#2563eb] text-white">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                  </svg>
+                </span>
+                <span>Wishlist {wishlistCount > 0 ? `(${wishlistCount})` : ''}</span>
+              </Link>
 
-            <div className="mt-5 p-0">
-              <div className="space-y-3">
+              {user ? (
                 <Link
-                  to="/"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-3 text-base font-medium text-gray-700"
-                >
-                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#2563eb] text-white">
-                    {renderMobileMenuIcon('home')}
-                  </span>
-                  <span>Home</span>
-                </Link>
-
-                <Link
-                  to="/account/wishlist"
+                  to="/account/profile"
                   onClick={() => setMobileMenuOpen(false)}
                   className="flex items-center gap-3 text-base font-medium text-gray-700"
                 >
                   <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#2563eb] text-white">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.121 17.804A9 9 0 1118.88 17.8M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
                   </span>
-                  <span>Wishlist {wishlistCount > 0 ? `(${wishlistCount})` : ''}</span>
+                  <span>My Profile</span>
                 </Link>
+              ) : (
+                <Link
+                  to="/login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 text-base font-medium text-gray-700"
+                >
+                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#2563eb] text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14M13 5l7 7-7 7" />
+                    </svg>
+                  </span>
+                  <span>Login / Sign Up</span>
+                </Link>
+              )}
 
-                {user ? (
-                  <Link
-                    to="/account/profile"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 text-base font-medium text-gray-700"
+              {mobileMenuItems.slice(1).map((item) => (
+                <Link
+                  key={item.label}
+                  to={item.to}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 text-base font-medium text-gray-700"
+                >
+                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#2563eb] text-white">
+                    {renderMobileMenuIcon(item.icon)}
+                  </span>
+                  <span>{item.label}</span>
+                </Link>
+              ))}
+
+              {user && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    handleLogout();
+                  }}
+                  className="flex w-full items-center gap-3 text-base font-medium text-red-500"
+                >
+                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-red-500 text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                  </span>
+                  <span>Logout</span>
+                </button>
+              )}
+
+              <div className="mt-4 border-t border-gray-200 pt-4">
+                <p className="mb-3 text-sm font-semibold text-gray-700">Follow us</p>
+                <div className="flex gap-3">
+                  <a
+                    href="https://facebook.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#2563eb] text-white hover:bg-[#1d4ed8] transition-colors"
+                    aria-label="Facebook"
                   >
-                    <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#2563eb] text-white">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.121 17.804A9 9 0 1118.88 17.8M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                      </svg>
-                    </span>
-                    <span>My Profile</span>
-                  </Link>
-                ) : (
-                  <Link
-                    to="/login"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 text-base font-medium text-gray-700"
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                    </svg>
+                  </a>
+
+                  <a
+                    href="https://instagram.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#2563eb] text-white hover:bg-[#1d4ed8] transition-colors"
+                    aria-label="Instagram"
                   >
-                    <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#2563eb] text-white">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14M13 5l7 7-7 7" />
-                      </svg>
-                    </span>
-                    <span>Login / Sign Up</span>
-                  </Link>
-                )}
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0m6 12.5c0 .276-.224.5-.5.5h-.5v3.5c0 .828-.672 1.5-1.5 1.5h-9c-.828 0-1.5-.672-1.5-1.5V13h-.5c-.276 0-.5-.224-.5-.5v-1c0-.276.224-.5.5-.5h.5V9.5c0-.828.672-1.5 1.5-1.5h9c.828 0 1.5.672 1.5 1.5v2h.5c.276 0 .5.224.5.5v1zm-5.25-4.25c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3z" />
+                    </svg>
+                  </a>
 
-                {mobileMenuItems.slice(1).map((item) => (
-                  <Link
-                    key={item.label}
-                    to={item.to}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 text-base font-medium text-gray-700"
-                  >
-                    <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#2563eb] text-white">
-                      {renderMobileMenuIcon(item.icon)}
-                    </span>
-                    <span>{item.label}</span>
-                  </Link>
-                ))}
-
-                {user && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setMobileMenuOpen(false);
-                      handleLogout();
-                    }}
-                    className="flex w-full items-center gap-3 text-base font-medium text-red-500"
-                  >
-                    <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-red-500 text-white">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                      </svg>
-                    </span>
-                    <span>Logout</span>
-                  </button>
-                )}
-
-                <div className="mt-4 border-t border-gray-200 pt-4">
-                  <p className="mb-3 text-sm font-semibold text-gray-700">Follow us</p>
-                  <div className="flex gap-3">
-                    <a
-                      href="https://facebook.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#2563eb] text-white hover:bg-[#1d4ed8] transition-colors"
-                      aria-label="Facebook"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                      </svg>
-                    </a>
-
-                    <a
-                      href="https://instagram.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#2563eb] text-white hover:bg-[#1d4ed8] transition-colors"
-                      aria-label="Instagram"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0m6 12.5c0 .276-.224.5-.5.5h-.5v3.5c0 .828-.672 1.5-1.5 1.5h-9c-.828 0-1.5-.672-1.5-1.5V13h-.5c-.276 0-.5-.224-.5-.5v-1c0-.276.224-.5.5-.5h.5V9.5c0-.828.672-1.5 1.5-1.5h9c.828 0 1.5.672 1.5 1.5v2h.5c.276 0 .5.224.5.5v1zm-5.25-4.25c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3z" />
-                      </svg>
-                    </a>
-
-                  </div>
                 </div>
               </div>
             </div>
-          </aside>
-        </div>
-      )}
+          </div>
+        </aside>
+      </div>
 
       <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
       <MobileBottomNav cartCount={totalItems} onCartClick={() => setCartOpen(true)} />
