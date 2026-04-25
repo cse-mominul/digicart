@@ -164,47 +164,56 @@ NODE_ENV=production
 
 After seeding or running the admin script, use:
 
-- **Email:** admin@digicart.com
-- **Password:** password123 *(if created via `npm run admin:create`)*
-- **Password:** admin123 *(if seeded via `npm run data:import`)*
+- **Email:** `admin@clickandpick.com`
+- **Password:** `admin123` (default from seeder)
+- **Alt Password:** `password123` (if created via `npm run admin:create`)
 
-> Change the password after first login for security!
+> **Note:** Change the password after first login for security!
 
 ---
 
-## Deploying on Apache CloudStack VM
+## ☁️ Apache CloudStack Deployment
 
-1. **Provision a VM**
-    - Create a new Ubuntu VM in your Apache CloudStack dashboard.
-    - Assign a public IP and open port 8080 (or your chosen port) in the security group/firewall.
+To deploy this application on an Apache CloudStack Virtual Machine:
 
-2. **Install Docker & Docker Compose**
-    SSH into your VM and run:
-    ```bash
-    sudo apt update
-    sudo apt install -y docker.io docker-compose
-    sudo systemctl enable --now docker
-    ```
+1. **Provision Ubuntu VM:** Create a new Ubuntu instance in your CloudStack dashboard.
+2. **Access & Security:** 
+   - Assign a **Public IP**.
+   - Open ports **8899** (SSH) and **5000** (App) in the Security Groups.
+3. **Environment Setup:** SSH into your VM and install Docker:
+   ```bash
+   sudo apt update
+   sudo apt install -y docker.io docker-compose
+   sudo systemctl enable --now docker
+   ```
+4. **Deploy:** Use Docker Compose or the GitHub Actions workflow below.
 
-3. **Copy Project Files to VM**
-    - Use `scp` or SFTP to upload your DigiCart folder, or clone from GitHub:
-    ```bash
-    git clone <your-repo-url>
-    cd digicart
-    ```
+---
 
-4. **Set Up Environment Variables**
-    - Edit `backend/.env` with your production values (MongoDB, JWT secret, etc.).
+## 🚀 GitHub Actions CI/CD
 
-5. **Start with Docker Compose**
-    ```bash
-    docker compose up --build -d
-    ```
+The project includes an automated deployment workflow located at `.github/workflows/deploy.yml`.
 
-6. **Access Your App**
-    - Visit `http://<your-vm-public-ip>:8080` in your browser.
+### Prerequisites (GitHub Secrets)
+To use the CI/CD pipeline, add the following secrets in your GitHub Repository (**Settings > Secrets and variables > Actions**):
 
-**Tip:** For updats, pull new code and re-run `docker compose up --build -d`.
+| Secret Name | Description |
+| :--- | :--- |
+| `DOCKERHUB_USERNAME` | Your Docker Hub username |
+| `DOCKERHUB_TOKEN` | Your Docker Hub Personal Access Token |
+| `VM_HOST` | Public IP of your CloudStack VM |
+| `VM_USER` | SSH username (e.g., `ubuntu` or `root`) |
+| `VM_PASSWORD` | SSH password for the VM |
+| `MONGO_URI` | Production MongoDB connection string |
+| `JWT_SECRET` | Secret key for JWT authentication |
+
+### How it works
+1. On every **push to `main`**, the workflow builds a Docker image.
+2. It pushes the image to **Docker Hub**.
+3. It connects to your **CloudStack VM via SSH** (Port 8899).
+4. It pulls the latest image and restarts the container automatically.
+
+---
 
 ## Useful Commands
 
@@ -219,3 +228,4 @@ npm run data:import
 cd backend
 npm run admin:create
 ```
+
