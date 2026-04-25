@@ -34,6 +34,7 @@ import AdminRoute from './components/AdminRoute';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import FloatingChatButton from './components/FloatingChatButton';
+import ScrollToTop from './components/ScrollToTop';
 import API from './api/axios';
 
 const UserLayout = ({ children }) => (
@@ -112,6 +113,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors">
+      <ScrollToTop />
       <Routes>
         {/* Public / User Routes */}
         <Route path="/" element={<UserLayout><Home /></UserLayout>} />
