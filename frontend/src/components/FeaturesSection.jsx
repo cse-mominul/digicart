@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const features = [
   {
@@ -40,24 +40,77 @@ const features = [
 ];
 
 const FeaturesSection = () => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const nextSlide = () => {
+    setCurrentIndex((prev) => (prev + 2 >= features.length ? 0 : prev + 2));
+  };
+
+  const prevSlide = () => {
+    setCurrentIndex((prev) => (prev - 2 < 0 ? features.length - 2 : prev - 2));
+  };
+
   return (
-    <section className="mb-8 px-0 sm:px-0">
-      <div className="bg-black rounded-3xl sm:rounded-full py-6 px-4 sm:py-8 sm:px-12 flex flex-col sm:flex-row items-center justify-between gap-8 sm:gap-4 shadow-xl">
-        {features.map((item, index) => (
-          <div key={index} className="flex items-center gap-4 group w-full sm:w-auto">
-            <div className="text-red-500 transition-transform duration-300 group-hover:scale-110">
-              {item.icon}
+    <section className="mb-8 px-0 sm:px-0 relative group">
+      <div className="bg-black rounded-[2rem] sm:rounded-full py-6 px-4 sm:py-8 sm:px-12 shadow-2xl relative overflow-hidden">
+        {/* Desktop View */}
+        <div className="hidden sm:flex flex-row items-center justify-between gap-4">
+          {features.map((item, index) => (
+            <div key={index} className="flex items-center gap-3 group">
+              <div className="text-red-500 transition-transform duration-300 group-hover:scale-110">
+                {item.icon}
+              </div>
+              <div className="flex flex-col">
+                <h3 className="text-white text-sm font-bold tracking-wider leading-tight">
+                  {item.title}
+                </h3>
+                <p className="text-gray-400 text-xs font-medium">
+                  {item.description}
+                </p>
+              </div>
             </div>
-            <div className="flex flex-col">
-              <h3 className="text-white text-xs sm:text-sm font-bold tracking-wider leading-tight">
-                {item.title}
-              </h3>
-              <p className="text-gray-400 text-[10px] sm:text-xs font-medium">
-                {item.description}
-              </p>
-            </div>
+          ))}
+        </div>
+
+        {/* Mobile View Slider */}
+        <div className="flex sm:hidden overflow-hidden">
+          <div 
+            className="flex transition-transform duration-500 ease-in-out w-full"
+            style={{ transform: `translateX(-${currentIndex * 50}%)` }}
+          >
+            {features.map((item, index) => (
+              <div key={index} className="min-w-[50%] flex flex-col items-center text-center px-2">
+                <div className="text-red-500 mb-2 scale-125">
+                  {item.icon}
+                </div>
+                <h3 className="text-white text-[10px] font-bold tracking-wider leading-tight mb-1">
+                  {item.title}
+                </h3>
+                <p className="text-gray-400 text-[9px] font-medium leading-none">
+                  {item.description}
+                </p>
+              </div>
+            ))}
           </div>
-        ))}
+        </div>
+
+        {/* Navigation Arrows for Mobile */}
+        <button 
+          onClick={prevSlide}
+          className="sm:hidden absolute left-1 top-1/2 -translate-y-1/2 w-8 h-10 bg-white/10 flex items-center justify-center rounded-r-lg text-white"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        <button 
+          onClick={nextSlide}
+          className="sm:hidden absolute right-1 top-1/2 -translate-y-1/2 w-8 h-10 bg-white/10 flex items-center justify-center rounded-l-lg text-white"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
       </div>
     </section>
   );
