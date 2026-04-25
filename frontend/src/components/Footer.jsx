@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { FaFacebookF, FaInstagram, FaWhatsapp } from 'react-icons/fa';
 import API from '../api/axios';
 
 const slugifyCategory = (name = '') =>
@@ -23,6 +24,7 @@ const Footer = () => {
     contactPhone: '+880 1700-123456',
     supportEmail: 'support@digicart.com',
     salesEmail: 'sales@digicart.com',
+    whatsappNumber: '',
   });
   const [siteBranding, setSiteBranding] = useState({
     siteTitle: 'DigiCart',
@@ -61,6 +63,7 @@ const Footer = () => {
           contactPhone: data?.contactPhone || '+880 1700-123456',
           supportEmail: data?.supportEmail || 'support@digicart.com',
           salesEmail: data?.salesEmail || 'sales@digicart.com',
+          whatsappNumber: data?.whatsappNumber || data?.contactPhone || '',
         });
         setSiteBranding({
           siteTitle: data?.siteTitle || 'DigiCart',
@@ -149,6 +152,35 @@ const Footer = () => {
               {siteBranding.siteDescription}
             </p>
 
+            <div className="mt-6 flex items-center gap-3">
+              <a
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-[#1e293b] text-gray-300 transition-all hover:bg-[#1877f2] hover:text-white"
+                aria-label="Facebook"
+              >
+                <FaFacebookF size={18} />
+              </a>
+              <a
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-[#1e293b] text-gray-300 transition-all hover:bg-[#e4405f] hover:text-white"
+                aria-label="Instagram"
+              >
+                <FaInstagram size={20} />
+              </a>
+              <a
+                href={`https://wa.me/${contactInfo.whatsappNumber.replace(/\D/g, '')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-[#1e293b] text-gray-300 transition-all hover:bg-[#25d366] hover:text-white"
+                aria-label="WhatsApp"
+              >
+                <FaWhatsapp size={20} />
+              </a>
+            </div>
           </div>
 
           {renderLinkList('About', aboutLinks)}
