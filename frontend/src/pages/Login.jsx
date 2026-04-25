@@ -22,7 +22,12 @@ const Login = () => {
       toast.success('Login successful!');
       navigate(data.role === 'admin' ? '/admin' : '/');
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Login failed');
+      if (error.response?.data?.message?.includes('not verified')) {
+        toast.error('Account not verified. OTP sent to email.');
+        navigate('/verify-otp', { state: { email: form.email } });
+      } else {
+        toast.error(error.response?.data?.message || 'Login failed');
+      }
     } finally {
       setLoading(false);
     }
@@ -78,6 +83,11 @@ const Login = () => {
               >
                 {showPassword ? 'Hide' : 'Show'}
               </button>
+            </div>
+            <div className="flex justify-end mt-1">
+              <Link to="/forgot-password" size="sm" className="text-xs font-medium text-[#2563eb] dark:text-blue-400 hover:underline">
+                Forgot Password?
+              </Link>
             </div>
           </div>
 

@@ -15,10 +15,9 @@ const Register = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const { data } = await API.post('/auth/register', form);
-      login(data);
-      toast.success('Account created successfully!');
-      navigate('/');
+      await API.post('/auth/register', form);
+      toast.success('OTP sent to your email!');
+      navigate('/verify-otp', { state: { email: form.email } });
     } catch (error) {
       toast.error(error.response?.data?.message || 'Registration failed');
     } finally {
