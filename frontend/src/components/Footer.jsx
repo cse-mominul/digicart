@@ -12,6 +12,13 @@ const slugifyCategory = (name = '') =>
     .replace(/\s+/g, '-')
     .replace(/-+/g, '-');
 
+const ensureExternalLink = (url) => {
+  if (!url || url === '#') return '#';
+  const trimmed = url.trim();
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) return trimmed;
+  return `https://${trimmed}`;
+};
+
 const Footer = () => {
   const [categoryLinks, setCategoryLinks] = useState([
     { label: 'Fashion', href: '/products/fashion' },
@@ -32,6 +39,8 @@ const Footer = () => {
     siteSlogan: 'Rebranded Sellzy',
     footerCopyrightText: '© 2026 DigiCart. All rights reserved.',
     siteDescription: 'DigiCart helps modern shoppers discover top-rated products at honest prices, fast delivery, and smooth checkout experiences.',
+    facebookUrl: '',
+    instagramUrl: '',
   });
 
   useEffect(() => {
@@ -71,6 +80,8 @@ const Footer = () => {
           siteSlogan: data?.siteSlogan || 'Rebranded Sellzy',
           footerCopyrightText: data?.footerCopyrightText || '© 2026 DigiCart. All rights reserved.',
           siteDescription: data?.siteDescription || 'DigiCart helps modern shoppers discover top-rated products at honest prices, fast delivery, and smooth checkout experiences.',
+          facebookUrl: data?.facebookUrl || '',
+          instagramUrl: data?.instagramUrl || '',
         });
       } catch (error) {
         console.error('Failed to fetch footer contact settings:', error);
@@ -154,7 +165,7 @@ const Footer = () => {
 
             <div className="mt-6 flex items-center gap-3">
               <a
-                href="#"
+                href={ensureExternalLink(siteBranding.facebookUrl)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex h-9 w-9 items-center justify-center rounded-full bg-[#1e293b] text-gray-300 transition-all hover:bg-[#1877f2] hover:text-white"
@@ -163,7 +174,7 @@ const Footer = () => {
                 <FaFacebookF size={18} />
               </a>
               <a
-                href="#"
+                href={ensureExternalLink(siteBranding.instagramUrl)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex h-9 w-9 items-center justify-center rounded-full bg-[#1e293b] text-gray-300 transition-all hover:bg-[#e4405f] hover:text-white"

@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import API from '../../api/axios';
 import toast from 'react-hot-toast';
@@ -37,9 +37,10 @@ const Settings = () => {
     siteWebsiteUrl: 'www.digicart.com',
     facebookPixelId: '',
     facebookPixelEnabled: false,
-    whatsappChatEnabled: true,
     whatsappNumber: '+8801700123456',
     whatsappDefaultMessage: 'Hello, I need help with my order.',
+    facebookUrl: '',
+    instagramUrl: '',
   });
   const [loading, setLoading] = useState(true);
   const [savingSettings, setSavingSettings] = useState(false);
@@ -81,6 +82,8 @@ const Settings = () => {
           whatsappChatEnabled: typeof data?.whatsappChatEnabled === 'boolean' ? data.whatsappChatEnabled : true,
           whatsappNumber: data?.whatsappNumber || '+8801700123456',
           whatsappDefaultMessage: data?.whatsappDefaultMessage || 'Hello, I need help with my order.',
+          facebookUrl: data?.facebookUrl || '',
+          instagramUrl: data?.instagramUrl || '',
         });
       } catch (error) {
         toast.error(error.response?.data?.message || 'Failed to load settings');
@@ -231,6 +234,8 @@ const Settings = () => {
       whatsappChatEnabled: Boolean(settingsForm.whatsappChatEnabled),
       whatsappNumber: settingsForm.whatsappNumber,
       whatsappDefaultMessage: settingsForm.whatsappDefaultMessage,
+      facebookUrl: settingsForm.facebookUrl,
+      instagramUrl: settingsForm.instagramUrl,
     });
 
     setSettingsForm({
@@ -254,6 +259,8 @@ const Settings = () => {
         : Boolean(settingsForm.whatsappChatEnabled),
       whatsappNumber: data?.whatsappNumber || settingsForm.whatsappNumber,
       whatsappDefaultMessage: data?.whatsappDefaultMessage || settingsForm.whatsappDefaultMessage,
+      facebookUrl: data?.facebookUrl || settingsForm.facebookUrl,
+      instagramUrl: data?.instagramUrl || settingsForm.instagramUrl,
     });
 
     toast.success(successMessage);
@@ -916,6 +923,32 @@ const Settings = () => {
                       setSettingsForm((prev) => ({ ...prev, siteWebsiteUrl: event.target.value }))
                     }
                     placeholder="www.digicart.com"
+                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm text-gray-300 mb-1">Facebook Page URL</label>
+                  <input
+                    type="text"
+                    value={settingsForm.facebookUrl}
+                    onChange={(event) =>
+                      setSettingsForm((prev) => ({ ...prev, facebookUrl: event.target.value }))
+                    }
+                    placeholder="https://facebook.com/yourpage"
+                    className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm text-gray-300 mb-1">Instagram Profile URL</label>
+                  <input
+                    type="text"
+                    value={settingsForm.instagramUrl}
+                    onChange={(event) =>
+                      setSettingsForm((prev) => ({ ...prev, instagramUrl: event.target.value }))
+                    }
+                    placeholder="https://instagram.com/yourprofile"
                     className="w-full rounded-xl border border-gray-700 bg-gray-800 text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>

@@ -45,6 +45,8 @@ const ensureDefaultSettings = async () => {
       whatsappChatEnabled: true,
       whatsappNumber: '+8801700123456',
       whatsappDefaultMessage: 'Hello, I need help with my order.',
+      facebookUrl: '',
+      instagramUrl: '',
       couponCode: DEFAULT_COUPON_CODE,
       couponDiscountPercent: DEFAULT_COUPON_DISCOUNT_PERCENT,
       couponActive: true,
@@ -90,6 +92,8 @@ const updateSettings = async (req, res) => {
     whatsappChatEnabled,
     whatsappNumber,
     whatsappDefaultMessage,
+    facebookUrl,
+    instagramUrl,
     couponCode,
     couponDiscountPercent,
     couponActive,
@@ -174,6 +178,12 @@ const updateSettings = async (req, res) => {
     const resolvedWhatsappDefaultMessage = typeof whatsappDefaultMessage === 'string' && whatsappDefaultMessage.trim()
       ? whatsappDefaultMessage.trim()
       : String(existingSettings.whatsappDefaultMessage || '').trim() || 'Hello, I need help with my order.';
+    const resolvedFacebookUrl = typeof facebookUrl === 'string'
+      ? facebookUrl.trim()
+      : String(existingSettings.facebookUrl || '').trim();
+    const resolvedInstagramUrl = typeof instagramUrl === 'string'
+      ? instagramUrl.trim()
+      : String(existingSettings.instagramUrl || '').trim();
     const resolvedCouponCode =
       typeof couponCode === 'string'
         ? couponCode.trim().toUpperCase()
@@ -230,6 +240,8 @@ const updateSettings = async (req, res) => {
         whatsappChatEnabled: resolvedWhatsappChatEnabled,
         whatsappNumber: resolvedWhatsappNumber,
         whatsappDefaultMessage: resolvedWhatsappDefaultMessage,
+        facebookUrl: resolvedFacebookUrl,
+        instagramUrl: resolvedInstagramUrl,
         couponCode: resolvedCouponCode,
         couponDiscountPercent: resolvedCouponDiscountPercent,
         couponActive: resolvedCouponActive,

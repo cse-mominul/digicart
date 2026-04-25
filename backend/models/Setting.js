@@ -105,6 +105,16 @@ const settingSchema = new mongoose.Schema(
       default: 'Hello, I need help with my order.',
       trim: true,
     },
+    facebookUrl: {
+      type: String,
+      default: '',
+      trim: true,
+    },
+    instagramUrl: {
+      type: String,
+      default: '',
+      trim: true,
+    },
     paymentMethods: {
       type: mongoose.Schema.Types.Mixed,
       default: {
