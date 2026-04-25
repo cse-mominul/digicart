@@ -455,7 +455,7 @@ const Navbar = () => {
             aria-label="Close mobile menu overlay"
           />
 
-          <aside className="relative h-full w-[86%] max-w-[360px] overflow-y-auto bg-[#f4f5f7] px-4 pb-8 pt-4 shadow-[8px_0_30px_rgba(15,23,42,0.2)]">
+          <aside className="relative h-full w-[86%] max-w-[360px] overflow-y-auto bg-white px-4 pb-8 pt-4 shadow-[8px_0_30px_rgba(15,23,42,0.1)]">
             <div className="flex items-center justify-between">
               <Link to="/" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2 text-[#2563eb]">
                 <>
@@ -477,7 +477,7 @@ const Navbar = () => {
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(false)}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 text-gray-600"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-600"
                 aria-label="Close mobile menu"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -486,7 +486,7 @@ const Navbar = () => {
               </button>
             </div>
 
-            <div className="mt-5 rounded-2xl border border-gray-300 bg-white p-4">
+            <div className="mt-5 p-0">
               <div className="space-y-3">
                 <Link
                   to="/"
