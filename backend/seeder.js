@@ -51,6 +51,7 @@ const User = require('./models/User');
 const Category = require('./models/Category');
 const Product = require('./models/Product');
 const Coupon = require('./models/Coupon');
+const Campaign = require('./models/Campaign');
 
 dotenv.config();
 
@@ -86,6 +87,16 @@ const demoCoupons = [
   },
 ];
 
+const demoCampaigns = [
+  {
+    title: 'Summer Sale',
+    subtitle: 'Get up to 50% off on all electronics',
+    desktopImage: 'https://placehold.co/1200x400?text=Summer+Sale',
+    mobileImage: 'https://placehold.co/400x300?text=Summer+Sale',
+    isActive: true,
+  }
+];
+
 console.log('Seeder demoProducts:', JSON.stringify(demoProducts, null, 2));
 const importData = async () => {
   try {
@@ -95,6 +106,7 @@ const importData = async () => {
     await Category.deleteMany();
     await Product.deleteMany();
     await Coupon.deleteMany();
+    await Campaign.deleteMany();
 
     const usersWithHashedPasswords = await Promise.all(
       demoUsers.map(async (user) => ({
@@ -109,8 +121,9 @@ const importData = async () => {
     console.log('Inserting demoProducts:', JSON.stringify(demoProducts, null, 2));
     await Product.insertMany(demoProducts);
     await Coupon.insertMany(demoCoupons);
+    await Campaign.insertMany(demoCampaigns);
 
-    console.log('✅ Demo users, categories, products, and coupons imported successfully');
+    console.log('✅ Demo users, categories, products, coupons, and campaigns imported successfully');
     process.exit();
   } catch (error) {
     console.error('❌ Seeder failed:', error);

@@ -2,13 +2,53 @@ import { FiPhone, FiHome, FiShoppingBag } from 'react-icons/fi';
 import { TbBrandWhatsapp } from 'react-icons/tb';
 import { BsShop } from 'react-icons/bs';
 import { Link, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import API from '../api/axios';
+
+const sanitizePhoneForWhatsApp = (phone) => {
+  let digits = String(phone || '').replace(/\D/g, '');
+  // If it's a standard BD number starting with 01, prepend 88
+  if (digits.startsWith('01') && digits.length === 11) {
+    digits = '88' + digits;
+  }
+  return digits;
+};
 
 export default function MobileBottomNav({ cartCount = 0, onCartClick }) {
   const location = useLocation();
+  const [settings, setSettings] = useState({
+    contactPhone: '',
+    whatsappNumber: '',
+    whatsappDefaultMessage: 'Hello, I need help with my order.',
+  });
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const { data } = await API.get('/settings', { params: { _t: Date.now() } });
+        if (data) {
+          setSettings({
+            contactPhone: data.contactPhone || '',
+            whatsappNumber: data.whatsappNumber || data.contactPhone || '',
+            whatsappDefaultMessage: data.whatsappDefaultMessage || 'Hello, I need help with my order.',
+          });
+        }
+      } catch (error) {
+        console.error('Failed to fetch settings for MobileBottomNav:', error);
+      }
+    };
+    fetchSettings();
+  }, []);
+
+  const phoneLink = settings.contactPhone ? `tel:${settings.contactPhone.replace(/\s+/g, '')}` : '/contact-us';
+  
+  const whatsappPhone = sanitizePhoneForWhatsApp(settings.whatsappNumber);
+  const whatsappMessage = encodeURIComponent(settings.whatsappDefaultMessage);
+  const whatsappLink = whatsappPhone ? `https://wa.me/${whatsappPhone}?text=${whatsappMessage}` : 'https://wa.me/';
 
   const navItems = [
-    { label: 'Phone', icon: <FiPhone size={22} />, to: '/contact-us', external: false },
-    { label: 'WhatsApp', icon: <TbBrandWhatsapp size={24} />, to: 'https://wa.me/', external: true },
+    { label: 'Phone', icon: <FiPhone size={22} />, to: phoneLink, external: !!settings.contactPhone },
+    { label: 'WhatsApp', icon: <TbBrandWhatsapp size={24} />, to: whatsappLink, external: true },
     { label: 'Home', icon: <FiHome size={22} />, to: '/' },
     { label: 'Shop', icon: <BsShop size={22} />, to: '/products/all' },
     { label: 'Cart', icon: <FiShoppingBag size={22} />, action: onCartClick, badge: true },
@@ -46,7 +86,7 @@ export default function MobileBottomNav({ cartCount = 0, onCartClick }) {
                   {content}
                 </button>
               ) : item.external ? (
-                <a href={item.to} target="_blank" rel="noopener noreferrer" className={className}>
+                <a href={item.to} target={item.to.startsWith('tel:') ? undefined : "_blank"} rel="noopener noreferrer" className={className}>
                   {content}
                 </a>
               ) : (

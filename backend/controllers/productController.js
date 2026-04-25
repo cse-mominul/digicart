@@ -70,7 +70,7 @@ const getTopSellingProducts = async (req, res) => {
   try {
     const limit = Math.min(20, Math.max(1, Number.parseInt(req.query.limit, 10) || 20));
 
-    const products = await Order.aggregate([
+    let products = await Order.aggregate([
       { $unwind: '$items' },
       {
         $group: {
@@ -112,6 +112,11 @@ const getTopSellingProducts = async (req, res) => {
         },
       },
     ]);
+
+    if (products.length === 0) {
+      // Fallback: If no orders exist, just return the newest products
+      products = await Product.find().sort({ createdAt: -1 }).limit(limit);
+    }
 
     res.json(products);
   } catch (error) {

@@ -1,9 +1,12 @@
-﻿import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import API from '../api/axios';
 
 const sanitizePhoneForWhatsApp = (phone) => {
-  const digits = String(phone || '').replace(/\D/g, '');
+  let digits = String(phone || '').replace(/\D/g, '');
+  if (digits.startsWith('01') && digits.length === 11) {
+    digits = '88' + digits;
+  }
   return digits;
 };
 
