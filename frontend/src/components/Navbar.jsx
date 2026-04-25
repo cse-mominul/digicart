@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import logoLight from '../assets/logo-light.png';
+import logoLight from '../assets/logo-light.jpeg';
 import logoDark from '../assets/logo-dark.png';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -7,6 +7,7 @@ import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import API from '../api/axios';
 import CartDrawer from './CartDrawer';
+import MobileBottomNav from './MobileBottomNav';
 
 const mobileMenuItems = [
   { label: 'Home', to: '/', icon: 'home' },
@@ -644,6 +645,7 @@ const Navbar = () => {
       )}
 
       <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
+      <MobileBottomNav cartCount={totalItems} onCartClick={() => setCartOpen(true)} />
     </>
   );
 };

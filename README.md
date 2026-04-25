@@ -204,7 +204,7 @@ After seeding or running the admin script, use:
 6. **Access Your App**
     - Visit `http://<your-vm-public-ip>:8080` in your browser.
 
-**Tip:** For updates, pull new code and re-run `docker compose up --build -d`.
+**Tip:** For updats, pull new code and re-run `docker compose up --build -d`.
 
 ## Useful Commands
 

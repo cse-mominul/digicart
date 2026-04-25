@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import logoLight from '../assets/logo-light.png';
+import logoLight from '../assets/logo-light.jpeg';
 import logoDark from '../assets/logo-dark.png';
 import { Link, useNavigate } from 'react-router-dom';
 import API from '../api/axios';

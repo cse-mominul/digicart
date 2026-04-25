@@ -7,13 +7,13 @@ services:
       dockerfile: Dockerfile
     container_name: clickpick_app
     ports:
-      - "8080:5000"  # Ekhane 5000:5000 er jaygay 8080:5000 din
+      - "5000:5000"  # Now using 5000:5000 to avoid port conflict
     env_file:
       - ./backend/.env
     environment:
       - NODE_ENV=production
       - PORT=5000
-      - MONGO_URI=mongodb://admin:admin1234@mongodb:27017/digicart?authSource=admin
+      - MONGO_URI=mongodb://admin:admin1234@mongodb:27017/database?authSource=admin
       - ADMIN_NAME=Admin User
       - ADMIN_EMAIL=admin@clickandpick.com
       - ADMIN_PASSWORD=admin1234
@@ -29,10 +29,8 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: admin1234
-      MONGO_INITDB_DATABASE: digicart
-    # MongoDB-r port expose for local dev
-    ports:
-      - "127.0.0.1:27017:27017"
+      MONGO_INITDB_DATABASE: database
+    # MongoDB port mapping removed to avoid conflict with local instance
     volumes:
       - mongo_data:/data/db
     restart: unless-stopped
