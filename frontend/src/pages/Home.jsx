@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import API from '../api/axios';
 import HeroSlider from '../components/HeroSlider';
-import AiHighlights from '../components/AiHighlights';
+import FeaturesSection from '../components/FeaturesSection';
 import AiDealsSection from '../components/AiDealsSection';
 import NewLaunchProductsSection from '../components/NewLaunchProductsSection';
 import LimitedTimeDealsSection from '../components/LimitedTimeDealsSection';
@@ -47,7 +47,7 @@ const Home = () => {
     <div className="max-w-7xl mx-auto overflow-x-hidden px-3 pb-6 sm:px-4 md:px-6 lg:px-8 sm:pb-8">
       <HeroSlider />
 
-      <AiHighlights />
+      <FeaturesSection />
 
       <AiDealsSection products={topSellingProducts} loading={topSellingLoading} />
 
