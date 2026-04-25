@@ -422,7 +422,7 @@ const Navbar = () => {
               onClick={() => navigate('/products/all?sort=price_asc')}
               className="flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-red-600 via-orange-500 to-orange-400 text-white text-sm font-bold shadow-sm hover:shadow-md transition-all active:scale-95 whitespace-nowrap"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 animate-fire" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1014 0c0-1.187-.249-2.315-.7-3.336a.75.75 0 011.035-1.035 9.747 9.747 0 012.29 2.12 1 1 0 001.783-.13 13.047 13.047 0 001.374-5.544 1 1 0 00-1.723-.706 7.516 7.516 0 01-4.684 2.624 19.059 19.059 0 00-1-1.783z" clipRule="evenodd" />
               </svg>
               Super Six
@@ -514,7 +514,7 @@ const Navbar = () => {
                 }}
                 className="flex w-full items-center gap-3 px-4 py-3 rounded-2xl bg-gradient-to-r from-red-600 via-orange-500 to-orange-400 text-white text-base font-bold shadow-sm active:scale-95 transition-all"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 animate-fire" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1014 0c0-1.187-.249-2.315-.7-3.336a.75.75 0 011.035-1.035 9.747 9.747 0 012.29 2.12 1 1 0 001.783-.13 13.047 13.047 0 001.374-5.544 1 1 0 00-1.723-.706 7.516 7.516 0 01-4.684 2.624 19.059 19.059 0 00-1-1.783z" clipRule="evenodd" />
                 </svg>
                 Super Six

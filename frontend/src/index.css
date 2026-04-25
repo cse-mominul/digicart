@@ -1,4 +1,4 @@
-﻿@tailwind base;
+@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -210,6 +210,23 @@ body::-webkit-scrollbar-button,
 
 .reveal-visible {
   animation: revealFromBottom 0.6s ease-out forwards;
+}
+
+@keyframes fire-wave {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+    filter: drop-shadow(0 0 2px rgba(255, 165, 0, 0.5));
+  }
+  50% {
+    transform: scale(1.1) rotate(3deg);
+    filter: drop-shadow(0 0 5px rgba(255, 69, 0, 0.8));
+  }
+}
+
+.animate-fire {
+  animation: fire-wave 1s ease-in-out infinite;
+  display: inline-block;
+  transform-origin: bottom center;
 }
 
 /* Responsive text utilities */
