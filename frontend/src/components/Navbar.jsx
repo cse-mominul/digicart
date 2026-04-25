@@ -488,7 +488,7 @@ const Navbar = () => {
 
         {/* Sidebar */}
         <aside 
-          className={`relative h-full w-[86%] max-w-[360px] overflow-y-auto bg-white px-4 pb-8 pt-4 shadow-[8px_0_30px_rgba(15,23,42,0.1)] transition-transform duration-300 ease-out ${
+          className={`relative h-full w-[86%] max-w-[360px] overflow-y-auto bg-white dark:bg-gray-950 px-4 pb-8 pt-4 shadow-[8px_0_30px_rgba(15,23,42,0.1)] transition-transform duration-300 ease-out ${
             mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
           }`}
         >
@@ -513,7 +513,7 @@ const Navbar = () => {
             <button
               type="button"
               onClick={() => setMobileMenuOpen(false)}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-600"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400"
               aria-label="Close mobile menu"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -565,7 +565,7 @@ const Navbar = () => {
                 <Link
                   to="/account/profile"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-3 text-base font-medium text-gray-700"
+                  className="flex items-center gap-3 text-base font-medium text-gray-700 dark:text-gray-200"
                 >
                   <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#2563eb] text-white">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -578,7 +578,7 @@ const Navbar = () => {
                 <Link
                   to="/login"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-3 text-base font-medium text-gray-700"
+                  className="flex items-center gap-3 text-base font-medium text-gray-700 dark:text-gray-200"
                 >
                   <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#2563eb] text-white">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -594,7 +594,7 @@ const Navbar = () => {
                   key={item.label}
                   to={item.to}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-3 text-base font-medium text-gray-700"
+                  className="flex items-center gap-3 text-base font-medium text-gray-700 dark:text-gray-200"
                 >
                   <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#2563eb] text-white">
                     {renderMobileMenuIcon(item.icon)}
@@ -621,8 +621,8 @@ const Navbar = () => {
                 </button>
               )}
 
-              <div className="mt-4 border-t border-gray-200 pt-4">
-                <p className="mb-3 text-sm font-semibold text-gray-700">Follow us</p>
+              <div className="mt-4 border-t border-gray-200 dark:border-gray-800 pt-4">
+                <p className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-300">Follow us</p>
                 <div className="flex gap-3">
                   <a
                     href="https://facebook.com"
