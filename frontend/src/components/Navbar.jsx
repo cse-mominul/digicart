@@ -187,37 +187,33 @@ const Navbar = () => {
       <header className="sticky top-0 z-50 bg-white dark:bg-gray-950 border-b border-gray-100 dark:border-gray-800">
         <div className="max-w-7xl mx-auto px-3 sm:px-4 py-2.5 sm:py-3">
           <div className="sm:hidden">
-            <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center justify-center relative min-h-[56px]">
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen((prev) => !prev)}
-                className="inline-flex h-14 w-14 items-center justify-center rounded-full border border-gray-300 bg-gray-50 text-gray-700 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200"
+                className="absolute left-0 inline-flex h-11 w-11 items-center justify-center rounded-full border border-gray-200 bg-gray-50 text-gray-700 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-200"
                 aria-label="Toggle mobile menu"
                 aria-expanded={mobileMenuOpen}
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M4 7h16M4 12h16M4 17h16" />
                 </svg>
               </button>
 
-              <Link to="/" className="flex items-center gap-2 text-[#2563eb]">
-                <>
-                  {/* Light mode logo */}
-                  <img
-                    src={logoLight}
-                    alt={siteBranding.siteTitle}
-                    className="h-9 w-auto max-w-[150px] object-contain block dark:hidden"
-                  />
-                  {/* Dark mode logo */}
-                  <img
-                    src={logoDark}
-                    alt={siteBranding.siteTitle}
-                    className="h-9 w-auto max-w-[150px] object-contain hidden dark:block"
-                  />
-                </>
+              <Link to="/" className="flex items-center justify-center">
+                {/* Light mode logo */}
+                <img
+                  src={logoLight}
+                  alt={siteBranding.siteTitle}
+                  className="h-10 w-auto max-w-[140px] object-contain block dark:hidden"
+                />
+                {/* Dark mode logo */}
+                <img
+                  src={logoDark}
+                  alt={siteBranding.siteTitle}
+                  className="h-10 w-auto max-w-[140px] object-contain hidden dark:block"
+                />
               </Link>
-
-
             </div>
 
             <div className="mt-3">
