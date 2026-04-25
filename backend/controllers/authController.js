@@ -267,4 +267,68 @@ const resetPassword = async (req, res) => {
   }
 };
 
-module.exports = { register, login, updateProfile, verifyOTP, forgotPassword, resetPassword };
+// @desc  Google Login
+// @route POST /api/auth/google-login
+const googleLogin = async (req, res) => {
+  const { name, email, photo } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ message: 'Email is required from Google' });
+  }
+
+  try {
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      // Create new user if doesn't exist
+      // We use a random password for Google users since they won't use it
+      const randomPassword = Math.random().toString(36).slice(-10) + 'A1!';
+      user = await User.create({
+        name,
+        email,
+        password: randomPassword,
+        isVerified: true, // Google users are pre-verified
+      });
+
+      await createNotification({
+        type: 'registration',
+        title: 'New User via Google',
+        message: `${name} registered using Google`,
+        actorName: name,
+        actorEmail: email,
+        actorUserId: user._id,
+      });
+    } else {
+      // If user exists but was not verified, verify them now
+      if (!user.isVerified) {
+        user.isVerified = true;
+        await user.save();
+      }
+
+      await createNotification({
+        type: 'login',
+        title: 'User Login via Google',
+        message: `${user.name} logged in using Google`,
+        actorName: user.name,
+        actorEmail: user.email,
+        actorUserId: user._id,
+      });
+    }
+
+    const now = new Date();
+    await User.findByIdAndUpdate(user._id, { $set: { lastLoginAt: now } });
+
+    res.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      role: user.role,
+      token: generateToken(user._id),
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { register, login, updateProfile, verifyOTP, forgotPassword, resetPassword, googleLogin };
