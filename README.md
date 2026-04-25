@@ -215,6 +215,26 @@ To use the CI/CD pipeline, add the following secrets in your GitHub Repository (
 
 ---
 
+## 🔒 SSL Setup (Free SSL with Certbot)
+
+To secure your application with HTTPS using Let's Encrypt:
+
+1. **Prerequisite:** Point your domain (e.g., `example.com`) to your VM's Public IP.
+2. **Install Certbot:** SSH into your VM and run:
+   ```bash
+   sudo apt install certbot python3-certbot-nginx -y
+   ```
+3. **Generate Certificate:**
+   ```bash
+   sudo certbot --nginx -d yourdomain.com
+   ```
+4. **Auto-Renewal:** Certbot automatically sets up a cron job for renewal. You can test it with:
+   ```bash
+   sudo certbot renew --dry-run
+   ```
+
+---
+
 ## Useful Commands
 
 **Seed demo data:**
