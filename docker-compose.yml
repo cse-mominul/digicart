@@ -6,8 +6,10 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: clickpick_app
-    ports:
-      - "5000:5000"  # Now using 5000:5000 to avoid port conflict
+    # ports:
+    #   - "5000:5000"  # Removed direct exposure, will be handled by Nginx
+    expose:
+      - "5000"
     env_file:
       - ./backend/.env
     environment:
@@ -33,6 +35,17 @@ services:
     # MongoDB port mapping removed to avoid conflict with local instance
     volumes:
       - mongo_data:/data/db
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    container_name: clickpick_nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - app
     restart: unless-stopped
 
 

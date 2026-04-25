@@ -146,9 +146,9 @@ See `DOCKER_SETUP.md` for full details. Quick start:
     ```bash
     docker compose up --build
     ```
-3. Access the app:
-    - Frontend: http://localhost:8080
-    - API: http://localhost:8080/api
+3. **Access Your App**
+    - Visit `http://localhost` in your browser (Port 80).
+    - API: http://localhost/api
 
 **Sample backend/.env:**
 ```env
@@ -179,7 +179,7 @@ To deploy this application on an Apache CloudStack Virtual Machine:
 1. **Provision Ubuntu VM:** Create a new Ubuntu instance in your CloudStack dashboard.
 2. **Access & Security:** 
    - Assign a **Public IP**.
-   - Open ports **8899** (SSH) and **5000** (App) in the Security Groups.
+   - Open ports **8899** (SSH) and **80** (Nginx/Web) in the Security Groups.
 3. **Environment Setup:** SSH into your VM and install Docker:
    ```bash
    sudo apt update
