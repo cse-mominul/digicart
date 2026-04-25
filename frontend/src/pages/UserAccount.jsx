@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import Swal from 'sweetalert2';
@@ -179,7 +179,8 @@ const UserAccount = () => {
       try {
         const { data } = await API.get('/orders/myorders');
         setOrders(Array.isArray(data) ? data : []);
-      } catch {
+      } catch (error) {
+        console.error('Fetch Orders Error:', error);
         toast.error('Failed to load orders');
       } finally {
         setOrdersLoading(false);
@@ -195,7 +196,8 @@ const UserAccount = () => {
         try {
           const { data } = await API.get('/orders/my-payments');
           setPayments(Array.isArray(data) ? data : []);
-        } catch {
+        } catch (error) {
+          console.error('Fetch Payments Error:', error);
           toast.error('Failed to load payments');
         } finally {
           setPaymentsLoading(false);
@@ -211,7 +213,8 @@ const UserAccount = () => {
       try {
         const { data } = await API.get('/products/my-reviews');
         setMyReviews(Array.isArray(data) ? data : []);
-      } catch {
+      } catch (error) {
+        console.error('Fetch Reviews API Error:', error);
         // Fallback for environments where /products/my-reviews route is unavailable.
         try {
           const { data: orderData } = await API.get('/orders/myorders');
@@ -664,7 +667,7 @@ const UserAccount = () => {
       return;
     }
 
-    window.location.href = item.to;
+    navigate(item.to);
   };
 
   const openAddAddress = () => {
@@ -860,7 +863,8 @@ const UserAccount = () => {
                 <div className="space-y-4">
                   {paginatedOrders.map((order) => {
                     const normalizedStatus = normalizeOrderStatus(order.status);
-                    const orderItems = Array.isArray(order.orderItems) ? order.orderItems.length : 0;
+                    const itemsList = getOrderLineItems(order);
+                    const orderItemsCount = itemsList.length;
                     const deliveryText =
                       order?.shippingAddress?.city || order?.shippingAddress?.address || 'Standard Delivery';
                     const isPaid = isOrderPaid(order);
@@ -893,7 +897,7 @@ const UserAccount = () => {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10" />
                               </svg>
                             </span>
-                            <p>{orderItems} item(s)</p>
+                            <p>{orderItemsCount} item(s)</p>
                           </div>
 
                           <div className="flex items-center gap-3">
